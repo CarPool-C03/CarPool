@@ -38,8 +38,10 @@ carpool/
 
 ## Come contribuire
 
+Il flusso completo (branch, commit, pull request, review e merge) è descritto in [CONTRIBUTING.md](CONTRIBUTING.md).
+
 - Sviluppo **pull-based**: nessun push diretto su `main`.
-- Una branch e una **pull request per ogni funzionalità**, revisionata da almeno un altro membro prima del merge.
+- Un branch e una **pull request per ogni funzionalità**, approvata da un Project Manager prima del merge.
 - I **test** si scrivono insieme alla funzionalità.
 - Ogni pull request riporta nel titolo o nella descrizione l'ID del task Jira e dei requisiti coinvolti (es. `RF_TRIP_01`).
 
