@@ -26,7 +26,7 @@ Fuori dall'ambito: pagamenti, tracciamento GPS in tempo reale, app mobile nativa
 ## Struttura del repository
 
 ```
-carpool/
+CarPool/
 ├── frontend/   # applicazione React
 ├── backend/    # API REST Node.js/Express
 └── docs/       # RAD, SDD, ODD, documenti di test e di project management
