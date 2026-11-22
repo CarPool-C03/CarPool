@@ -1,2 +1,19 @@
 # Ogni modifica a qualsiasi file del repository richiede la review dei Project Manager.
-* @CarPool-C03/project-managers
+# Se più righe corrispondono a un file vale l'ultima: la riga * resta in cima.
+*                       @CarPool-C03/project-managers
+
+# Configurazione degli agenti e della pipeline: solo i PM possono approvarla,
+# così né un agente né un singolo studente può cambiarla da solo.
+/AGENTS.md              @CarPool-C03/project-managers
+/opencode.json          @CarPool-C03/project-managers
+/.opencode/             @CarPool-C03/project-managers
+/.github/               @CarPool-C03/project-managers
+
+# Modelli di progetto (specifica per gli agenti).
+/docs/modelli/          @CarPool-C03/project-managers
+/docs/sdd/              @CarPool-C03/project-managers
+
+# Classi condivise da più casi d'uso (model e storage): quando il team decide
+# un proprietario, aggiungerlo qui, ad esempio:
+# /backend/src/model/   @utente-proprietario
+# /backend/src/storage/ @utente-proprietario

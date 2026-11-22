@@ -1,0 +1,70 @@
+name: Task per agente
+description: Implementazione di un caso d'uso con un agente (Copilot o OpenCode)
+title: "CP-XX UC_XXX_XX: "
+labels: ["task-agente"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Compila tutti i campi. Nessun agente parte all'invio: il PM rilegge il task
+        e poi aggiunge la label `fase:piano`. Guida: `docs/agentic-workflow.md`.
+  - type: input
+    id: jira
+    attributes:
+      label: Task Jira
+      placeholder: CP-12
+    validations:
+      required: true
+  - type: input
+    id: uc
+    attributes:
+      label: Caso d'uso e requisiti
+      placeholder: UC_TRIP_01 PubblicaViaggio — RF_TRIP_01, RF_TRIP_02
+    validations:
+      required: true
+  - type: textarea
+    id: specifica
+    attributes:
+      label: Specifica (file da leggere)
+      description: Solo gli artefatti necessari, e solo le classi rilevanti del class diagram.
+      placeholder: |
+        - docs/rad/uc/UC_TRIP_01.md
+        - docs/modelli/seq_UC_TRIP_01.puml
+        - docs/modelli/class.puml: Viaggio, Conducente, ViaggioControl
+    validations:
+      required: true
+  - type: textarea
+    id: ambito
+    attributes:
+      label: Ambito (file, classi e metodi da toccare)
+      description: Ricavato dal sequence diagram. Ogni file fuori ambito è un segnale da controllare.
+      placeholder: |
+        - backend/src/control/ViaggioControl.js: pubblicaViaggio(...)
+        - backend/src/storage/ViaggioDAO.js: save
+        - backend/src/routes/viaggi.js: POST /viaggi
+    validations:
+      required: true
+  - type: textarea
+    id: verifica
+    attributes:
+      label: Verifica (test frame da coprire)
+      placeholder: TF01-TF10 di docs/test/cp_UC_TRIP_01.md
+    validations:
+      required: true
+  - type: dropdown
+    id: agente
+    attributes:
+      label: Agente
+      options:
+        - OpenCode (pipeline con label)
+        - Copilot coding agent (issue assegnata a Copilot)
+        - In locale (Copilot o OpenCode nell'editor)
+    validations:
+      required: true
+  - type: textarea
+    id: procedura
+    attributes:
+      label: Procedura
+      value: |
+        Prima proponi un piano (file e metodi) e attendi l'approvazione.
+        Poi implementa ed esegui lint e test.

@@ -1,0 +1,46 @@
+# Fase 1 – Piano. Parte quando il PM aggiunge la label fase:piano all'issue.
+# L'agente pianificatore legge task e modelli e pubblica il piano come commento.
+# Non può modificare file (vedi .opencode/agents/pianificatore.md).
+name: Agente pianificatore
+on:
+  issues:
+    types: [labeled]
+concurrency:
+  group: agente-${{ github.event.issue.number }}
+  cancel-in-progress: false
+jobs:
+  piano:
+    if: github.event.label.name == 'fase:piano' && vars.OPENCODE_MODEL != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: read
+      models: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: anomalyco/opencode/github@latest
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        with:
+          model: ${{ vars.OPENCODE_MODEL }}
+          agent: pianificatore
+          use_github_token: true
+          prompt: |
+            Leggi AGENTS.md e l'issue #${{ github.event.issue.number }}.
+            Leggi solo i file elencati nella sezione «Specifica» dell'issue.
+            Proponi un piano: file da creare o modificare, metodi con le firme
+            dei modelli, test frame da coprire, deviazioni dai modelli.
+            La tua risposta finale è il piano: verrà pubblicata come commento.
+            Non modificare nessun file.
+            Se la specifica è incompleta o i modelli sono in contrasto, scrivilo
+            invece di proporre un piano.

@@ -1,0 +1,28 @@
+# Preparazione dell'ambiente per il Copilot coding agent.
+# Il nome del file e del job sono fissi. Il workflow si può provare a mano
+# dalla scheda Actions; parte anche quando questo file cambia, per verificarlo.
+name: Copilot Setup Steps
+on:
+  workflow_dispatch:
+  push:
+    paths: [.github/workflows/copilot-setup-steps.yml]
+  pull_request:
+    paths: [.github/workflows/copilot-setup-steps.yml]
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Installa le dipendenze di backend e frontend
+        run: |
+          for dir in backend frontend; do
+            if [ -f "$dir/package.json" ]; then
+              (cd "$dir" && if [ -f package-lock.json ]; then npm ci; else npm install; fi)
+            fi
+          done
