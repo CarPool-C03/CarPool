@@ -1,0 +1,50 @@
+# Fase 5 – Revisione rispetto ai modelli. Parte quando la PR viene segnata come
+# pronta («Ready for review») oppure quando si aggiunge la label fase:revisione.
+# Il revisore non modifica file: pubblica l'elenco delle differenze, che è il
+# primo materiale che legge il revisore umano.
+name: Agente revisore
+on:
+  pull_request:
+    types: [ready_for_review, labeled]
+concurrency:
+  group: revisione-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  revisione:
+    if: >-
+      vars.OPENCODE_MODEL != '' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      (github.event.action == 'ready_for_review' || github.event.label.name == 'fase:revisione')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      models: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: anomalyco/opencode/github@latest
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        with:
+          model: ${{ vars.OPENCODE_MODEL }}
+          agent: revisore
+          use_github_token: true
+          prompt: |
+            Segui .opencode/agents/revisore.md e AGENTS.md.
+            Confronta la diff della PR #${{ github.event.pull_request.number }}
+            (rispetto a origin/${{ github.event.pull_request.base.ref }}) con
+            docs/modelli/, docs/sdd/ e con il caso d'uso indicato nella PR.
+            La risposta finale è l'elenco delle differenze: verrà pubblicata
+            come commento. Non modificare nessun file.

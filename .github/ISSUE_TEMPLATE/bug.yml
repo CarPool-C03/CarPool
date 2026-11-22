@@ -1,0 +1,26 @@
+name: Difetto
+description: Segnala un difetto collegato a un caso d'uso
+title: "BUG UC_XXX_XX: "
+labels: ["bug"]
+body:
+  - type: input
+    id: uc
+    attributes:
+      label: Caso d'uso coinvolto
+      placeholder: UC_TRIP_01
+    validations:
+      required: true
+  - type: textarea
+    id: descrizione
+    attributes:
+      label: Cosa succede e cosa dovrebbe succedere
+      description: L'esito atteso si prende dal caso d'uso.
+    validations:
+      required: true
+  - type: textarea
+    id: riproduzione
+    attributes:
+      label: Come riprodurlo (o test che fallisce)
+      placeholder: Test frame TF10 di docs/test/cp_UC_TRIP_01.md fallisce con ...
+    validations:
+      required: true

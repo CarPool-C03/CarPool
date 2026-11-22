@@ -1,0 +1,17 @@
+name: Task senza agente
+description: Documentazione, configurazione o sviluppo svolto a mano
+labels: ["task"]
+body:
+  - type: input
+    id: jira
+    attributes:
+      label: Task Jira
+      placeholder: CP-8
+    validations:
+      required: true
+  - type: textarea
+    id: descrizione
+    attributes:
+      label: Descrizione e requisiti coinvolti
+    validations:
+      required: true

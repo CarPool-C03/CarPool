@@ -1,0 +1,67 @@
+# Integrazione continua: nessun agente, nessun secret.
+# Il job «build» è il controllo da richiedere nel ruleset di main.
+# Il job «guardia» segnala i comportamenti a rischio degli agenti.
+name: CI
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: carpool
+          POSTGRES_PASSWORD: carpool
+          POSTGRES_DB: carpool_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U carpool"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      # Credenziali solo per il DB di test usa-e-getta della CI.
+      DATABASE_URL: postgres://carpool:carpool@localhost:5432/carpool_test
+      NODE_ENV: test
+      CI: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Lint e test di backend e frontend
+        run: |
+          set -e
+          trovato=0
+          for dir in backend frontend; do
+            if [ -f "$dir/package.json" ]; then
+              trovato=1
+              echo "::group::$dir"
+              cd "$dir"
+              if [ -f package-lock.json ]; then npm ci; else npm install; fi
+              npm run lint --if-present
+              npm test --if-present
+              npm run build --if-present
+              cd ..
+              echo "::endgroup::"
+            fi
+          done
+          if [ "$trovato" = 0 ]; then
+            echo "::notice::Nessun package.json in backend/ o frontend/: niente da compilare."
+          fi
+
+  guardia:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Controlli sui segnali di rischio
+        run: bash scripts/guardia-pr.sh "origin/${{ github.event.pull_request.base.ref }}"

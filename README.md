@@ -21,7 +21,7 @@ Fuori dall'ambito: pagamenti, tracciamento GPS in tempo reale, app mobile nativa
 |---|---|
 | Frontend | React (web app responsive) |
 | Backend | Node.js / Express, API REST |
-| Database | relazionale *(da definire)* |
+| Database | PostgreSQL |
 
 ## Struttura del repository
 
@@ -29,7 +29,10 @@ Fuori dall'ambito: pagamenti, tracciamento GPS in tempo reale, app mobile nativa
 CarPool/
 ├── frontend/   # applicazione React
 ├── backend/    # API REST Node.js/Express
-└── docs/       # RAD, SDD, ODD, documenti di test e di project management
+├── docs/       # RAD, SDD, ODD, modelli (PlantUML), category partition, guide
+├── scripts/    # script di supporto (label, controlli della CI)
+├── AGENTS.md   # istruzioni comuni per gli agenti (Copilot, OpenCode)
+└── .github/    # workflow, agenti Copilot, moduli delle issue, template PR
 ```
 
 ## Installazione e avvio
@@ -44,6 +47,16 @@ Il flusso completo (branch, commit, pull request, review e merge) è descritto i
 - Un branch e una **pull request per ogni funzionalità**, approvata da un Project Manager prima del merge.
 - I **test** si scrivono insieme alla funzionalità.
 - Ogni pull request riporta nel titolo o nella descrizione l'ID del task Jira e dei requisiti coinvolti (es. `RF_TRIP_01`).
+
+## Lavorare con gli agenti
+
+Il team usa GitHub Copilot e OpenCode dentro una pipeline definita dai PM:
+task da issue form, piano approvato da una persona, implementazione e test da
+agenti separati, CI e revisione rispetto ai modelli prima del merge.
+
+- Guida per il team: [docs/agentic-workflow.md](docs/agentic-workflow.md)
+- Configurazione (PM): [docs/setup-pipeline-pm.md](docs/setup-pipeline-pm.md)
+- Istruzioni lette da ogni agente: [AGENTS.md](AGENTS.md)
 
 ## Team
 

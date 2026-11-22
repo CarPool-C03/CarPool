@@ -4,6 +4,8 @@ Questa guida spiega il flusso di lavoro che tutto il team segue per portare una 
 
 **Regola d'oro: nessuno lavora né fa push direttamente su `main`.** Ogni modifica passa da un branch e da una pull request approvata da un Project Manager (Giuseppe D'Ambrosio o Pietro Coticella).
 
+> Task con agenti (Copilot, OpenCode): stesso flusso, con le fasi avviate dalle label ([docs/agentic-workflow.md](docs/agentic-workflow.md)). Chi apre la PR deve saper spiegare tutto il codice.
+
 ## Il flusso in breve
 
 1. Aggiorna il tuo `main` locale
