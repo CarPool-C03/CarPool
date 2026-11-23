@@ -12,7 +12,7 @@ Confronta il codice con:
 - `docs/sdd/component.puml`: import ammessi tra boundary, control, model, storage
   (il frontend e le route non usano mai lo storage);
 - il caso d'uso: eccezioni con gli stessi nomi, gestite nella boundary;
-- la category partition: esiste un test per ogni frame (TFxx nel nome).
+- la category partition: esiste un test per ogni frame, con `TC_<UC>.<nn>` nel nome.
 
 Controlla anche: file modificati fuori dall'ambito del piano, nuove dipendenze
 in `package.json`, test esistenti modificati o disattivati.

@@ -34,9 +34,9 @@ Frontend React in `frontend/`, backend Node.js + Express (API REST) in
 - Identificativi: casi d'uso `UC_<PKG>_<n>` (es. `UC_TRIP_01`), requisiti
   `RF_<PKG>_<n>`, test frame `TF<nn>` dentro `docs/test/cp_<UC>.md`.
 - Branch: `<tipo>/CP-<n>-<descrizione>` (vedi `CONTRIBUTING.md`).
-- Commit: `CP-<n> UC_<PKG>_<n>: descrizione`.
-- Nome di ogni test: contiene l'identificativo del frame, es.
-  `TF10 - due prenotazioni attive: rifiuta`.
+- Commit: `CP-<n> UC_<PKG>_<n>: descrizione (RF_...)`; senza caso d'uso: `CP-<n>: descrizione`.
+- Nome di ogni test: contiene l'identificativo del caso di test del TCS
+  (`TC_<UC>.<nn>`, dove nn è il test frame), es. `TC_TRIP_06.03 - posti esauriti: rifiuta`.
 
 ## Regole
 ### Sempre
@@ -62,7 +62,7 @@ Frontend React in `frontend/`, backend Node.js + Express (API REST) in
 
 ## Quando un task è finito
 - Lint e test passano nelle cartelle toccate.
-- Ogni test frame del task ha un test con l'identificativo nel nome.
+- Ogni test frame del task ha un test con l'identificativo `TC_<UC>.<nn>` nel nome.
 - Nessun file modificato fuori dall'ambito del piano approvato.
 - La PR usa `.github/pull_request_template.md` compilato.
 
