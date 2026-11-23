@@ -1,0 +1,28 @@
+@startuml SCD_CP_01
+' SCD_CP_01 — Ciclo di vita dell'Account
+' Autori: Giovanni Scarico, Vladyslav Maslov
+skinparam shadowing false
+skinparam defaultFontName Inter
+skinparam state {
+  BackgroundColor #E8EEFA
+  BorderColor #4A6FB5
+  ArrowColor #34404E
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #C9A227
+}
+hide empty description
+left to right direction
+title SCD_CP_01 — Ciclo di vita dell'Account
+
+state "In attesa di verifica" as InAttesaDiVerifica
+state "Attivo" as Attivo
+state "Eliminato" as Eliminato
+
+[*] --> InAttesaDiVerifica : registrazione completata
+InAttesaDiVerifica --> Attivo : attivaAccount()
+Attivo --> Eliminato : eliminaAccount()
+InAttesaDiVerifica --> Eliminato : eliminaAccount()
+Eliminato --> [*]
+@enduml

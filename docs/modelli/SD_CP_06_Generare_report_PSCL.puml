@@ -1,0 +1,91 @@
+@startuml SD_CP_06
+' SD_CP_06 — Sequence Diagram di UC_ORG_01: Generare un report PSCL
+skinparam shadowing false
+skinparam defaultFontName Inter
+skinparam sequenceMessageAlign center
+skinparam participant {
+  BackgroundColor<<boundary>> #FFF1E0
+  BorderColor<<boundary>> #E0A35A
+  BackgroundColor<<control>> #E6EDFA
+  BorderColor<<control>> #7D9BD6
+  BackgroundColor<<entity>> #E8F2E9
+  BorderColor<<entity>> #79B184
+}
+hide footbox
+title SD_CP_06 — Generare un report PSCL\nUC_ORG_01 · Statistiche aggregate e anonime sui viaggi condivisi di una sede, per il Mobility Manager
+
+actor "a : Mobility Manager" as MMA
+participant ":ReportPSCLBoundary" as B <<boundary>>
+participant ":GeneraReportControl" as C <<control>>
+participant "mm : Membro" as MM <<entity>>
+participant "o : Organizzazione" as O <<entity>>
+participant "s : Sede" as S <<entity>>
+participant "v : Viaggio" as V <<entity>>
+
+MMA -> B : richiediReport()
+activate B
+create C
+B -->> C : <<create>>
+B -> C : avviaGenerazione()
+activate C
+C -> MM : o = getOrganizzazione()
+activate MM
+MM -->> C : o
+deactivate MM
+C -> O : sedi = getSedi()
+activate O
+O -->> C : sedi
+deactivate O
+C -> B : mostraModulo(sedi)
+B -->> MMA : modulo: periodo di analisi e sede
+deactivate C
+deactivate B
+
+loop primo invio oppure periodo corretto dopo un errore
+  MMA -> B : confermaRichiesta(s, inizio, fine)
+  activate B
+  B -> C : generaReport(s, inizio, fine)
+  activate C
+  C -> C : valido = validaPeriodo(inizio, fine)
+  alt valido = false: periodo non valido (4.b)
+    C -> B : mostraErrorePeriodo()
+    B -->> MMA : errore sulle date del periodo
+    break il Mobility Manager abbandona la richiesta · exit condition on failure
+      MMA -> B : abbandonaRichiesta()
+    end
+  else valido = true
+    C -> S : viaggi = getViaggiConclusi(inizio, fine)
+    activate S
+    S -->> C : viaggi
+    deactivate S
+    C -> C : report = aggregaDati(viaggi)
+    loop in aggregaDati: per ogni viaggio v in viaggi
+      C -> V : posti = getPostiOfferti()
+      activate V
+      V -->> C : posti
+      deactivate V
+      C -> V : passeggeri = contaPasseggeriTrasportati()
+      activate V
+      V -->> C : passeggeri
+      deactivate V
+    end
+    alt viaggi vuoto: nessun viaggio nel periodo (4.a)
+      C -> B : mostraReport(report)
+      B -->> MMA : avviso e report con valori nulli · exit on success
+    else viaggi non vuoto
+      C -> B : mostraReport(report)
+      B -->> MMA : report aggregato e anonimo · exit on success
+    end
+  end
+  deactivate C
+  deactivate B
+end
+destroy C
+
+legend bottom left
+  Precondizione: Mobility Manager autenticato (mm è il Membro con ruoloMobilityManager = true). s = sede indicata, tra le sedi di o.
+  validaPeriodo(inizio, fine): inizio precede fine e il periodo non è successivo alla data corrente.
+  aggregaDati(viaggi): ReportPSCL con numero di viaggi condivisi, posti offerti e passeggeri trasportati; nessun dato che identifichi un singolo Membro.
+  Riferimenti RAD: UC_ORG_01 · RF_ORG_01 · RNF_LEG_01 · RNF_PERF_2.
+endlegend
+@enduml

@@ -1,0 +1,75 @@
+@startuml SD_CP_02
+' SD_CP_02 — Sequence Diagram di UC_TRIP_02: Cercare un viaggio
+' Autori: Roberto Rega, Michele Vitiello
+skinparam shadowing false
+skinparam defaultFontName Inter
+skinparam sequenceMessageAlign center
+skinparam participant {
+  BackgroundColor<<boundary>> #FFF1E0
+  BorderColor<<boundary>> #E0A35A
+  BackgroundColor<<control>> #E6EDFA
+  BorderColor<<control>> #7D9BD6
+  BackgroundColor<<entity>> #E8F2E9
+  BorderColor<<entity>> #79B184
+}
+hide footbox
+title SD_CP_02 — Cercare un viaggio\nUC_TRIP_02 · Ricerca dei viaggi attivi verso una sede dell'organizzazione del Passeggero
+
+actor "p : Passeggero" as P
+participant ":RicercaViaggioBoundary" as B <<boundary>>
+participant ":CercaViaggioControl" as C <<control>>
+participant "s : Sede" as S <<entity>>
+participant "v : Viaggio" as VG <<entity>>
+
+P -> B : richiediRicerca()
+activate B
+create C
+B -->> C : <<create>>
+B -->> P : modulo con i filtri richiesti
+deactivate B
+
+loop primo tentativo oppure filtri corretti dopo un errore
+  P -> B : confermaRicerca(filtri)
+  activate B
+  B -> C : cercaViaggi(filtri)
+  activate C
+  C -> C : esito = validaFiltri(filtri)
+  alt esito non valido: filtri mancanti oppure data/ora già trascorsa
+    C -> B : mostraErrori(esito)
+    B -->> P : errori sui filtri
+    break il Passeggero abbandona · exit condition on failure
+      P -> B : abbandonaRicerca()
+    end
+  else esito valido
+    C -> S : viaggi = getViaggiAttivi()
+    activate S
+    S -->> C : viaggi
+    deactivate S
+    C -> C : candidati = selezionaCompatibili(viaggi, filtri)
+    loop per ogni viaggio candidato v in candidati
+      C -> VG : posti = calcolaPostiDisponibili()
+      activate VG
+      VG -->> C : posti
+      deactivate VG
+    end
+    C -> C : risultati = escludiCompleti(candidati)
+    alt risultati non vuoto
+      C -> B : mostraRisultati(risultati)
+      B -->> P : elenco dei viaggi compatibili · exit on success
+    else risultati vuoto: nessun viaggio compatibile (4.a)
+      C -> B : mostraNessunRisultato()
+      B -->> P : nessun viaggio compatibile · exit on success
+    end
+  end
+  deactivate C
+  deactivate B
+end
+destroy C
+
+legend bottom left
+  Precondizione: Passeggero autenticato. filtri: FiltriRicercaViaggio (zona di partenza, sede di destinazione, data e orario di partenza). esito: EsitoValidazione.
+  s = filtri.sede: la sede di destinazione scelta nei filtri, tra quelle dell'organizzazione del Passeggero.
+  risultati: solo viaggi con almeno un posto disponibile; per ciascuno data, orario, punto di partenza, posti disponibili e contributo spese.
+  Riferimenti RAD: UC_TRIP_02 · RF_TRIP_03 · RNF_USA_1 · RNF_USA_2 · RNF_PERF_3.
+endlegend
+@enduml

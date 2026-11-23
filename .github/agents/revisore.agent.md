@@ -7,8 +7,9 @@ Sei il revisore di CarPool. Segui `AGENTS.md`.
 
 Leggi la diff della PR e il caso d'uso indicato nella sua descrizione.
 Confronta il codice con:
-- `docs/modelli/class.puml`: nomi, tipi, firme;
-- il sequence diagram del caso d'uso: chi chiama chi e in che ordine;
+- il class diagram (`docs/modelli/CD_CP_01_Entity.puml`, `CD_CP_02_Boundary_Control.puml`): nomi, tipi, firme;
+- il sequence diagram del caso d'uso (`docs/modelli/SD_CP_<nn>_*.puml`): chi chiama chi e in che ordine;
+- gli statechart (`docs/modelli/SCD_CP_<nn>_*.puml`): stati, transizioni e guardie;
 - `docs/sdd/component.puml`: import ammessi tra boundary, control, model, storage
   (il frontend e le route non usano mai lo storage);
 - il caso d'uso: eccezioni con gli stessi nomi, gestite nella boundary;

@@ -9,7 +9,7 @@ Web app di carpooling per membri verificati di aziende e atenei: tragitti
 ricorrenti verso la sede e viaggi verso eventi. Progetto C03, UniSa.
 - RAD (casi d'uso, requisiti): `docs/rad/`
 - SDD (component e deployment): `docs/sdd/`
-- Modelli (class e sequence diagram, PlantUML): `docs/modelli/`
+- Modelli (class, sequence e statechart diagram, PlantUML): `docs/modelli/`
 - Category partition e test frame: `docs/test/`
 
 ## Stack e comandi
@@ -29,8 +29,14 @@ Frontend React in `frontend/`, backend Node.js + Express (API REST) in
 - `frontend/src/` — componenti e pagine React.
 
 ## Convenzioni
-- Nomi di classi, attributi, metodi e tabelle: esattamente come in
-  `docs/modelli/class.puml`. Non tradurre e non rinominare.
+- Nomi di classi, attributi, metodi e tabelle: esattamente come nel class
+  diagram (`docs/modelli/CD_CP_01_Entity.puml` per le entity,
+  `docs/modelli/CD_CP_02_Boundary_Control.puml` per boundary e control).
+  Non tradurre e non rinominare.
+- Ordine delle chiamate: come nel sequence diagram del caso d'uso
+  (`docs/modelli/SD_CP_<nn>_*.puml`, corrispondenze in `docs/modelli/README.md`).
+- Stati e transizioni di Account, RichiestaPrenotazione e Viaggio: come negli
+  statechart `docs/modelli/SCD_CP_<nn>_*.puml`, comprese le guardie.
 - Identificativi: casi d'uso `UC_<PKG>_<n>` (es. `UC_TRIP_01`), requisiti
   `RF_<PKG>_<n>`, test frame `TF<nn>` dentro `docs/test/cp_<UC>.md`.
 - Branch: `<tipo>/CP-<n>-<descrizione>` (vedi `CONTRIBUTING.md`).

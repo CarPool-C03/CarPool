@@ -1,0 +1,161 @@
+@startuml CD_CP_02
+' CarPool · Class diagram di analisi — Boundary e Control
+' Ogni messaggio ricevuto nei sequence SD_CP_01–06 è un'operazione della classe destinataria.
+skinparam shadowing false
+skinparam defaultFontName Inter
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor<<boundary>> #FFF1E0
+  BorderColor<<boundary>> #E0A35A
+  BackgroundColor<<control>> #E6EDFA
+  BorderColor<<control>> #7D9BD6
+  BackgroundColor<<entity>> #E8F2E9
+  BorderColor<<entity>> #79B184
+}
+hide circle
+hide empty members
+left to right direction
+title CarPool · Class diagram di analisi — Boundary e Control
+
+package boundary {
+  class RegistrazioneBoundary <<boundary>> {
+    + richiediRegistrazione()
+    + inviaDati(dati : DatiRegistrazione)
+    + abbandonaRegistrazione()
+    + mostraErrori(esito : EsitoValidazione, esiste : Booleano)
+    + mostraErroreDominio()
+    + mostraConfermaInvio()
+  }
+  class VerificaEmailBoundary <<boundary>> {
+    + apriLink(link : LinkVerifica)
+    + mostraConferma()
+    + mostraErroreLink()
+  }
+  class RicercaViaggioBoundary <<boundary>> {
+    + richiediRicerca()
+    + confermaRicerca(filtri : FiltriRicercaViaggio)
+    + abbandonaRicerca()
+    + mostraErrori(esito : EsitoValidazione)
+    + mostraRisultati(risultati : Viaggio [1..*])
+    + mostraNessunRisultato()
+  }
+  class PubblicazioneViaggioBoundary <<boundary>> {
+    + nuovoViaggio()
+    + mostraAvvisoVeicolo()
+    + mostraForm(sedi : Sede [1..*])
+    + inserisciDati(dati : DatiPubblicazioneViaggio)
+    + abbandonaPubblicazione()
+    + mostraConferma(vg : Viaggio)
+    + mostraErrori(esito : EsitoValidazione)
+  }
+  class GestionePrenotazioneBoundary <<boundary>> {
+    + accettaRichiesta(r : RichiestaPrenotazione)
+    + rifiutaRichiesta(r : RichiestaPrenotazione)
+    + mostraConfermaAccettazione()
+    + mostraConfermaRifiuto()
+    + mostraPostiEsauriti()
+    + mostraViaggioNonAttivo()
+  }
+  class ValutazioneBoundary <<boundary>> {
+    + richiediValutazione(v : Viaggio, valutato : Membro)
+    + mostraModulo()
+    + inviaValutazione(punteggio : Intero, commento : String [0..1])
+    + mostraConferma()
+    + mostraValutazioneNonConsentita()
+    + mostraValutazioneGiaInviata()
+    + mostraErrorePunteggio()
+  }
+  class ReportPSCLBoundary <<boundary>> {
+    + richiediReport()
+    + mostraModulo(sedi : Sede [1..*])
+    + confermaRichiesta(sede : Sede, inizio : DataOra, fine : DataOra)
+    + abbandonaRichiesta()
+    + mostraReport(report : ReportPSCL)
+    + mostraErrorePeriodo()
+  }
+}
+
+package "boundary · sistemi esterni" as ext {
+  class ServizioEmailBoundary <<boundary>> {
+    + inviaLinkVerifica(email : IndirizzoEmail, link : LinkVerifica) : Booleano
+    + inviaNotificaEsito(r : RichiestaPrenotazione) : Booleano
+  }
+}
+
+package control {
+  class RegistraAccountControl <<control>> {
+    + registra(dati : DatiRegistrazione)
+    + verificaLink(link : LinkVerifica)
+    - validaDati(dati : DatiRegistrazione) : EsitoValidazione
+    - generaLinkVerifica(a : Account) : LinkVerifica
+    - validaLink(link : LinkVerifica) : Booleano
+  }
+  class CercaViaggioControl <<control>> {
+    + cercaViaggi(filtri : FiltriRicercaViaggio)
+    - validaFiltri(filtri : FiltriRicercaViaggio) : EsitoValidazione
+    - selezionaCompatibili(viaggi : Viaggio [0..*], filtri : FiltriRicercaViaggio) : Viaggio [0..*]
+    - escludiCompleti(candidati : Viaggio [0..*]) : Viaggio [0..*]
+  }
+  class PubblicaViaggioControl <<control>> {
+    + avviaPubblicazione()
+    + pubblica(dati : DatiPubblicazioneViaggio)
+    - validaDati(dati : DatiPubblicazioneViaggio, v : Veicolo) : EsitoValidazione
+  }
+  class RispondiRichiestaControl <<control>> {
+    + accetta(r : RichiestaPrenotazione)
+    + rifiuta(r : RichiestaPrenotazione)
+  }
+  class ValutaPartecipanteControl <<control>> {
+    + avviaValutazione(v : Viaggio, valutato : Membro)
+    + registraValutazione(punteggio : Intero, commento : String [0..1])
+  }
+  class GeneraReportControl <<control>> {
+    + avviaGenerazione()
+    + generaReport(sede : Sede, inizio : DataOra, fine : DataOra)
+    - validaPeriodo(inizio : DataOra, fine : DataOra) : Booleano
+    - aggregaDati(viaggi : Viaggio [0..*]) : ReportPSCL
+  }
+}
+
+package "entity (dettaglio nel CD_CP_01)" as ent {
+  class Account <<entity>>
+  class Membro <<entity>>
+  class Organizzazione <<entity>>
+  class Sede <<entity>>
+  class Veicolo <<entity>>
+  class Viaggio <<entity>>
+  class RichiestaPrenotazione <<entity>>
+  class Valutazione <<entity>>
+}
+
+' Associazioni boundary -> control: il boundary crea e invoca il control
+RegistrazioneBoundary "1" -- "1" RegistraAccountControl : crea e invoca >
+VerificaEmailBoundary "0..1" -- "1" RegistraAccountControl : crea e invoca >
+RicercaViaggioBoundary "1" -- "1" CercaViaggioControl : crea e invoca >
+PubblicazioneViaggioBoundary "1" -- "1" PubblicaViaggioControl : crea e invoca >
+GestionePrenotazioneBoundary "1" -- "1" RispondiRichiestaControl : crea e invoca >
+ValutazioneBoundary "1" -- "1" ValutaPartecipanteControl : crea e invoca >
+ReportPSCLBoundary "1" -- "1" GeneraReportControl : crea e invoca >
+
+' Dipendenze dei control
+RegistraAccountControl ..> ServizioEmailBoundary : <<use>>
+RegistraAccountControl ..> Organizzazione : <<use>>
+RegistraAccountControl .[#2E7D4F].> Account : <<create>>
+RegistraAccountControl .[#2E7D4F].> Membro : <<create>>
+CercaViaggioControl ..> Sede : <<use>>
+CercaViaggioControl ..> Viaggio : <<use>>
+PubblicaViaggioControl ..> Membro : <<use>>
+PubblicaViaggioControl ..> Organizzazione : <<use>>
+PubblicaViaggioControl ..> Veicolo : <<use>>
+PubblicaViaggioControl .[#2E7D4F].> Viaggio : <<create>>
+RispondiRichiestaControl ..> RichiestaPrenotazione : <<use>>
+RispondiRichiestaControl ..> Viaggio : <<use>>
+RispondiRichiestaControl ..> ServizioEmailBoundary : <<use>>
+ValutaPartecipanteControl ..> Viaggio : <<use>>
+ValutaPartecipanteControl ..> Membro : <<use>>
+ValutaPartecipanteControl .[#2E7D4F].> Valutazione : <<create>>
+GeneraReportControl ..> Membro : <<use>>
+GeneraReportControl ..> Organizzazione : <<use>>
+GeneraReportControl ..> Sede : <<use>>
+GeneraReportControl ..> Viaggio : <<use>>
+@enduml

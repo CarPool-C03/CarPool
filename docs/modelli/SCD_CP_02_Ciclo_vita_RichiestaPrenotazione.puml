@@ -1,0 +1,47 @@
+@startuml SCD_CP_02
+' SCD_CP_02 — Ciclo di vita della RichiestaPrenotazione
+' Autori: Roberto Rega, Michele Vitiello
+skinparam shadowing false
+skinparam defaultFontName Inter
+skinparam state {
+  BackgroundColor #E8EEFA
+  BorderColor #4A6FB5
+  ArrowColor #34404E
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #C9A227
+}
+hide empty description
+title SCD_CP_02 — Ciclo di vita della RichiestaPrenotazione
+
+state "In attesa" as InAttesa
+state "Accettata" as Accettata
+state "Completata" as Completata
+state "Rifiutata" as Rifiutata
+state "Annullata" as Annullata
+
+[*] --> InAttesa : RichiestaPrenotazione(passeggero, viaggio)
+InAttesa -right-> Accettata : accetta()\n[viaggio «Attivo» e posti disponibili > 0]
+Accettata -right-> Completata : completa()
+InAttesa --> Rifiutata : rifiuta()\n[viaggio «Attivo»]
+InAttesa --> Annullata : annulla()\n[viaggio non concluso]
+Accettata --> Annullata : annulla()\n[viaggio non concluso]
+Completata --> [*]
+Rifiutata --> [*]
+Annullata --> [*]
+
+note as N1
+  Gli eventi sono operazioni della classe RichiestaPrenotazione nel class diagram
+  (costruttore, accetta, rifiuta, annulla, completa).
+  accetta() e rifiuta() sono invocate da RispondiRichiestaControl (UC_TRIP_06); le guardie
+  corrispondono ai flussi 2.a (posti esauriti) e 2.b (viaggio non più attivo).
+  annulla() è invocata quando il Passeggero annulla la richiesta (RF_TRIP_23a) e da
+  Viaggio.cancella() per le richieste In attesa e Accettate quando il Conducente
+  cancella il viaggio (RF_TRIP_16).
+  completa() è invocata da Viaggio.concludi(), 2 ore dopo l'orario di partenza,
+  per le richieste Accettate (RF_TRIP_25).
+  I posti disponibili sono calcolati da Viaggio.calcolaPostiDisponibili(): entrare in
+  Accettata occupa un posto, uscirne lo libera (RF_TRIP_11, RF_TRIP_23b).
+end note
+@enduml

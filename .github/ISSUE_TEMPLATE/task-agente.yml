@@ -29,8 +29,9 @@ body:
       description: Solo gli artefatti necessari, e solo le classi rilevanti del class diagram.
       placeholder: |
         - docs/rad/uc/UC_TRIP_01.md
-        - docs/modelli/seq_UC_TRIP_01.puml
-        - docs/modelli/class.puml: Viaggio, Conducente, ViaggioControl
+        - docs/modelli/SD_CP_03_Pubblicare_viaggio.puml
+        - docs/modelli/CD_CP_01_Entity.puml: Viaggio, Membro, Veicolo
+        - docs/modelli/CD_CP_02_Boundary_Control.puml: PubblicaViaggioControl
     validations:
       required: true
   - type: textarea
@@ -39,16 +40,16 @@ body:
       label: Ambito (file, classi e metodi da toccare)
       description: Ricavato dal sequence diagram. Ogni file fuori ambito è un segnale da controllare.
       placeholder: |
-        - backend/src/control/ViaggioControl.js: pubblicaViaggio(...)
-        - backend/src/storage/ViaggioDAO.js: save
-        - backend/src/routes/viaggi.js: POST /viaggi
+        - backend/src/control/PubblicaViaggioControl.js: avviaPubblicazione(), pubblica(dati)
+        - backend/src/model/Viaggio.js: costruttore Viaggio(dati, conducente, sede)
+        - backend/src/routes/viaggi.js: endpoint di PubblicazioneViaggioBoundary
     validations:
       required: true
   - type: textarea
     id: verifica
     attributes:
       label: Verifica (test frame da coprire)
-      placeholder: TF01-TF10 di docs/test/cp_UC_TRIP_01.md
+      placeholder: TF01-TF09 di docs/test/cp_UC_TRIP_01.md
     validations:
       required: true
   - type: dropdown

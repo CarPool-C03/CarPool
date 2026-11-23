@@ -14,7 +14,7 @@ il modello a oggetti del RAD:
 
 - **boundary**: route e controller delle API REST;
 - **control**: logica dei casi d'uso (es. `PubblicaViaggioControl`);
-- **entity / model**: oggetti del class diagram (`docs/modelli/class.puml`);
+- **entity / model**: oggetti del class diagram (`docs/modelli/CD_CP_01_Entity.puml`);
 - **storage**: accesso a PostgreSQL.
 
 Le route non accedono mai direttamente allo storage o al database

@@ -18,7 +18,7 @@ CP-XX · UC_XXX_XX · RF_XXX_XX · closes #
 - agente interrotto o task passato a una persona: <!-- sì / no -->
 
 ## Modifiche ai modelli
-<!-- es. aggiunta countAttive() a PrenotazioneDAO in class.puml, oppure «nessuna» -->
+<!-- es. aggiunta di contaPasseggeriTrasportati() a Viaggio in CD_CP_01_Entity.puml, oppure «nessuna» -->
 
 ## Come provarla
 1.
