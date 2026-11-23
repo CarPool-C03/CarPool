@@ -1,0 +1,51 @@
+@startuml SDD_Deployment
+' CarPool · SDD 3.3.1 — Deployment diagram
+' Trascrizione di C03_SDD_V_0.1.0. Va controllata dagli autori dell'SDD.
+skinparam shadowing false
+skinparam defaultFontName Inter
+left to right direction
+title CarPool · Deployment diagram (SDD 3.3.1)
+
+node "Hosting frontend" as HF <<node>> {
+  artifact "Applicazione web\n(file statici)" as WEB
+}
+
+node "Browser dell'utente" as BR <<device>> {
+  node "Browser web\nDesktop / Mobile" as BWE <<executionEnvironment>> {
+    component "InterfacciaUtenteSubsystem\nReact + Fluent UI" as UI
+  }
+}
+
+node "Hosting backend" as HB <<node>> {
+  node "Node.js\nAPI REST CarPool" as NODE <<executionEnvironment>> {
+    component GestioneAccountProfiloSubsystem
+    component GestioneOrganizzazioniSubsystem
+    component GestioneViaggiPrenotazioniSubsystem
+    component ReportisticaPSCLSubsystem
+    component ValutazioniMessaggiSubsystem
+    component NotificheSubsystem as NOT
+    component PersistenzaSubsystem as PER
+    component LoggingSubsystem
+  }
+}
+
+node "Nodo database" as DBN <<node>> {
+  database "PostgreSQL\nDatabase CarPool" as DB
+}
+
+node "Provider e-mail esterno" as MAIL <<external system>>
+
+HF --> BR : HTTPS\ndistribuzione file web
+UI --> NODE : HTTPS / REST\nrichieste applicative
+PER --> DB : protocollo PostgreSQL / TLS
+NOT --> MAIL : HTTPS / API\ninvio e-mail
+
+note bottom of NODE
+  Un'attività pianificata avvia periodicamente la
+  conclusione automatica dei viaggi
+  (GestioneViaggiPrenotazioniSubsystem).
+  Servizio cloud gestito: riavvio automatico,
+  deploy da GitHub, backup del DB; ripristino < 15 min
+  (DG_8, DG_14, DG_15).
+end note
+@enduml

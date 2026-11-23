@@ -1,0 +1,137 @@
+@startuml SDD_CD_Persistenza
+' CarPool · SDD 4.2 — Class diagram ristrutturato (oggetti persistenti)
+' Trascrizione di C03_SDD_V_0.1.0. Va controllata dagli autori dell'SDD.
+' Fonte per lo schema del database e le migrazioni (nomi di tabelle e colonne).
+skinparam shadowing false
+skinparam defaultFontName Inter
+skinparam classAttributeIconSize 0
+hide circle
+hide empty methods
+title CarPool · Class diagram ristrutturato (SDD 4.2)
+
+class Organizzazione {
+  id <<PK>>
+  denominazione
+  attiva
+}
+class DominioEmail {
+  id <<PK>>
+  dominio {unique}
+  organizzazioneId <<FK>>
+}
+class Sede {
+  id <<PK>>
+  nome
+  indirizzo
+  organizzazioneId <<FK>>
+}
+class Evento {
+  id <<PK>>
+  nome
+  dataOraInizio
+  luogo
+  organizzazioneId <<FK>>
+}
+class Account {
+  id <<PK>>
+  email {unique}
+  passwordHash
+  tipoAccount
+  stato
+}
+class Sessione {
+  id <<PK>>
+  ultimaAttivita
+  accountId <<FK>>
+}
+class TokenVerifica {
+  id <<PK>>
+  tipo
+  hashToken
+  scadenza
+  accountId <<FK>>
+}
+class Membro {
+  id <<PK>>
+  nome
+  cognome
+  ruoloMobilityManager
+  accountId <<FK>> {unique}
+  organizzazioneId <<FK>>
+}
+class Veicolo {
+  id <<PK>>
+  modello
+  colore
+  numeroPostiPasseggeri
+  membroId <<FK>> {unique}
+}
+class Viaggio {
+  id <<PK>>
+  dataOraPartenza
+  puntoPartenza
+  destinazioneRitorno [0..1]
+  postiOfferti {≥ 1}
+  contributoIndicativoEuro [0..1]
+  stato
+  direzioneEvento [0..1]
+  conducenteId <<FK>>
+  sedeId <<FK>> [0..1]
+  eventoId <<FK>> [0..1]
+}
+class RichiestaPrenotazione {
+  id <<PK>>
+  stato
+  passeggeroId <<FK>>
+  viaggioId <<FK>>
+}
+class Messaggio {
+  id <<PK>>
+  testo
+  dataOraInvio
+  mittenteId <<FK>>
+  viaggioId <<FK>>
+}
+class Valutazione {
+  id <<PK>>
+  punteggio {1..5}
+  commento [0..1]
+  autoreId <<FK>>
+  valutatoId <<FK>>
+  viaggioId <<FK>>
+}
+
+Organizzazione "1" -- "1..*" DominioEmail
+Organizzazione "1" *-- "1..*" Sede
+Organizzazione "1" -- "0..*" Evento
+Organizzazione "1" -- "0..*" Membro
+Account "1" -- "0..1" Membro
+Account "1" -- "0..*" Sessione
+Account "1" -- "0..*" TokenVerifica
+Membro "1" -- "0..1" Veicolo
+Membro "1" -- "0..*" Viaggio : conducente
+Sede "0..1" -- "0..*" Viaggio
+Evento "0..1" -- "0..*" Viaggio
+Viaggio "1" *-- "0..*" RichiestaPrenotazione
+Membro "1" -- "0..*" RichiestaPrenotazione : passeggero
+Viaggio "1" -- "0..*" Messaggio
+Membro "1" -- "0..*" Messaggio : mittente
+Viaggio "1" -- "0..*" Valutazione
+Membro "1" -- "0..*" Valutazione : autore
+Membro "1" -- "0..*" Valutazione : valutato
+
+note right of Viaggio
+  {xor} esattamente uno tra sedeId ed eventoId.
+  direzioneEvento e destinazioneRitorno solo per i viaggi per evento.
+  Non memorizzati: /destinazione (da Sede o Evento) e i posti
+  disponibili (postiOfferti meno le richieste Accettate, DG_5).
+end note
+note bottom of Valutazione
+  {unique} (autoreId, valutatoId, viaggioId) — RF_TRIP_13
+end note
+note bottom of Account
+  Account Amministratore: nessun Membro.
+  Cancellazione (RF_AUTH_07): stato Eliminato e dati
+  anonimizzati in un'unica transazione (Sez. 4.1).
+end note
+@enduml

@@ -49,4 +49,7 @@ usati negli oracoli del TCS (`docs/test/`).
 - Se l'implementazione richiede di cambiare un modello, la modifica va **nella
   stessa PR**, è dichiarata nel template della PR e si riporta anche nel RAD.
 - Prima dei task di un caso d'uso, l'agente `controllo-modelli` confronta caso
-  d'uso (`docs/rad/uc/`), sequence, class diagram e category partition (`docs/test/`).
+  d'uso (`docs/rad/uc/`), sequence, class diagram, statechart, SDD (`docs/sdd/`)
+  e category partition (`docs/test/`).
+- Il class diagram di analisi (qui) fissa i nomi del dominio; lo schema del
+  database segue il class diagram ristrutturato dell'SDD (`docs/sdd/CD_persistenza.puml`).

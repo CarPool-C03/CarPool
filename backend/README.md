@@ -9,17 +9,16 @@ progetto (creazione di `package.json`, scelta del framework di test, script
 
 ## Struttura prevista
 
-Il codice in `src/` segue il component diagram (`docs/sdd/component.puml`) e
-il modello a oggetti del RAD:
+Il codice in `src/` segue i sottosistemi dell'SDD (`docs/sdd/README.md`,
+`docs/sdd/component.puml`): una cartella per sottosistema (`account/`,
+`viaggi/`, `organizzazioni/`, `reportistica/`, `comunita/`, `notifiche/`,
+`persistenza/`, `logging/`), ognuna con un solo Service (Facade) e i propri
+control e model; le route REST stanno in `src/api/` e chiamano solo i Service.
 
-- **boundary**: route e controller delle API REST;
-- **control**: logica dei casi d'uso (es. `PubblicaViaggioControl`);
-- **entity / model**: oggetti del class diagram (`docs/modelli/CD_CP_01_Entity.puml`);
-- **storage**: accesso a PostgreSQL.
-
-Le route non accedono mai direttamente allo storage o al database
-(regola in `AGENTS.md`). I test stanno in `test/` e il loro nome contiene
-l'identificativo del caso di test del TCS (es. `TC_TRIP_01.04`).
+Solo `persistenza/` accede a PostgreSQL (schema in `docs/sdd/CD_persistenza.puml`),
+solo `notifiche/` al provider e-mail. Un'attività pianificata conclude i viaggi.
+I test stanno in `test/` e il loro nome contiene l'identificativo del caso di
+test del TCS (es. `TC_TRIP_01.04`).
 
 ## Configurazione
 
