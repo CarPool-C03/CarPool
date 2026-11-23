@@ -10,7 +10,10 @@ MERGE_BASE="$(git merge-base "$BASE" HEAD)"
 errori=0
 
 cambiati() { git diff --name-only --diff-filter="$1" "$MERGE_BASE" HEAD; }
-is_test() { [[ "$1" =~ (^|/)(test|tests|__tests__)/ || "$1" =~ \.(test|spec)\.[jt]sx?$ ]]; }
+is_test() {
+  [[ "$1" =~ ^docs/ ]] && return 1
+  [[ "$1" =~ (^|/)(test|tests|__tests__)/ || "$1" =~ \.(test|spec)\.[jt]sx?$ ]]
+}
 
 # 1. Test esistenti modificati o cancellati
 while read -r f; do
@@ -54,7 +57,7 @@ fi
 # 5. File fuori dalle cartelle previste
 while read -r f; do
   [ -z "$f" ] && continue
-  if ! [[ "$f" =~ ^(backend|frontend|docs|scripts|\.github|\.opencode)/ ]]; then
+  if ! [[ "$f" =~ ^(backend|frontend|docs|scripts|\.github|\.opencode)/ || "$f" =~ ^[^/]+\.md$ ]]; then
     echo "::notice file=$f::File fuori da backend/, frontend/, docs/: controllare che sia nell'ambito del piano."
   fi
 done < <(git diff --name-only "$MERGE_BASE" HEAD)

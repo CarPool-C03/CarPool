@@ -27,8 +27,8 @@ Fuori dall'ambito: pagamenti, tracciamento GPS in tempo reale, app mobile nativa
 
 ```
 CarPool/
-├── frontend/   # applicazione React
-├── backend/    # API REST Node.js/Express
+├── frontend/   # applicazione React (vedi frontend/README.md)
+├── backend/    # API REST Node.js/Express (vedi backend/README.md)
 ├── docs/       # RAD, SDD, ODD, modelli (PlantUML), category partition, guide
 ├── scripts/    # script di supporto (label, controlli della CI)
 ├── AGENTS.md   # istruzioni comuni per gli agenti (Copilot, OpenCode)
@@ -44,9 +44,9 @@ CarPool/
 Il flusso completo (branch, commit, pull request, review e merge) è descritto in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 - Sviluppo **pull-based**: nessun push diretto su `main`.
-- Un branch e una **pull request per ogni funzionalità**, approvata da un Project Manager prima del merge.
-- I **test** si scrivono insieme alla funzionalità.
-- Ogni pull request riporta nel titolo o nella descrizione l'ID del task Jira e dei requisiti coinvolti (es. `RF_TRIP_01`).
+- Un branch e una **pull request per ogni task Jira** (per lo sviluppo, un caso d'uso per task), approvata da un Project Manager diverso dall'autore e con la CI verde.
+- I **test** si scrivono dai test frame del caso d'uso in `docs/test/`, non guardando il codice.
+- Commit e titolo della PR seguono il formato `CP-12 UC_TRIP_01: descrizione`; la descrizione della PR si compila dal template.
 
 ## Lavorare con gli agenti
 

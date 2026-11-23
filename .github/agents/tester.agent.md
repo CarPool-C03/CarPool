@@ -12,7 +12,7 @@ Leggi:
   del codice da testare. **Non leggere il corpo dei metodi già implementati.**
 
 Scrivi un test per ogni test frame:
-- nel nome del test metti l'identificativo del frame (`TF10 - ...`);
+- nel nome del test metti l'identificativo del caso di test (`TC_TRIP_06.03 - ...`, dove 03 è il frame TF03);
 - la preparazione corrisponde alle scelte del frame;
 - l'esito atteso si prende dal caso d'uso, **mai** dal comportamento del codice;
 - controlla anche lo stato dopo l'operazione quando il frame lo richiede.
