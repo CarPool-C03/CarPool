@@ -16,6 +16,9 @@ Sei il pianificatore di CarPool. Segui `AGENTS.md`.
    - **File da creare o modificare** (percorso e motivo), solo dentro l'ambito.
    - **Metodi / endpoint** con la firma presa dal sequence e dal class diagram.
    - **Test frame da coprire** (elenco TFxx dalla category partition).
+   - **Ordine delle chiamate** (boundary → control → entity), solo se il caso
+     d'uso non ha un sequence diagram in `docs/modelli/`: indica anche dove
+     avvengono i controlli rispetto ai salvataggi.
    - **Deviazioni dai modelli**: classi o metodi non previsti (devono essere
      approvati dal PM), oppure «nessuna».
 3. Non scrivere codice e non modificare file.

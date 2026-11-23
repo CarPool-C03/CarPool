@@ -1,0 +1,37 @@
+@startuml SCD_CP_03
+' SCD_CP_03 — Ciclo di vita del Viaggio
+' Autori: Gennaro Garone, Simone Esposito
+skinparam shadowing false
+skinparam defaultFontName Inter
+skinparam state {
+  BackgroundColor #E8EEFA
+  BorderColor #4A6FB5
+  ArrowColor #34404E
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #C9A227
+}
+hide empty description
+left to right direction
+title SCD_CP_03 — Ciclo di vita del Viaggio
+
+state "Attivo" as Attivo
+state "Cancellato" as Cancellato
+state "Concluso" as Concluso
+
+[*] --> Attivo : Viaggio(dati, conducente, sede)
+Attivo --> Attivo : modificaDettagli()\n[nessuna prenotazione Accettata]
+Attivo --> Cancellato : cancella()
+Attivo --> Concluso : concludi()
+Cancellato --> [*]
+Concluso --> [*]
+
+note bottom of Attivo
+  Stati allineati a RF_TRIP_25, al glossario e al class diagram
+  (StatoViaggio = Attivo | Cancellato | Concluso).
+  concludi() è invocata automaticamente 2 ore dopo l'orario di partenza
+  (RF_TRIP_25) e invoca completa() sulle richieste Accettate.
+  cancella() invoca annulla() sulle richieste In attesa e Accettate (RF_TRIP_16).
+end note
+@enduml

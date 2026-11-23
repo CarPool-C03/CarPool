@@ -1,0 +1,94 @@
+@startuml SD_CP_04
+' SD_CP_04 — Sequence Diagram di UC_TRIP_06: Rispondere a una richiesta di prenotazione
+skinparam shadowing false
+skinparam defaultFontName Inter
+skinparam sequenceMessageAlign center
+skinparam participant {
+  BackgroundColor<<boundary>> #FFF1E0
+  BorderColor<<boundary>> #E0A35A
+  BackgroundColor<<control>> #E6EDFA
+  BorderColor<<control>> #7D9BD6
+  BackgroundColor<<entity>> #E8F2E9
+  BorderColor<<entity>> #79B184
+}
+hide footbox
+title SD_CP_04 — Rispondere a una richiesta di prenotazione\nUC_TRIP_06 · Accettazione o rifiuto di una richiesta e notifica dell'esito al Passeggero
+
+actor "c : Conducente" as CD
+participant ":GestionePrenotazioneBoundary" as B <<boundary>>
+participant ":RispondiRichiestaControl" as C <<control>>
+participant "r : RichiestaPrenotazione" as R <<entity>>
+participant "v : Viaggio" as V <<entity>>
+participant ":ServizioEmailBoundary" as SE <<boundary>>
+
+alt il Conducente richiede l'accettazione di r
+  CD -> B : accettaRichiesta(r)
+else il Conducente richiede il rifiuto di r (1.a)
+  CD -> B : rifiutaRichiesta(r)
+end
+activate B
+create C
+B -->> C : <<create>>
+alt accettazione
+  B -> C : accetta(r)
+else rifiuto
+  B -> C : rifiuta(r)
+end
+activate C
+C -> R : v = getViaggio()
+activate R
+R -->> C : v
+deactivate R
+C -> V : attivo = isAttivo()
+activate V
+V -->> C : attivo
+deactivate V
+
+alt attivo = false: viaggio cancellato o concluso (2.b)
+  C -> B : mostraViaggioNonAttivo()
+  B -->> CD : viaggio non più attivo · exit on failure
+else attivo = true
+  alt accettazione
+    C -> V : posti = calcolaPostiDisponibili()
+    activate V
+    V -->> C : posti
+    deactivate V
+    alt posti = 0: posti esauriti (2.a)
+      C -> B : mostraPostiEsauriti()
+      B -->> CD : posti esauriti · exit on failure
+    else posti > 0
+      C -> R : accetta()
+      activate R
+      R -->> C
+      deactivate R
+      C -> SE : inviaNotificaEsito(r)
+      activate SE
+      SE -->> C : richiestaInvioAccettata
+      deactivate SE
+      C -> B : mostraConfermaAccettazione()
+      B -->> CD : richiesta accettata · exit on success
+    end
+  else rifiuto
+    C -> R : rifiuta()
+    activate R
+    R -->> C
+    deactivate R
+    C -> SE : inviaNotificaEsito(r)
+    activate SE
+    SE -->> C : richiestaInvioAccettata
+    deactivate SE
+    C -> B : mostraConfermaRifiuto()
+    B -->> CD : richiesta rifiutata · exit on success
+  end
+end
+deactivate C
+deactivate B
+destroy C
+
+legend bottom left
+  Precondizione: Conducente autenticato; r è una RichiestaPrenotazione «In attesa» di un suo viaggio, selezionata dall'elenco.
+  r.accetta() porta la richiesta in «Accettata»: i posti disponibili di v (calcolati) diminuiscono di uno; con zero posti v è escluso dalla ricerca.
+  r.rifiuta() porta la richiesta in «Rifiutata». Nei flussi di errore r resta «In attesa». Il control è creato dal boundary e distrutto al termine.
+  Riferimenti RAD: UC_TRIP_06 · RF_TRIP_07 · RF_TRIP_08 · RF_TRIP_09 · RF_TRIP_10 · RF_TRIP_11 · RNF_PERF_1 · RNF_REL_3.
+endlegend
+@enduml

@@ -1,0 +1,105 @@
+@startuml SD_CP_01
+' SD_CP_01 — Sequence Diagram di UC_AUTH_01: Registrare un account
+' Autori: Giovanni Scarico, Vladyslav Maslov
+skinparam shadowing false
+skinparam defaultFontName Inter
+skinparam sequenceMessageAlign center
+skinparam participant {
+  BackgroundColor<<boundary>> #FFF1E0
+  BorderColor<<boundary>> #E0A35A
+  BackgroundColor<<control>> #E6EDFA
+  BorderColor<<control>> #7D9BD6
+  BackgroundColor<<entity>> #E8F2E9
+  BorderColor<<entity>> #79B184
+}
+hide footbox
+title SD_CP_01 — Registrare un account\nUC_AUTH_01 · Registrazione, verifica del dominio istituzionale e attivazione tramite e-mail
+
+actor "v : Visitatore" as V
+participant ":RegistrazioneBoundary" as RB <<boundary>>
+participant ":RegistraAccountControl" as C <<control>>
+participant ":VerificaEmailBoundary" as VEB <<boundary>>
+participant ":Account" as ACC <<entity>>
+participant ":Organizzazione" as ORG <<entity>>
+participant "a : Account" as A <<entity>>
+participant "m : Membro" as M <<entity>>
+participant ":ServizioEmailBoundary" as SE <<boundary>>
+
+V -> RB : richiediRegistrazione()
+activate RB
+create C
+RB -->> C : <<create>>
+RB -->> V : modulo di registrazione
+deactivate RB
+
+loop fino a dati validi e dominio autorizzato, oppure abbandono
+  V -> RB : inviaDati(dati)
+  activate RB
+  RB -> C : registra(dati)
+  activate C
+  C -> C : esito = validaDati(dati)
+  C -> ACC : esiste = esisteEmail(dati.email)
+  activate ACC
+  ACC -->> C : esiste
+  deactivate ACC
+  alt esito non valido oppure esiste = true
+    C -> RB : mostraErrori(esito, esiste)
+    RB -->> V : errori per campo
+    break il Visitatore abbandona la registrazione
+      V -> RB : abbandonaRegistrazione()
+    end
+  else esito valido ed e-mail non registrata
+    C -> ORG : org = trovaPerDominio(dati.email)
+    activate ORG
+    ORG -->> C : org
+    deactivate ORG
+    alt org = null: dominio e-mail non autorizzato
+      C -> RB : mostraErroreDominio()
+      RB -->> V : errore sul dominio e-mail
+    else org ≠ null: dominio autorizzato
+      create A
+      C -->> A : <<create>> a = Account(dati.email, dati.password)
+      create M
+      C -->> M : <<create>> m = Membro(dati.nome, dati.cognome, a, org)
+      C -> C : link = generaLinkVerifica(a)
+      C -> SE : inviaLinkVerifica(dati.email, link)
+      activate SE
+      SE -->> C : richiestaInvioAccettata
+      deactivate SE
+      C -> RB : mostraConfermaInvio()
+      RB -->> V : conferma invio del link
+    end
+  end
+  deactivate C
+  deactivate RB
+end
+
+== VERIFICA DELL'INDIRIZZO E-MAIL ==
+
+V -> VEB : apriLink(link)
+activate VEB
+VEB -> C : verificaLink(link)
+activate C
+C -> C : valido = validaLink(link)
+alt valido = true: link di verifica valido
+  C -> A : attivaAccount()
+  activate A
+  A -->> C
+  deactivate A
+  C -> VEB : mostraConferma()
+  VEB -->> V : account attivato
+else valido = false: link non valido
+  C -> VEB : mostraErroreLink()
+  VEB -->> V : link non valido
+end
+deactivate C
+deactivate VEB
+destroy C
+
+legend bottom left
+  Precondizione: il Visitatore non è autenticato. Esito: account «Attivo» associato all'organizzazione del dominio, oppure nessun account attivo.
+  esito: EsitoValidazione (valido, errori). esisteEmail(email) e trovaPerDominio(email) sono operazioni di classe (statiche).
+  Il control vive quanto il caso d'uso: è creato dal boundary che lo avvia e distrutto al termine. Il link non valido mantiene l'account «In attesa di verifica».
+  Riferimenti RAD: UC_AUTH_01 · RF_AUTH_01 · RF_AUTH_02 · RNF_INT_1 · RNF_USA_2.
+endlegend
+@enduml

@@ -1,0 +1,103 @@
+@startuml SDD_Componenti
+' CarPool · SDD 3.2.1–3.2.2 — Sottosistemi, interfacce (Facade) e dipendenze
+' Trascrizione di C03_SDD_V_0.1.0 (Fig. diagramma dei componenti, testo Sez. 3.2).
+' Va controllata dagli autori dell'SDD. A --> B: A usa l'interfaccia fornita da B.
+skinparam shadowing false
+skinparam defaultFontName Inter
+skinparam componentStyle uml2
+left to right direction
+title CarPool · Sottosistemi, interfacce e dipendenze (SDD 3.2)
+
+package "Presentazione" {
+  component InterfacciaUtenteSubsystem as UI
+}
+
+package "Applicativo" {
+  component ValutazioniMessaggiSubsystem as VM
+  component GestioneViaggiPrenotazioniSubsystem as GVP
+  component ReportisticaPSCLSubsystem as REP
+  component GestioneAccountProfiloSubsystem as GAP
+  component GestioneOrganizzazioniSubsystem as ORG
+  interface ComunitaService
+  interface ViaggioPrenotazioneService
+  interface ReportService
+  interface AccountService
+  interface OrganizzazioneService
+  VM -- ComunitaService
+  GVP -- ViaggioPrenotazioneService
+  REP -- ReportService
+  GAP -- AccountService
+  ORG -- OrganizzazioneService
+}
+
+package "Servizi" {
+  component NotificheSubsystem as NOT
+  component PersistenzaSubsystem as PER
+  component LoggingSubsystem as LOG
+  interface NotificaService
+  interface PersistenzaService
+  interface LogService
+  NOT -- NotificaService
+  PER -- PersistenzaService
+  LOG -- LogService
+}
+
+package "Integrazioni" {
+  component "Provider e-mail esterno" as MAIL <<external>>
+  component DBMS <<PostgreSQL>>
+  interface "API invio e-mail" as MailAPI
+  interface "Accesso al DBMS" as DbAPI
+  MAIL -- MailAPI
+  DBMS -- DbAPI
+}
+
+' Presentazione -> tutti i sottosistemi applicativi
+UI ..> ComunitaService
+UI ..> ViaggioPrenotazioneService
+UI ..> ReportService
+UI ..> AccountService
+UI ..> OrganizzazioneService
+
+' Dipendenze tra sottosistemi applicativi (unidirezionali, senza cicli)
+GAP ..> OrganizzazioneService
+GVP ..> AccountService
+GVP ..> OrganizzazioneService
+VM ..> ViaggioPrenotazioneService
+REP ..> AccountService
+REP ..> OrganizzazioneService
+
+' Notifiche: solo da Account e Viaggi
+GAP ..> NotificaService
+GVP ..> NotificaService
+
+' Persistenza: tutti gli applicativi
+GAP ..> PersistenzaService
+GVP ..> PersistenzaService
+ORG ..> PersistenzaService
+REP ..> PersistenzaService
+VM ..> PersistenzaService
+
+' Logging: tutti tranne InterfacciaUtente e Logging stesso
+GAP ..> LogService
+GVP ..> LogService
+ORG ..> LogService
+REP ..> LogService
+VM ..> LogService
+NOT ..> LogService
+PER ..> LogService
+
+' Integrazioni
+NOT ..> MailAPI
+PER ..> DbAPI
+
+note bottom of PER
+  Unico punto di accesso al database.
+  Transazioni (DG_5), aggregazione per i report
+  senza righe sui singoli Membri (DG_1),
+  cancellazione/anonimizzazione dei dati (Sez. 4.1).
+end note
+note bottom of LOG
+  Scrive su file, non nel database.
+  Non blocca l'operazione chiamante (DG_12 vs DG_16).
+end note
+@enduml

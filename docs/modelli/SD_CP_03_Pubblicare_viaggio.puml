@@ -1,0 +1,82 @@
+@startuml SD_CP_03
+' SD_CP_03 — Sequence Diagram di UC_TRIP_01: Pubblicare un viaggio
+' Autori: Gennaro Garone, Simone Esposito
+skinparam shadowing false
+skinparam defaultFontName Inter
+skinparam sequenceMessageAlign center
+skinparam participant {
+  BackgroundColor<<boundary>> #FFF1E0
+  BorderColor<<boundary>> #E0A35A
+  BackgroundColor<<control>> #E6EDFA
+  BorderColor<<control>> #7D9BD6
+  BackgroundColor<<entity>> #E8F2E9
+  BorderColor<<entity>> #79B184
+}
+hide footbox
+title SD_CP_03 — Pubblicare un viaggio\nUC_TRIP_01 · Pubblicazione di un viaggio singolo verso una sede dell'organizzazione
+
+actor "c : Conducente" as CD
+participant ":PubblicazioneViaggioBoundary" as B <<boundary>>
+participant ":PubblicaViaggioControl" as C <<control>>
+participant "m : Membro" as M <<entity>>
+participant "o : Organizzazione" as O <<entity>>
+participant "vg : Viaggio" as VG <<entity>>
+
+CD -> B : nuovoViaggio()
+activate B
+create C
+B -->> C : <<create>>
+B -> C : avviaPubblicazione()
+activate C
+C -> M : v = getVeicolo()
+activate M
+M -->> C : v
+deactivate M
+alt v = null: veicolo non registrato (2.a)
+  C -> B : mostraAvvisoVeicolo()
+  B -->> CD : avviso: inserire prima i dati del veicolo
+  note right of CD : Il caso d'uso termina con\nexit condition on failure (2.a2)
+else veicolo registrato
+  C -> M : o = getOrganizzazione()
+  activate M
+  M -->> C : o
+  deactivate M
+  C -> O : sedi = getSedi()
+  activate O
+  O -->> C : sedi
+  deactivate O
+  C -> B : mostraForm(sedi)
+  B -->> CD : modulo di pubblicazione
+  deactivate C
+  deactivate B
+  loop finché i dati non sono validi, oppure abbandono
+    CD -> B : inserisciDati(dati)
+    activate B
+    B -> C : pubblica(dati)
+    activate C
+    C -> C : esito = validaDati(dati, v)
+    alt esito valido
+      create VG
+      C -->> VG : <<create>> vg = Viaggio(dati, m, dati.sede)
+      C -> B : mostraConferma(vg)
+      B -->> CD : viaggio pubblicato
+    else esito non valido (4.a)
+      C -> B : mostraErrori(esito)
+      B -->> CD : errori per campo
+      break il Conducente abbandona la pubblicazione · exit condition on failure
+        CD -> B : abbandonaPubblicazione()
+      end
+    end
+    deactivate C
+    deactivate B
+  end
+end
+destroy C
+
+legend bottom left
+  Precondizione: Conducente autenticato (m è il Membro che ha avviato il caso d'uso).
+  dati: DatiPubblicazioneViaggio (data e ora di partenza, punto di partenza, sede, posti offerti, contributo indicativo facoltativo). esito: EsitoValidazione.
+  validaDati(dati, v): campi obbligatori completi, data e ora successive al momento corrente, 1 ≤ posti offerti ≤ posti passeggeri del veicolo v.
+  Riferimenti RAD: UC_TRIP_01 · RF_TRIP_01a · RF_TRIP_01b · RF_TRIP_02 · RNF_USA_2 · RNF_USA_3.
+endlegend
+@enduml

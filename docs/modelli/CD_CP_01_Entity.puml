@@ -1,0 +1,142 @@
+@startuml CD_CP_01
+' CarPool · Class diagram di analisi — Entity
+' Modello del dominio aggiornato a SD_CP_01–06 (operazioni statiche con {static} = sottolineate)
+skinparam shadowing false
+skinparam defaultFontName Inter
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor<<entity>> #E8F2E9
+  BorderColor<<entity>> #79B184
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #C9A227
+}
+hide circle
+title CarPool · Class diagram di analisi — Entity
+
+class Organizzazione <<entity>> {
+  - denominazione : String
+  - dominiEmailAutorizzati : String [1..*]
+  - attiva : Booleano = true
+  + aggiornaDenominazione(denominazione : String)
+  + aggiornaDomini(domini : String [1..*])
+  + disattiva()
+  + getSedi() : Sede [1..*]
+  + {static} trovaPerDominio(email : IndirizzoEmail) : Organizzazione [0..1]
+}
+
+class Evento <<entity>> {
+  - nome : String
+  - dataOraInizio : DataOra
+  - luogo : String
+}
+
+class Account <<entity>> {
+  - email : IndirizzoEmail
+  - password : String
+  - tipoAccount : TipoAccount
+  - stato : StatoAccount = InAttesaDiVerifica
+  + Account(email : IndirizzoEmail, password : String)
+  + attivaAccount()
+  + aggiornaCredenziale(nuovaPassword : String)
+  + isAttivo() : Booleano
+  + eliminaAccount()
+  + {static} esisteEmail(email : IndirizzoEmail) : Booleano
+}
+
+class Sede <<entity>> {
+  - nome : String
+  - indirizzo : String
+  + aggiornaDati(nome : String, indirizzo : String)
+  + getViaggiAttivi() : Viaggio [0..*]
+  + getViaggiConclusi(inizio : DataOra, fine : DataOra) : Viaggio [0..*]
+}
+
+class Membro <<entity>> {
+  - nome : String
+  - cognome : String
+  - ruoloMobilityManager : Booleano = false
+  + Membro(nome : String, cognome : String, account : Account, organizzazione : Organizzazione)
+  + getOrganizzazione() : Organizzazione
+  + getVeicolo() : Veicolo [0..1]
+  + assegnaRuoloMobilityManager()
+  + calcolaValutazioneMedia() : Decimale [0..1]
+}
+
+class Viaggio <<entity>> {
+  - dataOraPartenza : DataOra
+  - puntoPartenza : String
+  - /destinazione : String
+  - destinazioneRitorno : String [0..1]
+  - postiOfferti : Intero {postiOfferti ≥ 1}
+  - contributoIndicativoEuro : Decimale [0..1]
+  - stato : StatoViaggio = Attivo
+  - direzioneEvento : DirezioneEvento [0..1]
+  + Viaggio(dati : DatiPubblicazioneViaggio, conducente : Membro, sede : Sede)
+  + calcolaPostiDisponibili() : Intero
+  + modificaDettagli(dati : DatiModificaViaggio)
+  + isAttivo() : Booleano
+  + isConcluso() : Booleano
+  + cancella()
+  + concludi()
+  + verificaPartecipanti(autore : Membro, valutato : Membro) : Booleano
+  + esisteValutazione(autore : Membro, valutato : Membro) : Booleano
+  + getPostiOfferti() : Intero
+  + contaPasseggeriTrasportati() : Intero
+}
+
+class Veicolo <<entity>> {
+  - modello : String
+  - colore : String
+  - numeroPostiPasseggeri : Intero
+  + aggiornaDati(modello : String, colore : String, numeroPostiPasseggeri : Intero)
+}
+
+class Messaggio <<entity>> {
+  - testo : String
+  - dataOraInvio : DataOra
+}
+
+class RichiestaPrenotazione <<entity>> {
+  - stato : StatoRichiestaPrenotazione = InAttesa
+  + accetta()
+  + rifiuta()
+  + annulla()
+  + completa()
+  + getViaggio() : Viaggio
+}
+
+class Valutazione <<entity>> {
+  - punteggio : Intero {1 ≤ punteggio ≤ 5}
+  - commento : String [0..1]
+  + Valutazione(punteggio : Intero, commento : String [0..1], autore : Membro, valutato : Membro, viaggio : Viaggio)
+}
+
+Organizzazione "1" -- "0..*" Evento : organizza >
+Organizzazione "1" *-- "1..*" Sede : comprende >
+Organizzazione "1" -- "0..*" Membro : affilia >
+Account "1" -- "0..1" Membro : abilita il profilo >
+Sede "0..1" -- "0..*" Viaggio : è destinazione di\n(ruolo: sede di destinazione)
+Evento "0..1" -- "0..*" Viaggio : riguarda\n(ruolo: evento di riferimento)
+Membro "1" -- "0..*" Viaggio : conduce\n(ruolo: conducente)
+Membro "1" -- "0..1" Veicolo : registra >
+Membro "1" -- "0..*" Messaggio : invia\n(ruolo: mittente)
+Membro "1" -- "0..*" RichiestaPrenotazione : invia\n(ruolo: passeggero)
+Membro "1" -- "0..*" Valutazione : scrive\n(ruolo: autore)
+Membro "1" -- "0..*" Valutazione : riceve\n(ruolo: valutato)
+Viaggio "1" -- "0..*" Messaggio : raccoglie >
+Viaggio "1" *-- "0..*" RichiestaPrenotazione : riceve richieste >
+Viaggio "1" -- "0..*" Valutazione : contestualizza >
+
+note left of Viaggio
+  {xor} Ogni Viaggio fa riferimento a una sola Sede
+  oppure a un solo Evento. La direzione e la
+  destinazione di ritorno valgono solo per i viaggi per eventi.
+end note
+
+note bottom of Valutazione
+  {unique} Al più una Valutazione per
+  autore, valutato e viaggio (RF_TRIP_13)
+end note
+@enduml

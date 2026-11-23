@@ -1,0 +1,87 @@
+@startuml SD_CP_05
+' SD_CP_05 — Sequence Diagram di UC_TRIP_09: Valutare un partecipante al viaggio
+skinparam shadowing false
+skinparam defaultFontName Inter
+skinparam sequenceMessageAlign center
+skinparam participant {
+  BackgroundColor<<boundary>> #FFF1E0
+  BorderColor<<boundary>> #E0A35A
+  BackgroundColor<<control>> #E6EDFA
+  BorderColor<<control>> #7D9BD6
+  BackgroundColor<<entity>> #E8F2E9
+  BorderColor<<entity>> #79B184
+}
+hide footbox
+title SD_CP_05 — Valutare un partecipante al viaggio\nUC_TRIP_09 · Valutazione reciproca tra Conducente e Passeggero con prenotazione accettata, a viaggio concluso
+
+actor "m : Membro" as MB
+participant ":ValutazioneBoundary" as B <<boundary>>
+participant ":ValutaPartecipanteControl" as C <<control>>
+participant "v : Viaggio" as V <<entity>>
+participant "valutato : Membro" as VL <<entity>>
+participant "val : Valutazione" as VAL <<entity>>
+
+MB -> B : richiediValutazione(v, valutato)
+activate B
+create C
+B -->> C : <<create>>
+B -> C : avviaValutazione(v, valutato)
+activate C
+C -> V : concluso = isConcluso()
+activate V
+V -->> C : concluso
+deactivate V
+C -> V : partecipanti = verificaPartecipanti(autore, valutato)
+activate V
+V -->> C : partecipanti
+deactivate V
+
+alt concluso = false oppure partecipanti = false (2.a)
+  C -> B : mostraValutazioneNonConsentita()
+  B -->> MB : valutazione non consentita · exit on failure
+else concluso = true e partecipanti = true
+  C -> V : giaValutato = esisteValutazione(autore, valutato)
+  activate V
+  V -->> C : giaValutato
+  deactivate V
+  alt giaValutato = true: valutazione già inviata (2.b)
+    C -> B : mostraValutazioneGiaInviata()
+    B -->> MB : valutazione già inviata · exit on failure
+  else giaValutato = false
+    C -> B : mostraModulo()
+    B -->> MB : modulo: punteggio (1–5) e commento facoltativo
+    deactivate C
+    deactivate B
+    loop primo invio oppure punteggio inserito dopo un errore
+      MB -> B : inviaValutazione(punteggio, commento)
+      activate B
+      B -> C : registraValutazione(punteggio, commento)
+      activate C
+      alt punteggio = null: punteggio mancante (4.a)
+        C -> B : mostraErrorePunteggio()
+        B -->> MB : errore: punteggio obbligatorio
+        note right of MB : Il caso d'uso riprende dal passo 3
+      else punteggio presente
+        create VAL
+        C -->> VAL : <<create>> val = Valutazione(punteggio, commento, autore, valutato, v)
+        C -> VL : media = calcolaValutazioneMedia()
+        activate VL
+        VL -->> C : media
+        deactivate VL
+        C -> B : mostraConferma()
+        B -->> MB : valutazione registrata · exit on success
+      end
+      deactivate C
+      deactivate B
+    end
+  end
+end
+destroy C
+
+legend bottom left
+  Precondizione: Membro autenticato (autore è il Membro che ha avviato il caso d'uso); v è il viaggio selezionato, valutato il partecipante da valutare.
+  verificaPartecipanti(autore, valutato): true se uno è il Conducente di v e l'altro un Passeggero con prenotazione accettata su v.
+  esisteValutazione(autore, valutato): vincolo {unique} su autore, valutato e viaggio (RF_TRIP_13). punteggio: Intero 1..5, commento facoltativo.
+  Riferimenti RAD: UC_TRIP_09 · RF_TRIP_12 · RF_TRIP_13 · RF_TRIP_22 · RNF_REL_2.
+endlegend
+@enduml
