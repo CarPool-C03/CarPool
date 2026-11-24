@@ -17,7 +17,7 @@ Lo sviluppo è **bottom-up** dal database: `docs/sviluppo-bottom-up.md`.
 
 ## Stack e comandi
 Frontend React + Fluent UI in `frontend/`, backend Node.js + Express (API REST)
-in `backend/`, database PostgreSQL (connessione TLS, solo da `persistenza/`).
+in `backend/`, database PostgreSQL (connessione TLS, solo da `subsystems/persistenza/`).
 Un'attività pianificata nel backend conclude i viaggi due ore dopo la partenza.
 Ogni cartella ha il suo `package.json`.
 - Installazione: `npm ci` (dentro `backend/` o `frontend/`)
@@ -27,11 +27,11 @@ Ogni cartella ha il suo `package.json`.
   cartelle toccate. Gli stessi comandi li esegue la CI (`.github/workflows/ci.yml`).
 
 ## Struttura del repository
-- `backend/src/` — una cartella per sottosistema dell'SDD (`docs/sdd/README.md`):
-  `account/`, `viaggi/`, `organizzazioni/`, `reportistica/`, `comunita/`,
-  `notifiche/`, `persistenza/`, `logging/`. Ognuna espone un solo Service
-  (Facade, es. `ViaggioPrenotazioneService.js`) e contiene le sue classi interne.
-- `backend/src/api/` — route REST: chiamano solo i Service applicativi.
+- `backend/src/subsystems/` — una cartella per sottosistema (ODD, `docs/sdd/README.md`):
+  `account/`, `organizzazioni/`, `viaggiPrenotazioni/`, `valutazioniMessaggi/`,
+  `reportistica/`, `notifiche/`, `persistenza/`, `logging/`. Ognuna espone un solo
+  Service (Facade, es. `ViaggioPrenotazioneService.js`) e contiene le sue classi interne.
+- `backend/src/routes/` — route REST (es. `viaggiRouter.js`): chiamano solo i Service applicativi.
 - `backend/migrations/` — migrazioni del database; `backend/seeds/` — dati di prova.
 - `backend/test/`, `frontend/src/**/*.test.*` — test.
 - `frontend/src/` — componenti e pagine React.
@@ -73,8 +73,8 @@ Ogni cartella ha il suo `package.json`.
 
 ### Mai
 - Modificare una migrazione già presente nel `main`: si aggiunge una nuova migrazione.
-- Accedere al database fuori da `persistenza/`, o al provider e-mail fuori da
-  `notifiche/`; il frontend chiama solo le API REST.
+- Accedere al database fuori da `subsystems/persistenza/`, o al provider e-mail
+  fuori da `subsystems/notifiche/`; il frontend chiama solo le API REST.
 - Password in chiaro: si memorizza solo l'hash (DG_4).
 - Controllo dei posti e accettazione di una richiesta in operazioni separate:
   vanno nella stessa transazione di PersistenzaService (DG_5).

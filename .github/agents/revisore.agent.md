@@ -13,7 +13,7 @@ Confronta il codice con:
 - gli statechart (`docs/modelli/SCD_CP_<nn>_*.puml`): stati, transizioni e guardie;
 - `docs/sdd/README.md` e `component.puml`: import tra cartelle del backend solo
   tramite i Service e secondo le dipendenze ammesse; database solo in
-  `persistenza/`, e-mail solo in `notifiche/`;
+  `subsystems/persistenza/`, e-mail solo in `subsystems/notifiche/`;
 - `docs/sdd/CD_persistenza.puml`: tabelle, colonne, chiavi e vincoli delle migrazioni;
 - design goal: transazione unica per posti e accettazione (DG_5), password solo
   hash (DG_4), report solo aggregati (DG_1), sessione 30 minuti (DG_3);

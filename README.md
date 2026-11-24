@@ -29,9 +29,10 @@ Fuori dall'ambito: pagamenti, tracciamento GPS in tempo reale, app mobile nativa
 ```
 CarPool/
 ├── backend/
-│   ├── src/<sottosistema>/   # account, viaggi, organizzazioni, reportistica,
-│   │                         # comunita, notifiche, persistenza, logging
-│   ├── src/api/              # route REST (chiamano solo i Service)
+│   ├── src/subsystems/       # account, organizzazioni, viaggiPrenotazioni,
+│   │                         # valutazioniMessaggi, reportistica, notifiche,
+│   │                         # persistenza, logging (un Service Facade ciascuno)
+│   ├── src/routes/           # route REST (chiamano solo i Service)
 │   ├── migrations/           # migrazioni del database (L1)
 │   ├── seeds/                # dati di sviluppo e di test
 │   └── test/

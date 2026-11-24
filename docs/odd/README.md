@@ -9,9 +9,8 @@ Design goal, architettura e sottosistemi sono nell'SDD (`docs/sdd/`).
 | `README.md` | I quattro pattern: ruoli, classi, dove stanno nel codice |
 | `CD_ODD_pattern.puml` | Dettaglio di GestioneViaggiPrenotazioniSubsystem e NotificheSubsystem (Figura 6 dell'ODD) |
 
-**Cartelle.** L'ODD scrive `backend/src/subsystems/<sottosistema>/` e
-`backend/src/routes/`; nel repository valgono `backend/src/<sottosistema>/` e
-`backend/src/api/` (`docs/sdd/README.md`). Le cartelle sotto sono già convertite.
+**Cartelle.** Nel repository vale la struttura dell'ODD: `backend/src/subsystems/<sottosistema>/`
+per i sottosistemi e `backend/src/routes/` per le route (tabella in `docs/sdd/README.md`).
 
 ## Riepilogo
 
@@ -33,7 +32,7 @@ Scartati: Bridge (il provider esiste già), Proxy e Abstract Factory (nessun req
 | Classi del sottosistema | classi interne, es. GestoreViaggi, GestorePrenotazioni, RicercaViaggi in GestioneViaggiPrenotazioniSubsystem |
 | Client | route REST (es. ViaggiRouter, `/api/viaggi`) e Facade degli altri sottosistemi |
 
-Dove: `backend/src/<sottosistema>/<Nome>Service.js`; route in `backend/src/api/`.
+Dove: `backend/src/subsystems/<sottosistema>/<Nome>Service.js`; route in `backend/src/routes/`.
 Le route e gli altri sottosistemi non chiamano mai le classi interne.
 
 ## Adapter
@@ -45,7 +44,7 @@ Le route e gli altri sottosistemi non chiamano mai le classi interne.
 | Adaptee | TransactionalEmailsApi (SDK Brevo) |
 | Client | NotificaService |
 
-Dove: `backend/src/notifiche/`. L'adapter si sceglie con una variabile d'ambiente.
+Dove: `backend/src/subsystems/notifiche/`. L'adapter si sceglie con una variabile d'ambiente.
 
 ## Observer
 
@@ -59,7 +58,7 @@ Dove: `backend/src/notifiche/`. L'adapter si sceglie con una variabile d'ambient
 **Dopo il commit** della transazione, GestorePrenotazioni pubblica un
 EventoPrenotazione; gli osservatori sono registrati all'avvio. Una nuova notifica
 (es. RF_TRIP_17) si aggiunge con un nuovo osservatore.
-Dove: `backend/src/viaggi/eventi/`.
+Dove: `backend/src/subsystems/viaggiPrenotazioni/eventi/`.
 
 ## Strategy
 
@@ -71,7 +70,7 @@ Dove: `backend/src/viaggi/eventi/`.
 
 RicercaViaggi aggiunge le condizioni comuni (viaggio Attivo, futuro, almeno un
 posto disponibile) e fa eseguire **un'unica query** a PersistenzaService (DG_7).
-ViaggioPrenotazioneService crea il criterio adatto. Dove: `backend/src/viaggi/ricerca/`.
+ViaggioPrenotazioneService crea il criterio adatto. Dove: `backend/src/subsystems/viaggiPrenotazioni/ricerca/`.
 
 ## Glossario delle classi introdotte
 

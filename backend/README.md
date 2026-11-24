@@ -13,19 +13,24 @@ PostgreSQL di test (`DATABASE_URL` impostata dalla CI).
 ```
 backend/
 ├── src/
-│   ├── persistenza/     # unico accesso a PostgreSQL (PersistenzaService)
-│   ├── logging/         # LogService, su file
-│   ├── notifiche/       # NotificaService + ProviderEmail (Adapter)
-│   ├── account/  viaggi/  organizzazioni/  reportistica/  comunita/
-│   └── api/             # route REST: chiamano solo i Service
+│   ├── subsystems/
+│   │   ├── persistenza/          # unico accesso a PostgreSQL (PersistenzaService)
+│   │   ├── logging/              # LogService, su file
+│   │   ├── notifiche/            # NotificaService + ProviderEmail (Adapter)
+│   │   ├── account/              # AccountService
+│   │   ├── organizzazioni/       # OrganizzazioneService
+│   │   ├── viaggiPrenotazioni/   # ViaggioPrenotazioneService (+ eventi/, ricerca/)
+│   │   ├── valutazioniMessaggi/  # ComunitaService
+│   │   └── reportistica/         # ReportService
+│   └── routes/          # route REST: chiamano solo i Service
 ├── migrations/          # una migrazione per gruppo di tabelle (L1)
 ├── seeds/               # dati di sviluppo e dell'ambiente di test comune
 └── test/                # test di integrazione (L1–L3) e dei casi d'uso (L4)
 ```
 
-Ogni cartella di `src/` è un sottosistema dell'SDD (`docs/sdd/README.md`) con un
+Ogni cartella di `src/subsystems/` è un sottosistema dell'SDD (`docs/sdd/README.md`) con un
 solo Service (Facade). Si sviluppa dal basso: prima `migrations/` e
-`persistenza/`, poi i servizi, poi i casi d'uso (`docs/sviluppo-bottom-up.md`).
+`subsystems/persistenza/`, poi i servizi, poi i casi d'uso (`docs/sviluppo-bottom-up.md`).
 
 ## Regole
 

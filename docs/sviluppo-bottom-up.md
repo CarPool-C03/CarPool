@@ -12,11 +12,11 @@ ogni task Jira ha una issue GitHub collegata (`CP-n` nel titolo).
 
 | Livello | Cosa si costruisce | Dove | Fonte (specifica) | Come si verifica |
 |---|---|---|---|---|
-| **L0 Fondamenta** | progetto backend, PostgreSQL locale, tool di migrazione, connessione e transazioni, log | `backend/`, `backend/src/persistenza/`, `backend/src/logging/` | `docs/sdd/README.md`, `docs/sdd/deployment.puml` | CI verde, `npm run db:migrate` funziona da zero |
+| **L0 Fondamenta** | progetto backend, PostgreSQL locale, tool di migrazione, connessione e transazioni, log | `backend/`, `backend/src/subsystems/persistenza/`, `backend/src/subsystems/logging/` | `docs/sdd/README.md`, `docs/sdd/deployment.puml` | CI verde, `npm run db:migrate` funziona da zero |
 | **L1 Schema** | migrazioni delle tabelle, vincoli, indici, dati di seed | `backend/migrations/`, `backend/seeds/` | `docs/sdd/CD_persistenza.puml` | test che i vincoli rifiutano i dati non validi |
-| **L2 Accesso ai dati** | funzioni di PersistenzaService per gruppo di entità | `backend/src/persistenza/` | `CD_persistenza.puml`, design goal DG_1, DG_5 | test di integrazione su DB di test |
-| **L3 Servizi trasversali** | NotificaService con Adapter | `backend/src/notifiche/` | ODD 2.3 (`docs/odd/`) | test con `ConsoleEmailAdapter` |
-| **L4 Casi d'uso** | Service (Facade), control e route REST | `backend/src/<sottosistema>/`, `backend/src/api/` | caso d'uso, sequence, class diagram, ODD | test dai test frame del TCS (`docs/test/`) |
+| **L2 Accesso ai dati** | funzioni di PersistenzaService per gruppo di entità | `backend/src/subsystems/persistenza/` | `CD_persistenza.puml`, design goal DG_1, DG_5 | test di integrazione su DB di test |
+| **L3 Servizi trasversali** | NotificaService con Adapter | `backend/src/subsystems/notifiche/` | ODD 2.3 (`docs/odd/`) | test con `ConsoleEmailAdapter` |
+| **L4 Casi d'uso** | Service (Facade), control e route REST | `backend/src/subsystems/<sottosistema>/`, `backend/src/routes/` | caso d'uso, sequence, class diagram, ODD | test dai test frame del TCS (`docs/test/`) |
 | **L5 Interfaccia** | pagine e componenti React | `frontend/src/` | mockup e path navigazionale del RAD | test dei componenti |
 
 ## Ordine dentro L1 e L2

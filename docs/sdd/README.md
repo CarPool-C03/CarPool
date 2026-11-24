@@ -15,32 +15,32 @@ controllate dagli autori dell'SDD; se l'SDD cambia, si aggiornano qui e in
 | Sottosistema (strato) | Interfaccia | Cartella | Casi d'uso |
 |---|---|---|---|
 | InterfacciaUtenteSubsystem (presentazione) | — | `frontend/src/` | tutti |
-| GestioneAccountProfiloSubsystem | AccountService | `backend/src/account/` | UC_AUTH_01–08, UC_ADM_04 |
-| GestioneViaggiPrenotazioniSubsystem | ViaggioPrenotazioneService | `backend/src/viaggi/` | UC_TRIP_01–06, 08, 11–14 |
-| GestioneOrganizzazioniSubsystem | OrganizzazioneService | `backend/src/organizzazioni/` | UC_ADM_01–03, RF_ORG_03 |
-| ReportisticaPSCLSubsystem | ReportService | `backend/src/reportistica/` | UC_ORG_01–02 |
-| ValutazioniMessaggiSubsystem | ComunitaService | `backend/src/comunita/` | UC_TRIP_09, 10, 15 |
-| NotificheSubsystem (servizi) | NotificaService | `backend/src/notifiche/` | — |
-| PersistenzaSubsystem (servizi) | PersistenzaService | `backend/src/persistenza/` | — |
-| LoggingSubsystem (servizi) | LogService | `backend/src/logging/` | — |
+| GestioneAccountProfiloSubsystem | AccountService | `backend/src/subsystems/account/` | UC_AUTH_01–08, UC_ADM_04 |
+| GestioneViaggiPrenotazioniSubsystem | ViaggioPrenotazioneService | `backend/src/subsystems/viaggiPrenotazioni/` | UC_TRIP_01–06, 08, 11–14 |
+| GestioneOrganizzazioniSubsystem | OrganizzazioneService | `backend/src/subsystems/organizzazioni/` | UC_ADM_01–03, RF_ORG_03 |
+| ReportisticaPSCLSubsystem | ReportService | `backend/src/subsystems/reportistica/` | UC_ORG_01–02 |
+| ValutazioniMessaggiSubsystem | ComunitaService | `backend/src/subsystems/valutazioniMessaggi/` | UC_TRIP_09, 10, 15 |
+| NotificheSubsystem (servizi) | NotificaService | `backend/src/subsystems/notifiche/` | — |
+| PersistenzaSubsystem (servizi) | PersistenzaService | `backend/src/subsystems/persistenza/` | — |
+| LoggingSubsystem (servizi) | LogService | `backend/src/subsystems/logging/` | — |
 
-Le route REST (`backend/src/api/`) ricevono le richieste dell'interfaccia e
+Le route REST (`backend/src/routes/`) ricevono le richieste dell'interfaccia e
 chiamano solo i Service dei cinque sottosistemi applicativi. Le migrazioni
 dello schema stanno in `backend/migrations/` (una per gruppo di tabelle, in
 ordine di chiavi esterne: vedi `docs/sviluppo-bottom-up.md`).
 
-L'ODD (`docs/odd/`) indica le cartelle come `backend/src/subsystems/...`: nel
-repository vale la struttura di questa tabella.
+La struttura delle cartelle è quella dell'ODD (`docs/odd/`): sottosistemi in
+`backend/src/subsystems/`, route in `backend/src/routes/`.
 
 ## Dipendenze ammesse
 
-| Sottosistema | Può usare |
+| Cartella (`subsystems/`) | Può usare |
 |---|---|
 | account | OrganizzazioneService, NotificaService, PersistenzaService, LogService |
-| viaggi | AccountService, OrganizzazioneService, NotificaService, PersistenzaService, LogService |
+| viaggiPrenotazioni | AccountService, OrganizzazioneService, NotificaService, PersistenzaService, LogService |
 | organizzazioni | PersistenzaService, LogService |
 | reportistica | AccountService, OrganizzazioneService, PersistenzaService, LogService |
-| comunita | ViaggioPrenotazioneService, PersistenzaService, LogService |
+| valutazioniMessaggi | ViaggioPrenotazioneService, PersistenzaService, LogService |
 | notifiche | LogService, provider e-mail |
 | persistenza | DBMS (driver PostgreSQL), LogService |
 | logging | nessuno |
