@@ -55,7 +55,7 @@ Ogni cartella ha il suo `package.json`.
 - Branch: `<tipo>/C03-<n>-<descrizione>` (vedi `CONTRIBUTING.md`).
 - Commit: `C03-<n> UC_<PKG>_<n>: descrizione (RF_...)`; senza caso d'uso: `C03-<n>: descrizione`.
 - Nome dei test: per i casi d'uso contiene l'identificativo del caso di test del
-  TCS, es. `TC_TRIP_06.03 - posti esauriti: rifiuta`; per L1–L2 descrive il vincolo
+  TCS, es. `TC_TRIP_06.03 - posti esauriti: la richiesta resta In attesa`; per L1–L2 descrive il vincolo
   o la funzione provata, es. `Valutazione: rifiuta un punteggio fuori da 1..5`.
 
 ## Regole

@@ -151,3 +151,7 @@ vite.config.ts.timestamp-*
 # OpenCode (plugin e cache locali)
 .opencode/node_modules/
 .opencode/package-lock.json
+
+# Diff per il revisore Copilot (docs/guida-agenti-in-locale.md, passo 5)
+.revisione/*
+!.revisione/.gitkeep

@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 # Segnala in una PR i comportamenti a rischio tipici degli agenti.
 # Uso: scripts/guardia-pr.sh <branch-base>   (es. origin/main)
-# Fallisce solo per i casi che non hanno giustificazione (.only, test
-# cancellati, segreti evidenti); per gli altri emette avvisi da controllare.
+# Fallisce solo per i casi che non hanno giustificazione (.only, test o
+# migrazioni cancellati o rinominati, segreti evidenti); per gli altri emette
+# avvisi da controllare. Con --no-renames un file rinominato conta come
+# cancellato (vecchio nome) più aggiunto (nuovo nome).
 set -uo pipefail
 
 BASE="${1:-origin/main}"
 MERGE_BASE="$(git merge-base "$BASE" HEAD)"
 errori=0
 
-cambiati() { git diff --name-only --diff-filter="$1" "$MERGE_BASE" HEAD; }
+cambiati() { git diff --no-renames --name-only --diff-filter="$1" "$MERGE_BASE" HEAD; }
 is_test() {
   [[ "$1" =~ ^docs/ ]] && return 1
   [[ "$1" =~ (^|/)(test|tests|__tests__)/ || "$1" =~ \.(test|spec)\.[jt]sx?$ ]]
@@ -26,7 +28,7 @@ done < <(cambiati M)
 while read -r f; do
   [ -z "$f" ] && continue
   if is_test "$f"; then
-    echo "::error file=$f::Test esistente cancellato."
+    echo "::error file=$f::Test esistente cancellato o rinominato."
     errori=1
   fi
 done < <(cambiati D)
@@ -62,8 +64,9 @@ while read -r f; do
   fi
 done < <(git diff --name-only "$MERGE_BASE" HEAD)
 
-# 6. Segreti evidenti
-if echo "$aggiunte" | grep -Eiq '(sk-[a-z0-9_-]{20,}|ghp_[A-Za-z0-9]{30,}|-----BEGIN [A-Z ]*PRIVATE KEY)'; then
+# 6. Segreti evidenti, in tutti i file aggiunti o modificati (non solo nel codice)
+aggiunte_tutte="$(git diff -U0 --no-renames "$MERGE_BASE" HEAD -- . ':(exclude)*package-lock.json' | grep -E '^\+[^+]' || true)"
+if echo "$aggiunte_tutte" | grep -Eiq '(sk-[a-z0-9_-]{20,}|ghp_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|xkeysib-[a-z0-9-]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY)'; then
   echo "::error::Possibile chiave o credenziale nelle righe aggiunte."
   errori=1
 fi
@@ -73,7 +76,7 @@ while read -r f; do
   [ -z "$f" ] && continue
   echo "::error file=$f::Migrazione esistente modificata o cancellata: aggiungere una nuova migrazione."
   errori=1
-done < <(git diff --name-only --diff-filter=MD "$MERGE_BASE" HEAD -- 'backend/migrations/' || true)
+done < <(git diff --no-renames --name-only --diff-filter=MD "$MERGE_BASE" HEAD -- 'backend/migrations/' ':(exclude)backend/migrations/.gitkeep' || true)
 
 # 8. File oltre le 200 righe (regola del progetto, AGENTS.md)
 while read -r f; do
