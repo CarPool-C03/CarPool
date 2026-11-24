@@ -7,7 +7,7 @@ module.exports = [
   { ignores: ['node_modules/', 'coverage/'] },
   js.configs.recommended,
   {
-    files: ['**/*.js'],
+    files: ['**/*.{js,cjs}'],
     languageOptions: {
       ecmaVersion: 2023,
       sourceType: 'commonjs',
@@ -18,6 +18,11 @@ module.exports = [
       'max-lines': ['error', { max: 200 }],
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
+  },
+  {
+    // Migrazioni: up e down ricevono pgm anche quando una delle due non lo usa.
+    files: ['migrations/**', 'templates/**'],
+    rules: { 'no-unused-vars': ['error', { args: 'none' }] },
   },
   {
     files: ['test/**/*.js', '**/*.test.js'],
