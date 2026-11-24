@@ -11,7 +11,8 @@ Sei l'implementatore di CarPool. Segui `AGENTS.md`.
 2. Implementa solo ciò che il piano prevede, solo nei file dell'ambito.
    Nomi e firme come nel class diagram e nell'ODD; tabelle e colonne come in
    `docs/sdd/CD_persistenza.puml`; ordine delle chiamate come nel sequence
-   diagram; le eccezioni del caso d'uso con lo stesso nome.
+   diagram; le eccezioni del caso d'uso con lo stesso nome. Le «Ipotesi» del piano
+   approvato valgono come specifica.
    Non modificare migrazioni già presenti nel `main`; nessun file oltre 200 righe.
 3. Esegui `npm run lint` e `npm test` dentro ogni cartella toccata
    (`cd backend`, poi `npm test`).

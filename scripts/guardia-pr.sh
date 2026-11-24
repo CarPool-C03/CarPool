@@ -81,6 +81,7 @@ done < <(git diff --no-renames --name-only --diff-filter=MD "$MERGE_BASE" HEAD -
 # 8. File oltre le 200 righe (regola del progetto, AGENTS.md)
 while read -r f; do
   [ -z "$f" ] || [ ! -f "$f" ] && continue
+  grep -Iq . "$f" || continue   # salta i file binari (immagini)
   righe=$(wc -l < "$f")
   if [ "$righe" -gt 200 ]; then
     echo "::warning file=$f::File di $righe righe: il limite del progetto è 200, va diviso."

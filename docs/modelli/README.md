@@ -54,16 +54,19 @@ usati negli oracoli del TCS (`docs/test/`).
 - Il class diagram di analisi (qui) fissa i nomi del dominio; lo schema del
   database segue il class diagram ristrutturato dell'SDD (`docs/sdd/CD_persistenza.puml`).
 
-## Contrasti aperti tra i modelli
+## Contrasti tra i modelli e decisioni
 
-Da risolvere (decisione dei PM con gli autori dei diagrammi) **prima** dei task
-L4 interessati. Finché sono aperti, il pianificatore li segnala e non sceglie.
+Le decisioni dei PM valgono per il codice e per i test; i diagrammi si correggono nel RAD/SDD
+alla prossima revisione. Il pianificatore segue la decisione e **non** segnala più i contrasti
+risolti; segnala solo quelli ancora aperti.
 
-| # | Dove | Contrasto |
-|---|---|---|
-| M1 | `SD_CP_02`, `CD_CP_01` (Sede) | La ricerca prende i viaggi da `Sede.getViaggiAttivi()` e li filtra nel control; l'ODD (Strategy) prevede un'unica query di PersistenzaService (DG_7, RNF_PERF_3). `Sede` (organizzazioni) che restituisce viaggi viola le dipendenze dell'SDD. |
-| M2 | `SD_CP_06` | Il report conta i viaggi nel control a partire da `Sede.getViaggiConclusi()`; l'SDD assegna i conteggi a PersistenzaService (DG_1). Stessa dipendenza vietata di M1. |
-| M3 | `SD_CP_05` | `ValutaPartecipanteControl` (comunita) chiama `Membro.calcolaValutazioneMedia()` (account): comunita non può usare AccountService; l'SDD assegna la media a ComunitaService. |
-| M4 | `SD_CP_04` | La notifica è chiamata direttamente dal control; l'ODD prevede l'Observer dopo il commit. Il sequence non mostra la transazione unica tra controllo dei posti e `accetta()` (DG_5). |
-| M5 | ODD, `CD_CP_02` | L'ODD introduce `GestoreViaggi`, `GestorePrenotazioni`, `RicercaViaggi`; modelli e TCS usano i control. Va deciso se i control restano o diventano le classi interne dell'ODD. |
-| M6 | `docs/rad/uc/` | Riferimenti ai RNF non coerenti con il RAD (TCS, PA_08): UC_AUTH_01 (RNF_INT_2, RNF_REL_1), UC_TRIP_06 (RNF_REL_3), UC_TRIP_09 (RNF_REL_2), UC_TRIP_01 (RF_TRIP_01 invece di 01a/01b). Si correggono nel RAD e poi qui. |
+| # | Dove | Contrasto | Decisione |
+|---|---|---|---|
+| M1 | `SD_CP_02`, `CD_CP_01` (Sede) | La ricerca prende i viaggi da `Sede.getViaggiAttivi()` e li filtra nel control. | **Risolto**: vale l'ODD (Strategy): `RicercaViaggi` fa eseguire un'unica query a PersistenzaService. `SD_CP_02` vale solo per i controlli sui filtri. |
+| M2 | `SD_CP_06` | Il report conta i viaggi nel control da `Sede.getViaggiConclusi()`. | **Risolto**: conteggi con query aggregate in PersistenzaService (SDD, DG_1). `SD_CP_06` vale per l'ordine: modulo, validazione del periodo, report. |
+| M3 | `SD_CP_05` | La media è calcolata da `Membro.calcolaValutazioneMedia()` (account). | **Risolto**: la media la calcola ComunitaService tramite PersistenzaService; la partecipazione la verifica `ViaggioPrenotazioneService.verificaPartecipazione`. |
+| M4 | `SD_CP_04` | Notifica chiamata direttamente dal control; transazione non mostrata. | **Risolto**: controllo dei posti e accettazione in `PersistenzaService.transazione` (DG_5); notifica tramite Observer **dopo il commit** (ODD). |
+| M5 | ODD, `CD_CP_02` | Control dei modelli o classi interne dell'ODD. | **Risolto**: le classi interne sono quelle dell'ODD (`GestoreViaggi`, `GestorePrenotazioni`, `RicercaViaggi`), che svolgono le operazioni dei control di `CD_CP_02` con lo stesso ordine dei sequence. I control di account, comunita e reportistica restano con il nome di `CD_CP_02`. |
+| M6 | `docs/rad/uc/` | Riferimenti ai RNF non coerenti con il RAD (UC_AUTH_01, UC_TRIP_06, UC_TRIP_09, UC_TRIP_01). | **Aperto**, solo documentale: non blocca il codice. I testi dei requisiti sono in `docs/rad/requisiti.md`. |
+| M7 | `UC_TRIP_09`, `cp_UC_TRIP_09`, `cp_UC_ORG_01` | Parlano di prenotazione «Accettata» su viaggi conclusi, ma alla conclusione le richieste Accettate diventano «Completata» (`SCD_CP_02`, RF_TRIP_25). | **Risolto**: su un viaggio `Concluso` si considerano le richieste `Completata`; nei test «accettata» su un viaggio concluso si prepara come `Completata`. |
+| M8 | `SCD_CP_02`, `SCD_CP_03` | Alla conclusione del viaggio le richieste `InAttesa` non hanno una transizione. | **Aperto**: per ora restano `InAttesa`; da decidere nel RAD. |
