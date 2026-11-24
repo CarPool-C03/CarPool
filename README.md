@@ -55,7 +55,7 @@ CarPool/
 1. **Strategia bottom-up** dal database: livelli, ordine e Definition of Done in
    [docs/sviluppo-bottom-up.md](docs/sviluppo-bottom-up.md).
 2. **Task su Jira, issue su GitHub**: ogni task Jira (`C03-n`) ha una issue GitHub
-   creata dal modulo *Task* e un branch dedicato.
+   con le sezioni Specifica, Ambito e Verifica, e un branch dedicato.
 3. **Agenti in locale** (OpenCode o GitHub Copilot in VS Code): pianificatore,
    implementatore, tester e revisore, uno alla volta. Guida passo passo:
    [docs/guida-agenti-in-locale.md](docs/guida-agenti-in-locale.md).

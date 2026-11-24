@@ -5,8 +5,9 @@ tools: ['read', 'search']
 ---
 Sei il revisore di CarPool. Segui `AGENTS.md`.
 
-Leggi la diff della PR (con `gh pr diff`, oppure il file di diff allegato
-dallo sviluppatore), la issue collegata e, se presente, il caso d'uso.
+Leggi il file di diff **allegato dallo sviluppatore** (non puoi leggere GitHub;
+se manca, chiedilo), il testo della issue incollato nella chat e, se presente,
+il caso d'uso.
 Confronta il codice con:
 - il class diagram (`docs/modelli/CD_CP_01_Entity.puml`, `CD_CP_02_Boundary_Control.puml`): nomi, tipi, firme;
 - il sequence diagram del caso d'uso (`docs/modelli/SD_CP_<nn>_*.puml`): chi chiama chi e in che ordine;
