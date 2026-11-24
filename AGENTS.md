@@ -22,7 +22,10 @@ Un'attività pianificata nel backend conclude i viaggi due ore dopo la partenza.
 Ogni cartella ha il suo `package.json`.
 - Installazione: `npm ci` (dentro `backend/` o `frontend/`)
 - Lint: `npm run lint` · Test: `npm test`
-- Migrazioni (backend): `npm run db:migrate` · Seed: `npm run db:seed`
+- Migrazioni (backend): `npm run db:migrate` · nuova migrazione:
+  `npm run db:migrate:nuova -- <nome>` · Seed: `npm run db:seed`
+- Database locali: `docker compose up -d` (sviluppo 5432, test 5433); i test
+  usano sempre il database di test.
 - Verifica completa prima di dichiarare finito: lint e test in tutte le
   cartelle toccate. Gli stessi comandi li esegue la CI (`.github/workflows/ci.yml`).
 
