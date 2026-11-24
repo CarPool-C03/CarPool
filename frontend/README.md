@@ -3,10 +3,20 @@
 Applicazione web React con Fluent UI (responsive), che comunica con il backend tramite le
 API REST.
 
-La cartella è vuota finché non viene eseguito il task di impostazione del
-progetto (creazione di `package.json`, scelta del framework di test, script
-`lint`, `test` e `build`). Da quel momento la CI esegue qui `npm ci`,
-`npm run lint`, `npm test` e `npm run build` a ogni pull request.
+Stack: React, Vite, Fluent UI (`@fluentui/react-components`), React Router;
+test con Vitest e Testing Library. Script: `dev`, `build`, `lint`, `test`,
+`format`. La CI esegue qui `npm ci`, `npm run lint`, `npm test` e
+`npm run build` a ogni pull request.
+
+```
+frontend/src/
+├── main.jsx        # tema Fluent UI e router
+├── App.jsx         # rotte (una pagina per percorso)
+└── pages/          # pagine, con i test accanto (Home.jsx, Home.test.jsx)
+```
+
+In sviluppo le chiamate a `/api` vanno al backend tramite il proxy di Vite
+(`vite.config.js`, variabile `VITE_BACKEND_URL`, predefinito `http://localhost:3000`).
 
 ## Regole
 

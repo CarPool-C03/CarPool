@@ -2,11 +2,12 @@
 
 API REST in Node.js / Express, con database PostgreSQL.
 
-La cartella si popola con il task L0 di impostazione del progetto
-(`package.json`, framework di test, script `lint`, `test`, `build`,
-`db:migrate`, `db:seed`). Da quel momento la CI esegue qui `npm ci`,
-`npm run lint`, `npm test` e `npm run build` a ogni pull request, con un
-PostgreSQL di test (`DATABASE_URL` impostata dalla CI).
+Script: `dev` (nodemon), `start`, `lint`, `test` (Jest + Supertest, test in
+serie con `--runInBand`), `format`, `db:migrate`, `db:migrate:down`,
+`db:migrate:nuova -- <nome>` (crea una migrazione da `templates/migrazione.cjs`),
+`db:seed`. La CI esegue qui `npm ci`, `npm run lint` e
+`npm test` a ogni pull request. `src/app.js` crea l'applicazione Express (usata
+dai test), `src/server.js` la mette in ascolto sulla porta `PORT` di `.env`.
 
 ## Struttura prevista
 
@@ -25,6 +26,7 @@ backend/
 │   └── routes/          # route REST: chiamano solo i Service
 ├── migrations/          # una migrazione per gruppo di tabelle (L1)
 ├── seeds/               # dati di sviluppo e dell'ambiente di test comune
+├── templates/           # modello delle migrazioni (db:migrate:nuova)
 └── test/                # test di integrazione (L1–L3) e dei casi d'uso (L4)
 ```
 
@@ -46,4 +48,17 @@ solo Service (Facade). Si sviluppa dal basso: prima `migrations/` e
 
 Credenziali e connessione al database solo in variabili d'ambiente:
 `.env` non si versiona, `.env.example` contiene i nomi delle variabili con
-valori finti (`DATABASE_URL`, `EMAIL_PROVIDER=console|brevo`, `BREVO_API_KEY`).
+valori finti (`PORT`, `DATABASE_URL`, `TEST_DATABASE_URL`, `DATABASE_SSL`).
+Le variabili del provider e-mail (`EMAIL_PROVIDER=console|brevo`,
+`BREVO_API_KEY`) si aggiungono con il task di NotificaService (L3).
+
+## Database
+
+- `docker compose up -d` (radice del repository) avvia due PostgreSQL 16:
+  sviluppo sulla porta 5432 (`carpool_dev`), test sulla porta 5433 (`carpool_test`).
+- `PersistenzaService` (`src/subsystems/persistenza/`) è l'unico accesso al
+  database: `query(sql, parametri)`, `transazione(fn)` (COMMIT o ROLLBACK, DG_5),
+  `chiudi()`. Le funzioni per gruppo di entità si aggiungono nei task L2.
+- I test usano `TEST_DATABASE_URL` (in CI: `DATABASE_URL`, già di test); prima
+  di tutti i test `test/global-setup.js` applica le migrazioni.
+- TLS solo con `DATABASE_SSL=true` (database in cloud).

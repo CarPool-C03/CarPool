@@ -64,9 +64,38 @@ CarPool/
 
 ## Installazione e avvio
 
-> *Da completare con il task L0 di impostazione del progetto* (prerequisiti,
-> variabili d'ambiente, avvio del database, migrazioni, avvio di frontend e
-> backend). Questa sezione costituirà la base del Manuale di Installazione.
+Prerequisiti: [Node.js](https://nodejs.org/) 22 o successivo, Git e, per il
+database, [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+Su Windows usare Git Bash o PowerShell 7 come terminale di VS Code.
+
+```bash
+git clone https://github.com/CarPool-C03/CarPool.git
+cd CarPool
+
+# Database di sviluppo (porta 5432) e di test (porta 5433)
+docker compose up -d
+
+# Backend
+cd backend
+npm ci
+cp .env.example .env      # PowerShell: Copy-Item .env.example .env
+npm run db:migrate        # porta il database di sviluppo all'ultima migrazione
+npm run db:seed           # dati di sviluppo
+npm run dev               # http://localhost:3000/api/health
+
+# Frontend (in un secondo terminale, dalla radice del repository)
+cd frontend
+npm ci
+npm run dev               # http://localhost:5173 mostra lo stato del backend
+```
+
+Il frontend inoltra le chiamate `/api` al backend (proxy di Vite, porta in
+`frontend/vite.config.js`). Prima di ogni push, in ciascuna cartella toccata:
+`npm run lint` e `npm test`. I test del backend usano il database di test
+(`TEST_DATABASE_URL`) e lo portano da soli all'ultima migrazione.
+Per fermare i database: `docker compose down`.
+
+Questa sezione è la base del Manuale di Installazione.
 
 ## Team
 
