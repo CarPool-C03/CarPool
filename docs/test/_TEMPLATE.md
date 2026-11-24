@@ -31,7 +31,7 @@ Vincoli: `[error]`, `[single]`, `[property X]` / `[if X]`.
 | TF01 | ... | NomeEccezione (passo 4.a1) |
 | TF02 | ... | Operazione registrata |
 
-## Casi di test
+## Specifica dei casi di test
 
 | Caso di test | Input e preparazione | Output atteso (oracolo) |
 |---|---|---|

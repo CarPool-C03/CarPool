@@ -32,6 +32,7 @@ note bottom of Attivo
   (StatoViaggio = Attivo | Cancellato | Concluso).
   concludi() è invocata automaticamente 2 ore dopo l'orario di partenza
   (RF_TRIP_25) e invoca completa() sulle richieste Accettate.
-  cancella() invoca annulla() sulle richieste In attesa e Accettate (RF_TRIP_16).
+  cancella() invoca annulla() sulle richieste In attesa e Accettate
+  e notifica i Passeggeri (RF_TRIP_16).
 end note
 @enduml

@@ -25,21 +25,21 @@
 | Passo | Attore | Azione |
 |---|---|---|
 | 1 | Passeggero | Richiede la ricerca di un viaggio. |
-| 2 | Sistema | Richiede zona di partenza, sede di destinazione, data e orario di partenza. |
+| 2 | Sistema | Mostra il modulo di ricerca con i filtri obbligatori per zona di partenza, sede di destinazione, data e orario minimo di partenza. Il Passeggero può selezionare soltanto le sedi della propria organizzazione. |
 | 3 | Passeggero | Inserisce i filtri e conferma la ricerca. |
-| 4 | Sistema | Verifica che i filtri obbligatori siano completi e che data e orario non siano già trascorsi; seleziona i viaggi nello stato «Attivo» con almeno un posto disponibile e compatibili con i filtri; presenta l’elenco con data, orario, punto di partenza, posti disponibili e contributo spese di ciascun viaggio. |
+| 4 | Sistema | Verifica che tutti i filtri obbligatori siano compilati, che la sede selezionata appartenga all’organizzazione del Passeggero e che la data e l’orario indicati non siano già trascorsi. Se i filtri sono validi, seleziona i viaggi nello stato «Attivo» con almeno un posto disponibile, con partenza nella zona indicata, diretti alla sede selezionata e previsti nella data indicata. Include soltanto i viaggi con orario di partenza uguale o successivo all’orario minimo inserito. Per ciascun viaggio mostra data, orario, punto di partenza, posti disponibili e contributo spese. Se il contributo non è stato indicato, mostra «Contributo non indicato». |
 
 ## Flusso alternativo: Nessun viaggio compatibile
 
 | Passo | Attore | Azione |
 |---|---|---|
-| 4.a1 | Sistema | Rileva che nessun viaggio attivo è compatibile con i filtri e ne informa il Passeggero; il caso d’uso termina con exit condition on success. |
+| 4.a1 | Sistema | Il Sistema rileva che nessun viaggio soddisfa tutti i criteri del passo 4 e informa il Passeggero che non ci sono viaggi disponibili per i filtri inseriti. Il caso d’uso termina con exit condition on success. |
 
 ## Flusso di errore: Filtri non validi
 
 | Passo | Attore | Azione |
 |---|---|---|
-| 4.b1 | Sistema | Rileva filtri obbligatori mancanti oppure una data o un orario già trascorsi, non esegue la ricerca e segnala l’errore relativo a ciascun filtro. |
+| 4.b1 | Sistema | Se manca un filtro obbligatorio, la sede selezionata non appartiene all’organizzazione del Passeggero, la data è precedente a quella corrente oppure la data è quella corrente e l’orario è già trascorso, il Sistema non esegue la ricerca. Mostra il messaggio di errore accanto a ciascun campo non valido entro un secondo dall’invio del modulo. Per una data precedente a quella corrente, segnala l’errore sul campo data. |
 | 4.b2 | Sistema | Il caso d'uso riprende dal passo 3; se il Passeggero abbandona, termina con exit condition on failure. |
 
 ## Note
@@ -48,4 +48,4 @@
 |---|---|
 | Scenari collegati | SC_CP_08 |
 | RF collegati | RF_TRIP_03 |
-| Special requirements | RNF_USA_1: ricerca e invio della richiesta di prenotazione in massimo 5 interazioni. RNF_USA_2: segnalazione degli errori entro 1 secondo. |
+| Special requirements | RNF_USA_1: ricerca e invio della richiesta di prenotazione in massimo 5 interazioni. RNF_USA_2: segnalazione degli errori entro 1 secondo. RNF_PERF_3: Il Sistema presenta i risultati della ricerca entro 2 secondi dall’invio dei filtri, in presenza di almeno 500 viaggi attivi simultaneamente. |

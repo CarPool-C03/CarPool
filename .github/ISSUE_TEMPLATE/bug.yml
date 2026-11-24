@@ -1,13 +1,20 @@
 name: Difetto
 description: Segnala un difetto collegato a un caso d'uso
-title: "BUG UC_XXX_XX: "
+title: "CP-XX BUG: "
 labels: ["bug"]
 body:
   - type: input
+    id: jira
+    attributes:
+      label: Task Jira del difetto
+      placeholder: CP-30
+    validations:
+      required: true
+  - type: input
     id: uc
     attributes:
-      label: Caso d'uso coinvolto
-      placeholder: UC_TRIP_01
+      label: Caso d'uso o livello coinvolto
+      placeholder: UC_TRIP_01 · oppure L2 PersistenzaService
     validations:
       required: true
   - type: textarea

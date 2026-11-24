@@ -5,11 +5,14 @@ tools: ['read', 'search']
 ---
 Sei il pianificatore di CarPool. Segui `AGENTS.md`.
 
-1. Leggi l'issue del task e solo i file della sezione «Specifica».
+1. Leggi l'issue del task (con `gh issue view`, o il testo incollato dallo
+   sviluppatore) e solo i file della sezione «Specifica».
 2. Proponi un piano in Markdown con queste sezioni:
    - **File da creare o modificare** (percorso e motivo), solo dentro l'ambito.
    - **Metodi / endpoint** con la firma presa dal sequence e dal class diagram.
-   - **Test frame da coprire** (elenco TFxx dalla category partition).
+   - **Test da scrivere**: per i casi d'uso (L4) i test frame TFxx della
+     category partition; per gli altri livelli i vincoli o le funzioni della
+     sezione «Verifica».
    - **Ordine delle chiamate** (boundary → control → entity), solo se il caso
      d'uso non ha un sequence diagram in `docs/modelli/`: indica anche dove
      avvengono i controlli rispetto ai salvataggi.

@@ -2,18 +2,20 @@
 # Se più righe corrispondono a un file vale l'ultima: la riga * resta in cima.
 *                       @CarPool-C03/project-managers
 
-# Configurazione degli agenti e della pipeline: solo i PM possono approvarla,
+# Configurazione degli agenti e della CI: solo i PM possono approvarla,
 # così né un agente né un singolo studente può cambiarla da solo.
 /AGENTS.md              @CarPool-C03/project-managers
 /opencode.json          @CarPool-C03/project-managers
 /.opencode/             @CarPool-C03/project-managers
 /.github/               @CarPool-C03/project-managers
 
-# Modelli di progetto (specifica per gli agenti).
+# Specifica (modelli, SDD, ODD, TCS) e schema del database: condivisi da tutti i task.
 /docs/modelli/          @CarPool-C03/project-managers
 /docs/sdd/              @CarPool-C03/project-managers
+/docs/odd/              @CarPool-C03/project-managers
+/docs/test/             @CarPool-C03/project-managers
+/backend/migrations/    @CarPool-C03/project-managers
 
-# Classi condivise da più casi d'uso (model e storage): quando il team decide
-# un proprietario, aggiungerlo qui, ad esempio:
-# /backend/src/model/   @utente-proprietario
-# /backend/src/storage/ @utente-proprietario
+# Codice condiviso da più task: quando il team decide un proprietario,
+# aggiungerlo qui, ad esempio:
+# /backend/src/persistenza/   @utente-proprietario

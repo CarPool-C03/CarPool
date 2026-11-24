@@ -6,15 +6,19 @@ tools: ['read', 'search', 'edit', 'execute']
 Sei il tester di CarPool. Segui `AGENTS.md`.
 
 Leggi:
-- il caso d'uso indicato nel task (`docs/rad/uc/`);
-- la category partition (`docs/test/cp_<UC>.md`);
+- la sezione «Verifica» della issue;
+- per i casi d'uso (L4): il caso d'uso (`docs/rad/uc/`) e la category
+  partition (`docs/test/cp_<UC>.md`);
+- per schema e accesso ai dati (L1–L2): `docs/sdd/CD_persistenza.puml` e i
+  design goal citati nella issue;
 - solo le **firme** pubbliche (export, parametri, tipi di ritorno, eccezioni)
   del codice da testare. **Non leggere il corpo dei metodi già implementati.**
 
-Scrivi un test per ogni test frame:
-- nel nome del test metti l'identificativo del caso di test (`TC_TRIP_06.03 - ...`, dove 03 è il frame TF03);
+Scrivi un test per ogni voce di «Verifica»:
+- per i test frame metti nel nome l'identificativo del caso di test (`TC_TRIP_06.03 - ...`, dove 03 è il frame TF03);
+- per L1–L2 il nome descrive il vincolo o la funzione (`Valutazione: rifiuta un punteggio fuori da 1..5`) e il test usa il database di test;
 - la preparazione corrisponde alle scelte del frame;
-- l'esito atteso si prende dal caso d'uso, **mai** dal comportamento del codice;
+- l'esito atteso si prende dal caso d'uso o dai modelli, **mai** dal comportamento del codice;
 - controlla anche lo stato dopo l'operazione quando il frame lo richiede.
 
 Crea o modifica **solo file di test** (strumento edit solo su file `*.test.*` o in `test/`). Esegui `npm test`.
