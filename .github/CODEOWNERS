@@ -18,4 +18,4 @@
 
 # Codice condiviso da più task: quando il team decide un proprietario,
 # aggiungerlo qui, ad esempio:
-# /backend/src/persistenza/   @utente-proprietario
+# /backend/src/subsystems/persistenza/   @utente-proprietario

@@ -29,9 +29,10 @@ Fuori dall'ambito: pagamenti, tracciamento GPS in tempo reale, app mobile nativa
 ```
 CarPool/
 ├── backend/
-│   ├── src/<sottosistema>/   # account, viaggi, organizzazioni, reportistica,
-│   │                         # comunita, notifiche, persistenza, logging
-│   ├── src/api/              # route REST (chiamano solo i Service)
+│   ├── src/subsystems/       # account, organizzazioni, viaggiPrenotazioni,
+│   │                         # valutazioniMessaggi, reportistica, notifiche,
+│   │                         # persistenza, logging (un Service Facade ciascuno)
+│   ├── src/routes/           # route REST (chiamano solo i Service)
 │   ├── migrations/           # migrazioni del database (L1)
 │   ├── seeds/                # dati di sviluppo e di test
 │   └── test/
@@ -53,7 +54,7 @@ CarPool/
 
 1. **Strategia bottom-up** dal database: livelli, ordine e Definition of Done in
    [docs/sviluppo-bottom-up.md](docs/sviluppo-bottom-up.md).
-2. **Task su Jira, issue su GitHub**: ogni task Jira (`CP-n`) ha una issue GitHub
+2. **Task su Jira, issue su GitHub**: ogni task Jira (`C03-n`) ha una issue GitHub
    creata dal modulo *Task* e un branch dedicato.
 3. **Agenti in locale** (OpenCode o GitHub Copilot in VS Code): pianificatore,
    implementatore, tester e revisore, uno alla volta. Guida passo passo:
