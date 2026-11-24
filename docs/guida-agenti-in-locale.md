@@ -74,11 +74,16 @@ e aprila in una **nuova finestra** di VS Code. A lavoro mergiato:
 - *OpenCode*: `@pianificatore Proponi il piano per la issue #21.`
 - *Copilot*: `Proponi il piano per questa issue:` + testo della issue incollato.
 
-Controlla il piano: file dentro l'Ambito, nomi come nei modelli (per L1–L2
-tabelle e colonne di `docs/sdd/CD_persistenza.puml`), ordine delle chiamate
-come nel sequence (L4), tutti i test di «Verifica» elencati, «Deviazioni dai
-modelli: nessuna». Se segnala incoerenze tra i modelli, **fermati e scrivilo
-al PM**: non scegliere tu.
+Il pianificatore risponde in uno di tre modi:
+- **Piano senza ipotesi**: controlla file dentro l'Ambito, nomi come nei modelli e in
+  `docs/api/`, ordine delle chiamate come nel sequence (L4), test di «Verifica» elencati.
+- **Piano con «Ipotesi» e «Documentazione da aggiungere»**: scrivi (o correggi) i testi
+  proposti nei file di `docs/` indicati, commit `C03-12: documentazione …`, poi approva.
+- **Solo «Da modificare prima di andare avanti»**: aggiorna i documenti indicati, commit,
+  e rilancia il pianificatore in una **sessione nuova**. Se serve una decisione di progetto
+  (due documenti in contrasto, una regola del caso d'uso), chiedila prima al PM.
+
+Le modifiche a `docs/` vanno nella stessa PR e le rivede il PM.
 
 ### ✋ Approva il piano
 
@@ -185,4 +190,5 @@ scrivi nella PR perché è corretta così. Poi `git push`: la PR si aggiorna.
 | I test del backend non si collegano al database | `docker compose up -d` e `.env` copiato da `.env.example` |
 | `main` è andato avanti / conflitti | `git switch main`, `git pull`, torna al branch, `git merge main` |
 | Commit su `main` per sbaglio | Vedi «Problemi frequenti» in CONTRIBUTING.md |
+| Il pianificatore chiede documentazione | Aggiungila in `docs/` nel tuo branch; decisioni di progetto al PM |
 | Il modello sembra sbagliato | Non correggerlo nel codice: segnalalo al PM nella issue |

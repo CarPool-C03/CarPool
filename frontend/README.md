@@ -22,7 +22,7 @@ In sviluppo le chiamate a `/api` vanno al backend tramite il proxy di Vite
 
 - Il frontend (InterfacciaUtenteSubsystem) chiama solo le API REST del backend:
   non accede mai al database né al provider e-mail.
-- Pagine e componenti seguono i mockup e il path navigazionale del RAD;
+- Pagine, percorsi e menu seguono `docs/rad/mockup/README.md`; campi ed errori `docs/api/`;
   nei casi d'uso non si citano pulsanti o elementi di interfaccia.
 - I test stanno accanto ai componenti (`*.test.jsx`) e il loro nome contiene
   l'identificativo del caso di test del TCS, quando ne deriva.

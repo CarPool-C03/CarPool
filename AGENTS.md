@@ -9,7 +9,8 @@ da un Project Manager.
 Web app di carpooling per membri verificati di aziende e atenei: tragitti
 ricorrenti verso la sede e viaggi verso eventi. Progetto C03, UniSa.
 Lo sviluppo è **bottom-up** dal database: `docs/sviluppo-bottom-up.md`.
-- RAD (casi d'uso, requisiti): `docs/rad/`
+- RAD (casi d'uso, requisiti `docs/rad/requisiti.md`, mockup `docs/rad/mockup/`): `docs/rad/`
+- Contratto delle API REST (endpoint, campi, errori): `docs/api/`
 - Modelli (class, sequence e statechart diagram, PlantUML): `docs/modelli/`
 - SDD (sottosistemi, deployment, schema del database): `docs/sdd/`
 - ODD (design pattern Facade, Adapter, Observer, Strategy): `docs/odd/`
@@ -43,7 +44,8 @@ Ogni cartella ha il suo `package.json`.
 - Nomi di classi, attributi e metodi: esattamente come nel class diagram
   (`docs/modelli/CD_CP_01_Entity.puml`, `docs/modelli/CD_CP_02_Boundary_Control.puml`)
   e nell'ODD (`docs/odd/README.md`). Tabelle, colonne e vincoli: come in
-  `docs/sdd/CD_persistenza.puml`. Non tradurre e non rinominare.
+  `docs/sdd/CD_persistenza.puml` (e le scelte dello schema documentate in `docs/sdd/`).
+  Campi delle API: come in `docs/api/`. Non tradurre e non rinominare.
 - Import tra cartelle del backend: solo le dipendenze ammesse in
   `docs/sdd/README.md`, sempre tramite il Service dell'altro sottosistema.
 - Ordine delle chiamate: come nel sequence diagram del caso d'uso
@@ -61,18 +63,22 @@ Ogni cartella ha il suo `package.json`.
 ## Regole
 ### Sempre
 - Lavora solo nel branch del task e solo sui file dell'ambito del piano.
-- Leggi solo i file elencati nella sezione «Specifica» della issue, più questi
-  file di istruzioni.
+- Leggi i file elencati nella sezione «Specifica» della issue, più questi file di
+  istruzioni. Solo il pianificatore, se non bastano, cerca anche nel resto di `docs/`.
 - Scrivi i test indicati nella sezione «Verifica» della issue.
 - **Nessun file oltre le 200 righe**: se un file cresce, dividilo per responsabilità.
 - Esegui lint e test prima di dichiarare il lavoro finito.
 
 ### Chiedi prima (fermati e scrivilo nella risposta o nella PR)
-- Classi, metodi, tabelle o endpoint non presenti nei modelli.
+- Classi, metodi, tabelle o endpoint non presenti nei modelli, in `docs/api/` o nella issue.
+  Quelli scritti nella issue (Cosa fare, Decisioni del PM) sono già approvati dal PM.
 - Modifiche a codice condiviso da più task (PersistenzaService, Service di altri sottosistemi).
 - Nuove dipendenze npm (vanno approvate dal PM: esistenza, manutenzione, licenza).
-- Due modelli in contrasto tra loro, o specifica incompleta: segnala, non scegliere.
-  I contrasti già noti sono elencati in `docs/modelli/README.md`.
+- Specifica incompleta o documenti in contrasto: il **pianificatore** propone il piano con
+  le ipotesi e la «Documentazione da aggiungere», oppure, se il punto è bloccante, solo
+  l'elenco «Da modificare prima di andare avanti». Lo sviluppatore aggiorna `docs/` nel
+  branch del task. Implementatore e tester non scelgono: davanti a un buco non coperto
+  dal piano si fermano. I contrasti già risolti sono in `docs/modelli/README.md`.
 
 ### Mai
 - Modificare una migrazione già presente nel `main`: si aggiunge una nuova migrazione.

@@ -16,8 +16,8 @@ C03-XX · L? · UC_XXX_XX (se presente) · closes #
 - revisore eseguito prima di Ready for review: <!-- sì, differenze risolte / motivate qui sotto -->
 - tentativi falliti prima del verde:
 
-## Modifiche ai modelli o allo schema
-<!-- es. nuova migrazione che aggiunge un indice, oppure «nessuna» -->
+## Modifiche alla documentazione e allo schema
+<!-- documentazione aggiunta in docs/ su richiesta del pianificatore, nuove migrazioni, oppure «nessuna» -->
 
 ## Come provarla
 1.
