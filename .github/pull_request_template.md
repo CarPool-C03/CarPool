@@ -1,6 +1,6 @@
 ## Task e issue
-<!-- es. CP-12 · L4 · UC_TRIP_01 · RF_TRIP_01a · closes #21  —  oppure  CP-7 · L1 · closes #14 -->
-CP-XX · L? · UC_XXX_XX (se presente) · closes #
+<!-- es. C03-12 · L4 · UC_TRIP_01 · RF_TRIP_01a · closes #21  —  oppure  C03-7 · L1 · closes #14 -->
+C03-XX · L? · UC_XXX_XX (se presente) · closes #
 
 ## Cosa fa
 <!-- Breve descrizione della modifica -->

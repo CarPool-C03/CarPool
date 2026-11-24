@@ -48,9 +48,9 @@ Ogni cartella ha il suo `package.json`.
 - Stati e transizioni di Account, RichiestaPrenotazione e Viaggio: come negli
   statechart `docs/modelli/SCD_CP_<nn>_*.puml`, comprese le guardie.
 - Identificativi: casi d'uso `UC_<PKG>_<n>`, requisiti `RF_<PKG>_<n>`, test frame
-  `TF<nn>` dentro `docs/test/cp_UC_<PKG>_<n>.md`, task Jira `CP-<n>`.
-- Branch: `<tipo>/CP-<n>-<descrizione>` (vedi `CONTRIBUTING.md`).
-- Commit: `CP-<n> UC_<PKG>_<n>: descrizione (RF_...)`; senza caso d'uso: `CP-<n>: descrizione`.
+  `TF<nn>` dentro `docs/test/cp_UC_<PKG>_<n>.md`, task Jira `C03-<n>`.
+- Branch: `<tipo>/C03-<n>-<descrizione>` (vedi `CONTRIBUTING.md`).
+- Commit: `C03-<n> UC_<PKG>_<n>: descrizione (RF_...)`; senza caso d'uso: `C03-<n>: descrizione`.
 - Nome dei test: per i casi d'uso contiene l'identificativo del caso di test del
   TCS, es. `TC_TRIP_06.03 - posti esauriti: rifiuta`; per L1–L2 descrive il vincolo
   o la funzione provata, es. `Valutazione: rifiuta un punteggio fuori da 1..5`.

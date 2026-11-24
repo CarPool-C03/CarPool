@@ -6,7 +6,7 @@ l'interfaccia. Ogni livello si appoggia solo su quelli già completati e
 provati, e si integra con test di integrazione scritti a quel livello.
 
 Il backlog è su Jira (una epic per livello, un task per unità di lavoro);
-ogni task Jira ha una issue GitHub collegata (`CP-n` nel titolo).
+ogni task Jira ha una issue GitHub collegata (`C03-n` nel titolo).
 
 ## I livelli
 
@@ -51,7 +51,7 @@ delle stesse tabelle, così lo schema e il suo uso hanno lo stesso proprietario.
 
 ## Definition of Done di un task
 
-- [ ] Branch e PR dedicati al task (`CP-n` in titolo e commit).
+- [ ] Branch e PR dedicati al task (`C03-n` in titolo e commit).
 - [ ] Solo file dell'ambito indicato nella issue.
 - [ ] Test del livello scritti e verdi in locale e in CI.
 - [ ] Nessuna migrazione esistente modificata; nessuna dipendenza nuova non approvata.

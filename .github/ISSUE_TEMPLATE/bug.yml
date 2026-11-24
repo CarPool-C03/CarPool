@@ -1,13 +1,13 @@
 name: Difetto
 description: Segnala un difetto collegato a un caso d'uso
-title: "CP-XX BUG: "
+title: "[C03-XX] BUG: "
 labels: ["bug"]
 body:
   - type: input
     id: jira
     attributes:
       label: Task Jira del difetto
-      placeholder: CP-30
+      placeholder: C03-30
     validations:
       required: true
   - type: input

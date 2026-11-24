@@ -23,7 +23,7 @@ issue ─► branch ─► 1 pianificatore ─► ✋ approvi il piano ─► 2 
 ## 1. Prendi la issue
 
 1. Apri la issue assegnata a te su GitHub e controlla che abbia il codice
-   Jira (`CP-n`), il livello (L0–L5) e Specifica, Ambito e Verifica compilati.
+   Jira all'inizio del titolo (`[C03-n]`), il livello (L0–L5) e Specifica, Ambito e Verifica compilati.
 2. Controlla **«Dipende da»**: le issue indicate devono essere già mergiate,
    altrimenti costruiresti su codice che nel `main` non c'è ancora.
 3. Se manca qualcosa o non è chiaro, **chiedi al PM prima di partire**.
@@ -36,10 +36,11 @@ Ogni issue ha il **suo** branch, creato sempre da un `main` aggiornato.
 ```bash
 git switch main
 git pull
-git switch -c feature/CP-12-pubblicazione-viaggio
+git switch -c feature/C03-12-pubblicazione-viaggio
 ```
 
-Formato: `<tipo>/CP-<n>-<descrizione>`, tutto minuscolo con i trattini.
+Formato: `<tipo>/C03-<n>-<descrizione>`: il codice è quello tra parentesi quadre
+nel titolo della issue (`[C03-12]`), la descrizione è minuscola con i trattini.
 `feature` per codice nuovo (anche migrazioni e accesso ai dati), `fix` per difetti,
 `chore` per configurazione, `docs` per documenti, `test` per soli test.
 
@@ -47,10 +48,10 @@ Formato: `<tipo>/CP-<n>-<descrizione>`, tutto minuscolo con i trattini.
 seconda cartella di lavoro collegata allo stesso repository.
 
 ```bash
-git worktree add ../carpool-CP-15 -b feature/CP-15-ricerca-viaggio
-cd ../carpool-CP-15        # apri l'agente qui
+git worktree add ../carpool-C03-15 -b feature/C03-15-ricerca-viaggio
+cd ../carpool-C03-15        # apri l'agente qui
 # a lavoro finito e mergiato:
-git worktree remove ../carpool-CP-15
+git worktree remove ../carpool-C03-15
 ```
 
 ## 3. Usa i 4 agenti, uno alla volta
@@ -72,7 +73,7 @@ Regole valide per tutti:
 ### 3.1 Pianificatore — propone il piano (non modifica file)
 
 ```
-Proponi il piano per la issue #21 (CP-12, UC_TRIP_01).
+Proponi il piano per la issue #21 (C03-12, UC_TRIP_01).
 ```
 (Con Copilot: incolla anche il testo della issue.)
 
@@ -95,8 +96,8 @@ Nella stessa cartella, sul tuo branch:
 Implementa il piano approvato della issue #21. Poi esegui lint e test.
 ```
 L'agente modifica solo i file del piano, esegue `npm run lint` e `npm test`
-e fa i commit nel formato `CP-12 UC_TRIP_01: descrizione (RF_...)` (oppure
-`CP-7: descrizione` per i task senza caso d'uso). Il push lo fai tu.
+e fa i commit nel formato `C03-12 UC_TRIP_01: descrizione (RF_...)` (oppure
+`C03-7: descrizione` per i task senza caso d'uso). Il push lo fai tu.
 
 Fermalo e prendi in mano tu se:
 - fallisce **3 volte** sullo stesso errore;
@@ -131,10 +132,10 @@ git log --oneline main..HEAD
 ## 4. Push e pull request in bozza
 
 ```bash
-git push -u origin feature/CP-12-pubblicazione-viaggio
+git push -u origin feature/C03-12-pubblicazione-viaggio
 ```
 Su GitHub: **Compare & pull request** → base `main` → titolo
-`CP-12 UC_TRIP_01: Pubblicazione di un viaggio` (o `CP-7: Migrazione di Membro e Veicolo`) →
+`C03-12 UC_TRIP_01: Pubblicazione di un viaggio` (o `C03-7: Migrazione di Membro e Veicolo`) →
 compila tutto il template (con `closes #21`) → **Create draft pull request**.
 
 ## 5. Revisore — confronto con i modelli
@@ -145,7 +146,7 @@ Prima di chiedere la review umana, fai controllare la PR al revisore
 - *OpenCode*: `Rivedi la pull request #34.` (usa `gh pr diff`).
 - *Copilot*: salva la diff **fuori dal repo** e allegala alla chat:
   ```bash
-  git diff main...HEAD > ../revisione-CP-12.diff
+  git diff main...HEAD > ../revisione-C03-12.diff
   ```
   `Rivedi questa diff rispetto ai modelli; caso d'uso UC_TRIP_01.`
 
@@ -162,7 +163,7 @@ scrivi nella PR perché è corretta così. Poi `git push`: la PR si aggiorna.
    ```bash
    git switch main
    git pull
-   git branch -D feature/CP-12-pubblicazione-viaggio
+   git branch -D feature/C03-12-pubblicazione-viaggio
    ```
 
 ## Checklist della PR
