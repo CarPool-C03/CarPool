@@ -27,6 +27,7 @@
     "globalSetup": "<rootDir>/test/global-setup.js"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "dotenv": "^18.0.10",
     "express": "^5.3.0",
     "node-pg-migrate": "^9.0.0",
