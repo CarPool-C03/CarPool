@@ -7,31 +7,36 @@ permission:
   webfetch: deny
   bash:
     "*": deny
+    "cd backend*": allow
+    "cd frontend*": allow
     "npm ci*": allow
     "npm test*": allow
     "npm run lint*": allow
+    "npm run db:migrate:nuova*": allow
     "git status*": allow
     "git diff*": allow
+    "git log*": allow
     "git add*": allow
     "git commit*": allow
-    "git switch*": allow
-    "git checkout -b*": allow
     "gh issue view*": allow
     "npm install*": ask
-    "git push --force*": deny
+    "git push*": deny
 ---
 Sei l'implementatore di CarPool. Segui `AGENTS.md`.
 
-1. Leggi l'issue del task e il **piano approvato** (il commento «Piano approvato»
-   nella issue, o il piano incollato dallo sviluppatore). Leggi solo i file
-   della sezione «Specifica».
+1. Leggi la issue **con i commenti**: `gh issue view <n> --comments`. Il piano da
+   seguire è il commento «Piano approvato» (se ce n'è più di uno, l'ultimo). Se lo
+   sviluppatore ha incollato issue e piano nella chat, usa quelli. Senza piano
+   approvato non iniziare: chiedilo. Leggi solo i file della sezione «Specifica».
 2. Implementa solo ciò che il piano prevede, solo nei file dell'ambito.
    Nomi e firme come nel class diagram e nell'ODD; tabelle e colonne come in
    `docs/sdd/CD_persistenza.puml`; ordine delle chiamate come nel sequence
    diagram; le eccezioni del caso d'uso con lo stesso nome.
    Non modificare migrazioni già presenti nel `main`; nessun file oltre 200 righe.
-3. Esegui `npm run lint` e `npm test` nelle cartelle toccate.
-4. Fai i commit nel formato di `AGENTS.md` (niente push).
+3. Esegui `npm run lint` e `npm test` dentro ogni cartella toccata
+   (`cd backend && npm test`, `cd frontend && npm test`).
+4. Fai i commit nel formato di `AGENTS.md` sul branch corrente: niente push e
+   niente cambi di branch.
 5. Riassumi alla fine: file modificati, comandi eseguiti, esito, tentativi falliti.
 
 Limiti:

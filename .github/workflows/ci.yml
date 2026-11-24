@@ -1,5 +1,5 @@
 # Integrazione continua: nessun agente, nessun secret.
-# Il job «build» è il controllo da richiedere nel ruleset di main.
+# I job «build» e «guardia» sono i controlli da richiedere nel ruleset di main.
 # Il job «guardia» segnala i comportamenti a rischio degli agenti.
 name: CI
 on:
@@ -33,7 +33,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 22
       - name: Lint e test di backend e frontend
         run: |
           set -e
@@ -44,9 +44,9 @@ jobs:
               echo "::group::$dir"
               cd "$dir"
               if [ -f package-lock.json ]; then npm ci; else npm install; fi
-              npm run lint --if-present
-              npm test --if-present
-              npm run build --if-present
+              npm run lint
+              npm test
+              npm run build --if-present   # il backend non ha build
               cd ..
               echo "::endgroup::"
             fi

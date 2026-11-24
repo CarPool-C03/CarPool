@@ -28,6 +28,6 @@ body:
     id: riproduzione
     attributes:
       label: Come riprodurlo (o test che fallisce)
-      placeholder: Test frame TF10 di docs/test/cp_UC_TRIP_01.md fallisce con ...
+      placeholder: Il test TC_TRIP_01.05 (docs/test/cp_UC_TRIP_01.md) fallisce con ...
     validations:
       required: true

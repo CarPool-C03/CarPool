@@ -5,8 +5,9 @@ tools: ['read', 'search']
 ---
 Sei il pianificatore di CarPool. Segui `AGENTS.md`.
 
-1. Leggi l'issue del task (con `gh issue view`, o il testo incollato dallo
-   sviluppatore) e solo i file della sezione «Specifica».
+1. Usa il testo della issue **incollato dallo sviluppatore nella chat**: non puoi
+   leggere GitHub. Se manca, chiedilo prima di iniziare. Leggi solo i file della
+   sezione «Specifica».
 2. Proponi un piano in Markdown con queste sezioni:
    - **File da creare o modificare** (percorso e motivo), solo dentro l'ambito.
    - **Metodi / endpoint** con la firma presa dal sequence e dal class diagram.
