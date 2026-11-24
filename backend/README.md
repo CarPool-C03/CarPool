@@ -2,11 +2,10 @@
 
 API REST in Node.js / Express, con database PostgreSQL.
 
-La cartella si popola con il task L0 di impostazione del progetto
-(`package.json`, framework di test, script `lint`, `test`, `build`,
-`db:migrate`, `db:seed`). Da quel momento la CI esegue qui `npm ci`,
-`npm run lint`, `npm test` e `npm run build` a ogni pull request, con un
-PostgreSQL di test (`DATABASE_URL` impostata dalla CI).
+Script: `dev` (nodemon), `start`, `lint`, `test` (Jest + Supertest, test in
+serie con `--runInBand`), `format`. La CI esegue qui `npm ci`, `npm run lint` e
+`npm test` a ogni pull request. `src/app.js` crea l'applicazione Express (usata
+dai test), `src/server.js` la mette in ascolto sulla porta `PORT` di `.env`.
 
 ## Struttura prevista
 

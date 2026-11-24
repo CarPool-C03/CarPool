@@ -1,0 +1,32 @@
+{
+  "name": "carpool-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "API REST di CarPool (Node.js + Express)",
+  "type": "commonjs",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "jest --runInBand"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.10",
+    "express": "^5.3.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.15.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.14.0",
+    "jest": "^30.5.2",
+    "nodemon": "^3.1.14",
+    "prettier": "^3.10.1",
+    "supertest": "^7.3.2"
+  }
+}
