@@ -1,0 +1,68 @@
+@startuml ODD_CD_Pattern
+' CarPool · ODD Sez. 3 — Dettaglio di GestioneViaggiPrenotazioniSubsystem e NotificheSubsystem
+' Trascrizione della figura di C03_ODD_V_0.1.0. Va controllata dagli autori dell'ODD.
+skinparam shadowing false
+skinparam defaultFontName Inter
+skinparam classAttributeIconSize 0
+hide circle
+hide empty members
+title CarPool · Design pattern (ODD 3)
+
+package "GestioneViaggiPrenotazioniSubsystem" {
+  class ViaggioPrenotazioneService <<Facade>>
+  class GestoreViaggi
+  class GestorePrenotazioni
+  class RicercaViaggi <<Context>>
+  class Viaggio
+  class RichiestaPrenotazione
+  class EventiPrenotazione <<Subject>>
+  interface OsservatorePrenotazione <<Observer>>
+  class NotificaEsitoObserver <<ConcreteObserver>>
+  interface CriterioRicerca <<Strategy>>
+  class RicercaPerSede <<ConcreteStrategy>>
+  class RicercaPerEvento <<ConcreteStrategy>>
+}
+
+package "NotificheSubsystem" {
+  class NotificaService <<Facade>>
+  interface ProviderEmail <<Target>>
+  class BrevoAdapter <<Adapter>>
+  class ConsoleEmailAdapter <<Adapter>>
+  class TransactionalEmailsApi <<Adaptee>>
+}
+
+ViaggioPrenotazioneService ..> GestoreViaggi : delega
+ViaggioPrenotazioneService ..> GestorePrenotazioni : delega
+ViaggioPrenotazioneService ..> RicercaViaggi : delega
+ViaggioPrenotazioneService ..> CriterioRicerca : crea il criterio
+GestoreViaggi ..> Viaggio
+GestoreViaggi ..> RichiestaPrenotazione
+GestorePrenotazioni ..> Viaggio
+GestorePrenotazioni ..> RichiestaPrenotazione
+Viaggio "1" *-- "0..*" RichiestaPrenotazione
+GestorePrenotazioni ..> EventiPrenotazione : pubblica()
+EventiPrenotazione o-- "0..*" OsservatorePrenotazione
+OsservatorePrenotazione <|.. NotificaEsitoObserver
+RicercaViaggi --> CriterioRicerca : usa
+CriterioRicerca <|.. RicercaPerSede
+CriterioRicerca <|.. RicercaPerEvento
+NotificaEsitoObserver ..> NotificaService : inviaEsitoPrenotazione()
+NotificaService --> ProviderEmail : usa
+ProviderEmail <|.. BrevoAdapter
+ProviderEmail <|.. ConsoleEmailAdapter
+BrevoAdapter --> TransactionalEmailsApi : delega
+
+note bottom of RicercaViaggi
+  Aggiunge le condizioni comuni (Attivo, futuro,
+  almeno un posto) e fa eseguire un'unica query
+  a PersistenzaService (DG_7).
+end note
+note bottom of EventiPrenotazione
+  GestorePrenotazioni pubblica l'evento
+  dopo il commit della transazione.
+end note
+legend bottom left
+  Tutte le classi accedono ai dati tramite PersistenzaService e registrano
+  gli errori con LogService (non mostrati).
+endlegend
+@enduml

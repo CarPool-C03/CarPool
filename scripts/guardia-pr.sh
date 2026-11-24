@@ -58,7 +58,7 @@ fi
 while read -r f; do
   [ -z "$f" ] && continue
   if ! [[ "$f" =~ ^(backend|frontend|docs|scripts|\.github|\.opencode)/ || "$f" =~ ^[^/]+\.md$ ]]; then
-    echo "::notice file=$f::File fuori da backend/, frontend/, docs/: controllare che sia nell'ambito del piano."
+    echo "::notice file=$f::File fuori dalle cartelle previste (backend, frontend, docs, scripts, .github, .opencode): controllare che sia nell'ambito del piano."
   fi
 done < <(git diff --name-only "$MERGE_BASE" HEAD)
 
@@ -67,6 +67,22 @@ if echo "$aggiunte" | grep -Eiq '(sk-[a-z0-9_-]{20,}|ghp_[A-Za-z0-9]{30,}|-----B
   echo "::error::Possibile chiave o credenziale nelle righe aggiunte."
   errori=1
 fi
+
+# 7. Migrazioni esistenti modificate o cancellate (si aggiunge sempre una nuova migrazione)
+while read -r f; do
+  [ -z "$f" ] && continue
+  echo "::error file=$f::Migrazione esistente modificata o cancellata: aggiungere una nuova migrazione."
+  errori=1
+done < <(git diff --name-only --diff-filter=MD "$MERGE_BASE" HEAD -- 'backend/migrations/' || true)
+
+# 8. File oltre le 200 righe (regola del progetto, AGENTS.md)
+while read -r f; do
+  [ -z "$f" ] || [ ! -f "$f" ] && continue
+  righe=$(wc -l < "$f")
+  if [ "$righe" -gt 200 ]; then
+    echo "::warning file=$f::File di $righe righe: il limite del progetto è 200, va diviso."
+  fi
+done < <(git diff --name-only --diff-filter=AM "$MERGE_BASE" HEAD | grep -Ev '(^|/)package-lock\.json$' || true)
 
 echo "Elenco dei file modificati:"
 git diff --stat "$MERGE_BASE" HEAD | tail -n 50

@@ -1,17 +1,72 @@
-name: Task senza agente
-description: Documentazione, configurazione o sviluppo svolto a mano
+name: Task
+description: Un task Jira da implementare (con gli agenti in locale o a mano)
+title: "CP-XX: "
 labels: ["task"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Una issue per ogni task Jira. Titolo: `CP-n: descrizione`, oppure
+        `CP-n UC_XXX_XX: descrizione` per i casi d'uso. Guida:
+        `docs/guida-agenti-in-locale.md`; livelli: `docs/sviluppo-bottom-up.md`.
   - type: input
     id: jira
     attributes:
       label: Task Jira
-      placeholder: CP-8
+      placeholder: CP-7
+    validations:
+      required: true
+  - type: dropdown
+    id: livello
+    attributes:
+      label: Livello
+      options:
+        - L0 Fondamenta
+        - L1 Schema del database
+        - L2 Accesso ai dati
+        - L3 Servizi trasversali
+        - L4 Caso d'uso (Service, control, route)
+        - L5 Interfaccia
+        - Documentazione o configurazione
+    validations:
+      required: true
+  - type: input
+    id: requisiti
+    attributes:
+      label: Caso d'uso e requisiti (se presenti)
+      placeholder: UC_TRIP_01 — RF_TRIP_01a, RF_TRIP_01b · oppure DG_5
+  - type: textarea
+    id: specifica
+    attributes:
+      label: Specifica (file da leggere)
+      description: Solo gli artefatti necessari e, per i diagrammi, solo le classi rilevanti.
+      placeholder: |
+        - docs/sdd/CD_persistenza.puml: Membro, Veicolo
+        - docs/sviluppo-bottom-up.md
     validations:
       required: true
   - type: textarea
-    id: descrizione
+    id: ambito
     attributes:
-      label: Descrizione e requisiti coinvolti
+      label: Ambito (file, classi e metodi da toccare)
+      description: Ogni file fuori ambito è un segnale da controllare in review.
+      placeholder: |
+        - backend/migrations/<timestamp>_membro_veicolo.js
+        - backend/test/migrazioni/membroVeicolo.test.js
     validations:
       required: true
+  - type: textarea
+    id: verifica
+    attributes:
+      label: Verifica (test da scrivere)
+      description: Per L4 i test frame del TCS; per L1–L3 i vincoli o le funzioni da provare.
+      placeholder: |
+        - rifiuta un secondo Membro con lo stesso accountId
+        - rifiuta numeroPostiPasseggeri < 1
+    validations:
+      required: true
+  - type: textarea
+    id: dipendenze
+    attributes:
+      label: Dipende da
+      placeholder: "#12 (CP-5 migrazione Organizzazione), #14 (CP-6 Account)"

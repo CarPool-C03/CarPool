@@ -6,10 +6,10 @@ Progetto del **Team C03** per i corsi di *Gestione dei Progetti Software* e *Ing
 
 ## Funzionalità principali
 
-- **Accesso riservato**: registrazione solo con l'email di un'organizzazione partner, che ne determina l'appartenenza.
+- **Accesso riservato**: registrazione solo con l'e-mail di un'organizzazione partner, che ne determina l'appartenenza.
 - **Viaggi**: pubblicazione, ricerca e prenotazione di passaggi verso una sede o verso un evento.
 - **Prenotazioni**: il conducente accetta o rifiuta le richieste; i posti disponibili si aggiornano.
-- **Notifiche e messaggi** via email tra conducente e passeggeri.
+- **Notifiche via e-mail** sull'esito delle prenotazioni e **messaggi** tra conducente e passeggeri dentro la piattaforma.
 - **Valutazioni reciproche** al termine del viaggio.
 - **Cruscotto del Mobility Manager**: statistiche aggregate e anonime per sede e periodo, a supporto del PSCL (D.L. 34/2020, art. 229; D.I. 179/2021).
 
@@ -19,44 +19,53 @@ Fuori dall'ambito: pagamenti, tracciamento GPS in tempo reale, app mobile nativa
 
 | Livello | Tecnologia |
 |---|---|
-| Frontend | React (web app responsive) |
+| Frontend | React + Fluent UI (web app responsive) |
 | Backend | Node.js / Express, API REST |
 | Database | PostgreSQL |
+| Provider e-mail | Brevo (tramite Adapter, vedi ODD) |
 
 ## Struttura del repository
 
 ```
 CarPool/
-├── frontend/   # applicazione React (vedi frontend/README.md)
-├── backend/    # API REST Node.js/Express (vedi backend/README.md)
-├── docs/       # RAD, SDD, ODD, modelli (PlantUML), category partition, guide
-├── scripts/    # script di supporto (label, controlli della CI)
-├── AGENTS.md   # istruzioni comuni per gli agenti (Copilot, OpenCode)
-└── .github/    # workflow, agenti Copilot, moduli delle issue, template PR
+├── backend/
+│   ├── src/<sottosistema>/   # account, viaggi, organizzazioni, reportistica,
+│   │                         # comunita, notifiche, persistenza, logging
+│   ├── src/api/              # route REST (chiamano solo i Service)
+│   ├── migrations/           # migrazioni del database (L1)
+│   ├── seeds/                # dati di sviluppo e di test
+│   └── test/
+├── frontend/                 # applicazione React
+├── docs/
+│   ├── rad/uc/               # casi d'uso (copia testuale del RAD)
+│   ├── modelli/              # class, sequence, statechart (PlantUML)
+│   ├── sdd/                  # sottosistemi, deployment, schema del DB
+│   ├── odd/                  # design pattern e classi che introducono
+│   ├── test/                 # category partition e casi di test (TCS)
+│   ├── sviluppo-bottom-up.md # livelli e ordine di sviluppo
+│   └── guida-agenti-in-locale.md
+├── scripts/                  # controlli della CI
+├── AGENTS.md                 # istruzioni lette da ogni agente
+└── .github/                  # CI, agenti Copilot, moduli delle issue, template PR
 ```
+
+## Come lavoriamo
+
+1. **Strategia bottom-up** dal database: livelli, ordine e Definition of Done in
+   [docs/sviluppo-bottom-up.md](docs/sviluppo-bottom-up.md).
+2. **Task su Jira, issue su GitHub**: ogni task Jira (`CP-n`) ha una issue GitHub
+   creata dal modulo *Task* e un branch dedicato.
+3. **Agenti in locale** (OpenCode o GitHub Copilot in VS Code): pianificatore,
+   implementatore, tester e revisore, uno alla volta. Guida passo passo:
+   [docs/guida-agenti-in-locale.md](docs/guida-agenti-in-locale.md).
+4. **Pull request** approvata da un PM diverso dall'autore, con la CI verde:
+   regole in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Installazione e avvio
 
-> *Da completare con lo sviluppo* (prerequisiti, variabili d'ambiente, comandi di avvio di frontend e backend). Questa sezione costituirà la base del Manuale di Installazione.
-
-## Come contribuire
-
-Il flusso completo (branch, commit, pull request, review e merge) è descritto in [CONTRIBUTING.md](CONTRIBUTING.md).
-
-- Sviluppo **pull-based**: nessun push diretto su `main`.
-- Un branch e una **pull request per ogni task Jira** (per lo sviluppo, un caso d'uso per task), approvata da un Project Manager diverso dall'autore e con la CI verde.
-- I **test** si scrivono dai test frame del caso d'uso in `docs/test/`, non guardando il codice.
-- Commit e titolo della PR seguono il formato `CP-12 UC_TRIP_01: descrizione`; la descrizione della PR si compila dal template.
-
-## Lavorare con gli agenti
-
-Il team usa GitHub Copilot e OpenCode dentro una pipeline definita dai PM:
-task da issue form, piano approvato da una persona, implementazione e test da
-agenti separati, CI e revisione rispetto ai modelli prima del merge.
-
-- Guida per il team: [docs/agentic-workflow.md](docs/agentic-workflow.md)
-- Configurazione (PM): [docs/setup-pipeline-pm.md](docs/setup-pipeline-pm.md)
-- Istruzioni lette da ogni agente: [AGENTS.md](AGENTS.md)
+> *Da completare con il task L0 di impostazione del progetto* (prerequisiti,
+> variabili d'ambiente, avvio del database, migrazioni, avvio di frontend e
+> backend). Questa sezione costituirà la base del Manuale di Installazione.
 
 ## Team
 

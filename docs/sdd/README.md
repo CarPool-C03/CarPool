@@ -8,7 +8,7 @@ controllate dagli autori dell'SDD; se l'SDD cambia, si aggiornano qui e in
 |---|---|---|
 | `component.puml` | Sez. 3.2.1–3.2.2: sottosistemi, interfacce, dipendenze | Cartelle del backend, servizi (Facade) e chi può usare chi |
 | `deployment.puml` | Sez. 3.3.1: nodi e protocolli | Stack, connessioni (PostgreSQL/TLS, provider e-mail), attività pianificata |
-| `CD_persistenza.puml` | Sez. 4.2: class diagram ristrutturato | Schema del database: tabelle, colonne, PK/FK, vincoli |
+| `CD_persistenza.puml` | Sez. 4.2: class diagram ristrutturato | Schema del database: tabelle, colonne, PK/FK, vincoli (livelli L1–L2) |
 
 ## Sottosistemi e cartelle del backend
 
@@ -25,7 +25,12 @@ controllate dagli autori dell'SDD; se l'SDD cambia, si aggiornano qui e in
 | LoggingSubsystem (servizi) | LogService | `backend/src/logging/` | — |
 
 Le route REST (`backend/src/api/`) ricevono le richieste dell'interfaccia e
-chiamano solo i Service dei cinque sottosistemi applicativi.
+chiamano solo i Service dei cinque sottosistemi applicativi. Le migrazioni
+dello schema stanno in `backend/migrations/` (una per gruppo di tabelle, in
+ordine di chiavi esterne: vedi `docs/sviluppo-bottom-up.md`).
+
+L'ODD (`docs/odd/`) indica le cartelle come `backend/src/subsystems/...`: nel
+repository vale la struttura di questa tabella.
 
 ## Dipendenze ammesse
 

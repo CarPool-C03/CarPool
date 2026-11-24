@@ -2,26 +2,43 @@
 
 API REST in Node.js / Express, con database PostgreSQL.
 
-La cartella è vuota finché non viene eseguito il task di impostazione del
-progetto (creazione di `package.json`, scelta del framework di test, script
-`lint` e `test`). Da quel momento la CI esegue qui `npm ci`, `npm run lint`,
-`npm test` e `npm run build` a ogni pull request.
+La cartella si popola con il task L0 di impostazione del progetto
+(`package.json`, framework di test, script `lint`, `test`, `build`,
+`db:migrate`, `db:seed`). Da quel momento la CI esegue qui `npm ci`,
+`npm run lint`, `npm test` e `npm run build` a ogni pull request, con un
+PostgreSQL di test (`DATABASE_URL` impostata dalla CI).
 
 ## Struttura prevista
 
-Il codice in `src/` segue i sottosistemi dell'SDD (`docs/sdd/README.md`,
-`docs/sdd/component.puml`): una cartella per sottosistema (`account/`,
-`viaggi/`, `organizzazioni/`, `reportistica/`, `comunita/`, `notifiche/`,
-`persistenza/`, `logging/`), ognuna con un solo Service (Facade) e i propri
-control e model; le route REST stanno in `src/api/` e chiamano solo i Service.
+```
+backend/
+├── src/
+│   ├── persistenza/     # unico accesso a PostgreSQL (PersistenzaService)
+│   ├── logging/         # LogService, su file
+│   ├── notifiche/       # NotificaService + ProviderEmail (Adapter)
+│   ├── account/  viaggi/  organizzazioni/  reportistica/  comunita/
+│   └── api/             # route REST: chiamano solo i Service
+├── migrations/          # una migrazione per gruppo di tabelle (L1)
+├── seeds/               # dati di sviluppo e dell'ambiente di test comune
+└── test/                # test di integrazione (L1–L3) e dei casi d'uso (L4)
+```
 
-Solo `persistenza/` accede a PostgreSQL (schema in `docs/sdd/CD_persistenza.puml`),
-solo `notifiche/` al provider e-mail. Un'attività pianificata conclude i viaggi.
-I test stanno in `test/` e il loro nome contiene l'identificativo del caso di
-test del TCS (es. `TC_TRIP_01.04`).
+Ogni cartella di `src/` è un sottosistema dell'SDD (`docs/sdd/README.md`) con un
+solo Service (Facade). Si sviluppa dal basso: prima `migrations/` e
+`persistenza/`, poi i servizi, poi i casi d'uso (`docs/sviluppo-bottom-up.md`).
+
+## Regole
+
+- Tabelle e colonne come in `docs/sdd/CD_persistenza.puml`.
+- Una migrazione già nel `main` non si modifica: si aggiunge una nuova migrazione.
+- Controllo dei posti e accettazione nella stessa transazione (DG_5).
+- I test di integrazione usano il database di test e lo riportano allo stato
+  iniziale prima di ogni test; i nomi dei test dei casi d'uso contengono
+  l'identificativo del TCS (es. `TC_TRIP_01.04`).
+- Nessun file oltre le 200 righe.
 
 ## Configurazione
 
 Credenziali e connessione al database solo in variabili d'ambiente:
 `.env` non si versiona, `.env.example` contiene i nomi delle variabili con
-valori finti.
+valori finti (`DATABASE_URL`, `EMAIL_PROVIDER=console|brevo`, `BREVO_API_KEY`).
