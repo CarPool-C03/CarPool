@@ -1,7 +1,14 @@
 const bcrypt = require('bcryptjs');
 const { createHash, randomBytes } = require('node:crypto');
 const PersistenzaService = require('../persistenza/PersistenzaService');
-const { ErroreNonAutenticato, ErroreNonAutorizzato } = require('../../comune/errori');
+const Membro = require('./Membro');
+const {
+  ErroreValidazione,
+  ErroreNonAutenticato,
+  ErroreNonAutorizzato,
+  ErroreNonTrovato,
+  ErroreConflitto,
+} = require('../../comune/errori');
 
 const MESSAGGIO_CREDENZIALI = 'E-mail o password non valide';
 
@@ -74,4 +81,37 @@ async function esci(token) {
   await PersistenzaService.eliminaSessione(hashToken(token));
 }
 
-module.exports = { accedi, esci, utenteCorrente };
+async function cercaMembri(email) {
+  const termine = typeof email === 'string' ? email.trim() : '';
+  if (termine.length < 3) {
+    throw new ErroreValidazione([
+      { campo: 'email', messaggio: 'Inserisci almeno 3 caratteri' },
+    ]);
+  }
+  return PersistenzaService.cercaMembri(termine);
+}
+
+async function assegnaRuoloMobilityManager(membroId) {
+  const dati = await PersistenzaService.membroPerAssegnazioneRuolo(membroId);
+  if (!dati) throw new ErroreNonTrovato('Membro non trovato');
+  if (dati.statoAccount !== 'Attivo') {
+    throw new ErroreConflitto('ACCOUNT_NON_ATTIVO', 'L’account del Membro non è attivo');
+  }
+  const membro = new Membro(dati);
+  membro.assegnaRuoloMobilityManager();
+  const aggiornato = await PersistenzaService.assegnaRuoloMobilityManager(membro.id);
+  if (!aggiornato) {
+    const corrente = await PersistenzaService.membroPerAssegnazioneRuolo(membro.id);
+    if (!corrente) throw new ErroreNonTrovato('Membro non trovato');
+    throw new ErroreConflitto('ACCOUNT_NON_ATTIVO', 'L’account del Membro non è attivo');
+  }
+  return aggiornato;
+}
+
+module.exports = {
+  accedi,
+  esci,
+  utenteCorrente,
+  cercaMembri,
+  assegnaRuoloMobilityManager,
+};
