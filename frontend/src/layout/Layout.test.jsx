@@ -62,7 +62,7 @@ describe('Layout', () => {
     expect(logo).toHaveAttribute('href', '/');
     expect(within(logo).getByRole('img', { name: 'Logo CarPool' })).toHaveAttribute(
       'src',
-      '/logo.svg',
+      '/CARPOOL.png',
     );
   });
 
