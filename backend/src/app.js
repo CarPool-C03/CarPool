@@ -4,6 +4,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const healthRouter = require('./routes/healthRouter');
 const authRouter = require('./routes/authRouter');
+const accountRouter = require('./routes/accountRouter');
 const gestoreErrori = require('./middleware/gestoreErrori');
 
 function creaApp() {
@@ -11,6 +12,7 @@ function creaApp() {
   app.use(express.json());
   app.use(cookieParser());
   app.use('/api/health', healthRouter);
+  app.use('/api/account', accountRouter);
   app.use('/api/auth', authRouter);
   app.use(gestoreErrori);
   return app;

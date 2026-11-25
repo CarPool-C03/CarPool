@@ -68,6 +68,90 @@ async function eliminaSessione(hashToken) {
   await query('DELETE FROM "Sessione" WHERE "hashToken" = $1', [hashToken]);
 }
 
+async function trovaOrganizzazioneAttivaPerDominio(dominio) {
+  const righe = await query(
+    `SELECT o.id, o.denominazione
+     FROM "Organizzazione" o
+     JOIN "DominioEmail" d ON d."organizzazioneId" = o.id
+     WHERE d.dominio = $1 AND o.attiva = TRUE`,
+    [dominio],
+  );
+  return righe[0] ?? null;
+}
+
+async function esisteAccountEmail(email) {
+  const righe = await query(
+    'SELECT EXISTS (SELECT 1 FROM "Account" WHERE email = $1) AS esistente',
+    [email],
+  );
+  return righe[0].esistente;
+}
+
+async function creaAccount(tx, { email, passwordHash }) {
+  const righe = await tx.query(
+    `INSERT INTO "Account" (email, "passwordHash", "tipoAccount", stato)
+     VALUES ($1, $2, 'Membro', 'InAttesaDiVerifica')
+     RETURNING id`,
+    [email, passwordHash],
+  );
+  return righe[0].id;
+}
+
+async function creaMembro(tx, { nome, cognome, accountId, organizzazioneId }) {
+  await tx.query(
+    `INSERT INTO "Membro" (nome, cognome, "accountId", "organizzazioneId")
+     VALUES ($1, $2, $3, $4)`,
+    [nome, cognome, accountId, organizzazioneId],
+  );
+}
+
+async function creaTokenVerifica(tx, { hashToken, scadenza, accountId }) {
+  await tx.query(
+    `INSERT INTO "TokenVerifica" (tipo, "hashToken", scadenza, "accountId")
+     VALUES ('VerificaEmail', $1, $2, $3)`,
+    [hashToken, scadenza, accountId],
+  );
+}
+
+async function attivaAccountConTokenVerifica(hashToken, adesso) {
+  return transazione(async (tx) => {
+    const token = (
+      await tx.query(
+        `SELECT t.id, t."accountId"
+         FROM "TokenVerifica" t
+         JOIN "Account" a ON a.id = t."accountId"
+         WHERE t."hashToken" = $1
+           AND t.tipo = 'VerificaEmail'
+           AND t.scadenza > $2
+           AND t."usatoIl" IS NULL
+           AND a.stato = 'InAttesaDiVerifica'
+         FOR UPDATE OF t, a`,
+        [hashToken, adesso],
+      )
+    )[0];
+    if (!token) return false;
+
+    const account = await tx.query(
+      `UPDATE "Account" SET stato = 'Attivo'
+       WHERE id = $1 AND stato = 'InAttesaDiVerifica'
+       RETURNING id`,
+      [token.accountId],
+    );
+    if (!account[0]) return false;
+
+    const aggiornato = await tx.query(
+      `UPDATE "TokenVerifica" SET "usatoIl" = $1
+       WHERE id = $2 AND "usatoIl" IS NULL
+       RETURNING id`,
+      [adesso, token.id],
+    );
+    if (!aggiornato[0]) {
+      throw new Error('Impossibile contrassegnare il token di verifica come usato');
+    }
+    return true;
+  });
+}
+
 // Chiude le connessioni (fine dei test o degli script).
 async function chiudi() {
   if (!pool) return;
@@ -81,5 +165,11 @@ module.exports = {
   creaSessione,
   verificaSessione,
   eliminaSessione,
+  trovaOrganizzazioneAttivaPerDominio,
+  esisteAccountEmail,
+  creaAccount,
+  creaMembro,
+  creaTokenVerifica,
+  attivaAccountConTokenVerifica,
   chiudi,
 };
