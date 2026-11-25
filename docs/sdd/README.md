@@ -48,6 +48,16 @@ La struttura delle cartelle è quella dell'ODD (`docs/odd/`): sottosistemi in
 Ogni altro import tra cartelle è vietato. Un sottosistema usa un altro solo
 tramite il suo Service, mai i suoi file interni.
 
+## Registrazione degli errori (LogService, RNF_SUP_1, DG_16)
+
+- Operazione: `LogService.registraErrore({ codice, descrizione, sottosistema })`, l'unica del Service.
+- Scrive una riga JSON nel file di log dedicato (`LOG_FILE`, predefinito `logs/errori.log`) con
+  `data` e `ora` (ISO 8601, UTC), `codice`, `descrizione`, `sottosistema`. La scrittura è
+  asincrona e non blocca chi chiama; un errore di scrittura va solo sulla console.
+- Codici: `ERRORE_INTERNO` (errori imprevisti, `sottosistema: backend`); `INVIO_EMAIL_FALLITO`
+  (provider che rifiuta l'invio o non risponde, `sottosistema: notifiche`), con nella
+  `descrizione` il tipo di e-mail e il motivo, **senza** l'indirizzo del destinatario.
+
 ## Control e boundary dei modelli di analisi → sottosistemi
 
 | Classe di analisi (`docs/modelli/`) | Sottosistema |

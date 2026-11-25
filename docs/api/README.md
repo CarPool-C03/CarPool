@@ -42,13 +42,17 @@ Formato unico, prodotto dal middleware di #10 a partire dalle classi di `backend
 | Codice HTTP | Quando | Corpo |
 |---|---|---|
 | 400 | dati non validi (un messaggio per campo, RNF_USA_2) | `{ "errori": [{ "campo": "email", "messaggio": "…" }] }` |
-| 401 | nessuna sessione valida o credenziali errate | `{ "errore": { "codice": "NON_AUTENTICATO", "messaggio": "…" } }` |
+| 401 | nessuna sessione valida (assente, scaduta o non riconosciuta) | `{ "errore": { "codice": "NON_AUTENTICATO", "messaggio": "…" } }` |
+| 401 | credenziali errate su `POST /api/auth/login` (messaggio generico, RF_AUTH_06) | `{ "errore": { "codice": "CREDENZIALI_NON_VALIDE", "messaggio": "…" } }` |
 | 403 | ruolo o proprietario non ammesso | `{ "errore": { "codice": "NON_AUTORIZZATO", "messaggio": "…" } }` |
 | 404 | risorsa inesistente | `{ "errore": { "codice": "NON_TROVATO", "messaggio": "…" } }` |
 | 409 | operazione non ammessa nello stato attuale (regola di dominio) | `{ "errore": { "codice": "<CODICE>", "messaggio": "…" } }` |
 | 500 | errore imprevisto (registrato con LogService) | `{ "errore": { "codice": "ERRORE_INTERNO", "messaggio": "Si è verificato un errore" } }` |
 
 - I **codici 409** sono elencati negli endpoint (es. `POSTI_ESAURITI`): il frontend mostra `messaggio`.
+- I due **codici 401** non si confondono: `NON_AUTENTICATO` lo restituisce solo `richiediAutenticazione`;
+  `CREDENZIALI_NON_VALIDE` solo `POST /api/auth/login`, con lo stesso messaggio generico sia per e-mail
+  inesistente sia per password errata (RF_AUTH_06).
 - Classi in `comune/errori.js`: `ErroreValidazione` (400, con `errori`), `ErroreNonAutenticato` (401),
   `ErroreNonAutorizzato` (403), `ErroreNonTrovato` (404), `ErroreConflitto` (409, con `codice`).
 - Gli errori imprevisti sono registrati con `codice: ERRORE_INTERNO` e `sottosistema: backend`.
