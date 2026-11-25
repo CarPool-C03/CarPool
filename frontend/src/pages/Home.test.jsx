@@ -1,39 +1,34 @@
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router';
 import { FluentProvider, webLightTheme } from '@fluentui/react-components';
+import { UtenteProvider } from '../auth/UtenteContext.jsx';
 import Home from './Home.jsx';
 
 function mostraHome() {
   return render(
     <FluentProvider theme={webLightTheme}>
-      <Home />
+      <MemoryRouter>
+        <UtenteProvider
+          utenteIniziale={{
+            ruolo: 'Membro',
+            membro: { nome: 'Luca' },
+            organizzazione: { denominazione: 'Università degli Studi di Salerno' },
+          }}
+        >
+          <Home />
+        </UtenteProvider>
+      </MemoryRouter>
     </FluentProvider>,
   );
 }
 
 describe('Home', () => {
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
-  test('Home: mostra lo stato restituito da /api/health', async () => {
-    const fetchSimulata = vi.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ status: 'ok' }),
-    });
-    vi.stubGlobal('fetch', fetchSimulata);
-
+  test('Home: mostra il saluto e il riquadro di ricerca', () => {
     mostraHome();
 
-    expect(await screen.findByText('Stato del backend: ok')).toBeInTheDocument();
-    expect(fetchSimulata).toHaveBeenCalledWith('/api/health');
-  });
-
-  test('Home: segnala il backend non raggiungibile', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('rete assente')));
-
-    mostraHome();
-
-    expect(await screen.findByText('Backend non raggiungibile')).toBeInTheDocument();
+    expect(screen.getByText('Ciao Luca, dove vai?')).toBeInTheDocument();
+    expect(screen.getByText('Trova un viaggio verso la tua sede')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Pubblica un viaggio' })).toBeInTheDocument();
   });
 });
