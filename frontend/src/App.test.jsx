@@ -71,9 +71,61 @@ async function verificaPercorsi({ utente, voci }) {
           status: 200,
           json: () => Promise.resolve(utente),
         };
+  const rispostaViaggio = {
+    ok: true,
+    status: 200,
+    json: () => Promise.resolve({
+      id: 1,
+      dataOraPartenza: '2026-12-03T08:00:00+01:00',
+      puntoPartenza: 'Salerno, Piazza della Concordia',
+      sede: { id: 1, nome: 'Campus di Fisciano' },
+      postiOfferti: 4,
+      postiDisponibili: 4,
+      contributoIndicativoEuro: null,
+      stato: 'Attivo',
+      conducente: { id: 1, nome: 'Luca', cognome: 'Verdi' },
+    }),
+  };
+  const rispostaProfilo = {
+    ok: true,
+    status: 200,
+    json: () => Promise.resolve({
+      nome: 'Luca',
+      cognome: 'Verdi',
+      email: 'luca.verdi@example.test',
+      organizzazione: {
+        id: 1,
+        denominazione: 'Università degli Studi di Salerno',
+      },
+      ruoloMobilityManager: false,
+      veicolo: {
+        modello: 'Fiat Panda',
+        colore: 'Bianco',
+        numeroPostiPasseggeri: 4,
+      },
+      valutazioneMedia: null,
+    }),
+  };
+  const rispostaPubblicazione = {
+    ok: true,
+    status: 200,
+    json: () => Promise.resolve({
+      postiMassimi: 4,
+      sedi: [{ id: 1, nome: 'Campus di Fisciano' }],
+    }),
+  };
+  const risposteApi = new Map([
+    ['/api/viaggi/1', rispostaViaggio],
+    ['/api/profilo', rispostaProfilo],
+    ['/api/viaggi/pubblicazione', rispostaPubblicazione],
+  ]);
   vi.stubGlobal(
     'fetch',
-    vi.fn().mockResolvedValue(risposta),
+    vi.fn((percorso) =>
+      Promise.resolve(
+        risposteApi.get(String(percorso)) ?? risposta,
+      ),
+    ),
   );
   const erroreConsole = vi.spyOn(console, 'error').mockImplementation(() => {});
   window.innerWidth = 390;

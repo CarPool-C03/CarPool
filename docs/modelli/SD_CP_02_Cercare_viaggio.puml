@@ -19,7 +19,6 @@ actor "p : Passeggero" as P
 participant ":RicercaViaggioBoundary" as B <<boundary>>
 participant ":CercaViaggioControl" as C <<control>>
 participant "s : Sede" as S <<entity>>
-participant "v : Viaggio" as VG <<entity>>
 
 P -> B : richiediRicerca()
 activate B
@@ -46,12 +45,6 @@ loop primo tentativo oppure filtri corretti dopo un errore
     S -->> C : viaggi
     deactivate S
     C -> C : candidati = selezionaCompatibili(viaggi, filtri)
-    loop per ogni viaggio candidato v in candidati
-      C -> VG : posti = calcolaPostiDisponibili()
-      activate VG
-      VG -->> C : posti
-      deactivate VG
-    end
     C -> C : risultati = escludiCompleti(candidati)
     alt risultati non vuoto
       C -> B : mostraRisultati(risultati)
@@ -64,6 +57,11 @@ loop primo tentativo oppure filtri corretti dopo un errore
   deactivate C
   deactivate B
 end
+note over C
+  I risultati effettivi della ricerca includono postiDisponibili calcolati
+  da PersistenzaService come postiOfferti meno le richieste «Accettata».
+  Questo diagramma rappresenta i controlli sui filtri (M1).
+end note
 destroy C
 
 legend bottom left

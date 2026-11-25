@@ -74,7 +74,6 @@ class Viaggio <<entity>> {
   - stato : StatoViaggio = Attivo
   - direzioneEvento : DirezioneEvento [0..1]
   + Viaggio(dati : DatiPubblicazioneViaggio, conducente : Membro, sede : Sede)
-  + calcolaPostiDisponibili() : Intero
   + modificaDettagli(dati : DatiModificaViaggio)
   + isAttivo() : Booleano
   + isConcluso() : Booleano

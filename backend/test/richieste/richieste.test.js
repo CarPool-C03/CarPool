@@ -96,4 +96,35 @@ describe('Richieste di prenotazione: creazione', () => {
       conducente: { id: contesto.conducente.membroId },
     });
   });
+
+  test('Dettaglio: sottrae i posti delle sole richieste Accettata', async () => {
+    const viaggioId = await creaViaggio(contesto, { postiOfferti: 2 });
+    await creaRichiesta(
+      viaggioId,
+      contesto.altroPasseggero.membroId,
+      'Accettata',
+    );
+    await creaRichiesta(viaggioId, contesto.passeggero.membroId, 'InAttesa');
+
+    const risposta = await request(creaApp())
+      .get(`/api/viaggi/${viaggioId}`)
+      .set('Cookie', contesto.cookie);
+
+    expect(risposta.status).toBe(200);
+    expect(risposta.body.dataOraPartenza).toMatch(
+      /^\d{4}-\d{2}-\d{2}T.*(?:Z|[+-]\d{2}:\d{2})$/,
+    );
+    expect(new Date(risposta.body.dataOraPartenza).toISOString())
+      .toBe('2026-12-03T07:00:00.000Z');
+    expect(risposta.body).toMatchObject({
+      id: viaggioId,
+      puntoPartenza: 'Salerno, Piazza della Concordia',
+      sede: { id: contesto.sede.id, nome: contesto.sede.nome },
+      postiOfferti: 2,
+      postiDisponibili: 1,
+      contributoIndicativoEuro: null,
+      stato: 'Attivo',
+      conducente: { id: contesto.conducente.membroId },
+    });
+  });
 });

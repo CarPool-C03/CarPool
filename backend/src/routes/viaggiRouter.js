@@ -15,6 +15,31 @@ function idPositivo(valore) {
 }
 
 router.get(
+  '/viaggi/pubblicazione',
+  richiediAutenticazione,
+  richiediRuolo('Membro'),
+  async (richiesta, risposta) => {
+    const dati = await ViaggioPrenotazioneService.avviaPubblicazione(
+      richiesta.utente.membro.id,
+    );
+    risposta.status(200).json(dati);
+  },
+);
+
+router.post(
+  '/viaggi',
+  richiediAutenticazione,
+  richiediRuolo('Membro'),
+  async (richiesta, risposta) => {
+    const viaggio = await ViaggioPrenotazioneService.pubblicaViaggio(
+      richiesta.utente.membro.id,
+      richiesta.body,
+    );
+    risposta.status(201).json(viaggio);
+  },
+);
+
+router.get(
   '/viaggi/ricerca',
   ...soloMembro,
   async (richiesta, risposta) => {

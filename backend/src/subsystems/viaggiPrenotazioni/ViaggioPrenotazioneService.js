@@ -100,6 +100,8 @@ async function annullaRichiesta(membroId, richiestaId) {
 
 module.exports = {
   cercaViaggi,
+  avviaPubblicazione: GestoreViaggi.avviaPubblicazione,
+  pubblicaViaggio: GestoreViaggi.pubblica,
   dettaglioViaggio,
   inviaRichiesta,
   richiesteDelPasseggero,

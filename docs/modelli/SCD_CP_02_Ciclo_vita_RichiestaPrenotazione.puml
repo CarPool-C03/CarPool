@@ -41,7 +41,8 @@ note as N1
   cancella il viaggio (RF_TRIP_16).
   completa() è invocata da Viaggio.concludi(), 2 ore dopo l'orario di partenza,
   per le richieste Accettate (RF_TRIP_25).
-  I posti disponibili sono calcolati da Viaggio.calcolaPostiDisponibili(): entrare in
-  Accettata occupa un posto, uscirne lo libera (RF_TRIP_11, RF_TRIP_23b).
+  La persistenza calcola i posti disponibili sottraendo ai posti offerti le richieste
+  «Accettata»: entrare in questo stato occupa un posto, uscirne lo libera
+  (RF_TRIP_11, RF_TRIP_23b).
 end note
 @enduml
