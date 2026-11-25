@@ -39,13 +39,14 @@ Ordine (SD_CP_04 con le decisioni M4 di `docs/modelli/README.md`), tutto in `Per
 5. altrimenti la richiesta diventa `Accettata`.
 
 Dopo il commit: evento `RichiestaAccettata` a EventiPrenotazione → NotificaEsitoObserver →
-`NotificaService.inviaEsitoPrenotazione` (entro 60 s, RNF_PERF_1). Un invio fallito non annulla
-l'accettazione (errore nel log). Risposta `200`: `{ "id", "stato": "Accettata", "postiDisponibili": 1 }`.
+`NotificaService.inviaEsitoPrenotazione(email, dati, esito)` con `esito` = `Accettata` (entro 60 s,
+RNF_PERF_1; messaggio e campi di `dati` in `docs/odd/README.md`, «Adapter»). Un invio fallito non
+annulla l'accettazione (errore nel log, codice `INVIO_EMAIL_FALLITO`). Risposta `200`: `{ "id", "stato": "Accettata", "postiDisponibili": 1 }`.
 
 ## POST /api/richieste/:id/rifiuta — #20 · UC_TRIP_06 flusso 1.a
 Service: `ViaggioPrenotazioneService.rifiutaRichiesta(membroId, richiestaId)` (operazione `rifiuta`).
 Stessi controlli 2–3 di `accetta`, poi la richiesta diventa `Rifiutata`; dopo il commit evento
-`RichiestaRifiutata` con la notifica di esito negativo. Risposta `200`: `{ "id", "stato": "Rifiutata" }`.
+`RichiestaRifiutata` con la notifica di esito negativo (`inviaEsitoPrenotazione(email, dati, "Rifiutata")`). Risposta `200`: `{ "id", "stato": "Rifiutata" }`.
 
 ## Observer (cartella `viaggiPrenotazioni/eventi/`, ODD)
 

@@ -17,7 +17,7 @@ Corpo: `{ "nome", "cognome", "email", "password" }`
 
 Effetti: Account `InAttesaDiVerifica` (email in minuscolo, solo hash bcrypt), Membro collegato
 all'organizzazione del dominio, TokenVerifica `VerificaEmail` con scadenza 24 ore, e-mail con il link
-`<FRONTEND_URL>/verifica?token=<token>` tramite `NotificaService.inviaVerificaAccount(email, link)`.
+`<FRONTEND_URL>/verifica?token=<token>` tramite `NotificaService.inviaLinkVerifica(email, link)`.
 
 Risposta `201`: `{ "messaggio": "Ti abbiamo inviato un link di verifica all'indirizzo indicato" }`
 

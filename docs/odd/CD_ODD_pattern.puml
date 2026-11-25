@@ -46,7 +46,7 @@ OsservatorePrenotazione <|.. NotificaEsitoObserver
 RicercaViaggi --> CriterioRicerca : usa
 CriterioRicerca <|.. RicercaPerSede
 CriterioRicerca <|.. RicercaPerEvento
-NotificaEsitoObserver ..> NotificaService : inviaEsitoPrenotazione()
+NotificaEsitoObserver ..> NotificaService : inviaEsitoPrenotazione(email, dati, esito)
 NotificaService --> ProviderEmail : usa
 ProviderEmail <|.. BrevoAdapter
 ProviderEmail <|.. ConsoleEmailAdapter

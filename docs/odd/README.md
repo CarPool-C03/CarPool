@@ -46,6 +46,19 @@ Le route e gli altri sottosistemi non chiamano mai le classi interne.
 
 Dove: `backend/src/subsystems/notifiche/`. L'adapter si sceglie con una variabile d'ambiente.
 
+**Messaggio** passato a `ProviderEmail.invia(messaggio)`: `{ destinatario, oggetto, html }`
+(indirizzo e-mail, testo dell'oggetto, corpo HTML). Lo compone NotificaService; gli adapter lo
+traducono nel formato del provider e restituiscono `true` se il provider ha accettato l'invio.
+
+**`NotificaService.inviaEsitoPrenotazione(email, dati, esito)`** (ServizioEmailBoundary.inviaNotificaEsito):
+- `email`: indirizzo del Passeggero; `esito`: `Accettata` o `Rifiutata` (stato della richiesta);
+- `dati`: `{ nomePasseggero, nomeConducente, puntoPartenza, destinazione, dataOraPartenza }`,
+  `dataOraPartenza` in ISO 8601; li raccoglie NotificaEsitoObserver dalla richiesta e dal viaggio;
+- oggetto: «Richiesta di prenotazione accettata» (RF_TRIP_09) o «Richiesta di prenotazione rifiutata»
+  (RF_TRIP_10); il corpo HTML riporta i campi di `dati` (data e ora nel formato `gg/mm/aaaa hh:mm`);
+- restituisce `true` se l'invio è inoltrato al provider, `false` altrimenti; non lancia eccezioni:
+  un fallimento si registra con LogService (`docs/sdd/README.md`, «Registrazione degli errori»).
+
 ## Observer
 
 | Ruolo | Classi |
