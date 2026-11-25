@@ -44,6 +44,7 @@ forniti dal chiamante.
 - `Account.tipoAccount`: `Membro`, `Amministratore`.
 - `Account.stato`: `InAttesaDiVerifica`, `Attivo`, `Eliminato`; default
   `InAttesaDiVerifica`.
+- `Account.email` è memorizzata in minuscolo (vincolo `account_email_minuscola`); il confronto in login e registrazione avviene sull'indirizzo normalizzato.
 - `Viaggio.stato`: `Attivo`, `Cancellato`, `Concluso`; default `Attivo`.
 - `RichiestaPrenotazione.stato`: `InAttesa`, `Accettata`, `Rifiutata`,
   `Annullata`, `Completata`; default `InAttesa`.
@@ -66,6 +67,7 @@ forniti dal chiamante.
 - Richieste attive: indice univoco parziale su `(passeggeroId, viaggioId)`
   per gli stati `InAttesa` e `Accettata`
   (`richiesta_prenotazione_attiva_unica`).
+- Chiusura delle sessioni e ricerca dei token di un account: indici su `Sessione.accountId` (`sessione_account_idx`) e `TokenVerifica.accountId` (`token_verifica_account_idx`).
 
 ## Token e password
 
