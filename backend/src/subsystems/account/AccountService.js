@@ -16,17 +16,7 @@ const {
 const MESSAGGIO_CREDENZIALI = 'E-mail o password non valide';
 
 async function utenteCorrente(accountId) {
-  const righe = await PersistenzaService.query(
-    `SELECT a.id, a.email, a."tipoAccount", m.id AS "membroId",
-            m.nome, m.cognome, m."ruoloMobilityManager",
-            o.id AS "organizzazioneId", o.denominazione
-     FROM "Account" a
-     LEFT JOIN "Membro" m ON m."accountId" = a.id
-     LEFT JOIN "Organizzazione" o ON o.id = m."organizzazioneId"
-     WHERE a.id = $1 AND a.stato = 'Attivo'`,
-    [accountId],
-  );
-  const account = righe[0];
+  const account = await PersistenzaService.recuperaUtenteCorrente(accountId);
   if (!account) return null;
 
   const amministratore = account.tipoAccount === 'Amministratore';
@@ -51,11 +41,7 @@ async function accedi(email, password) {
   if (typeof email !== 'string' || typeof password !== 'string') {
     throw new ErroreNonAutenticato(MESSAGGIO_CREDENZIALI, 'CREDENZIALI_NON_VALIDE');
   }
-  const righe = await PersistenzaService.query(
-    `SELECT id, "passwordHash", stato FROM "Account" WHERE email = $1`,
-    [email.trim().toLowerCase()],
-  );
-  const account = righe[0];
+  const account = await PersistenzaService.trovaAccountPerEmail(email.trim().toLowerCase());
   const passwordValida =
     account && (await bcrypt.compare(password, account.passwordHash));
   if (!passwordValida) {

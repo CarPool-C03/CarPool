@@ -34,6 +34,28 @@ function creaOperazioniAccount({ query, transazione }) {
     return righe[0].esistente;
   }
 
+  async function trovaAccountPerEmail(email) {
+    const righe = await query(
+      'SELECT id, "passwordHash", stato FROM "Account" WHERE email = $1',
+      [email],
+    );
+    return righe[0] ?? null;
+  }
+
+  async function recuperaUtenteCorrente(accountId) {
+    const righe = await query(
+      `SELECT a.id, a.email, a."tipoAccount", m.id AS "membroId",
+              m.nome, m.cognome, m."ruoloMobilityManager",
+              o.id AS "organizzazioneId", o.denominazione
+       FROM "Account" a
+       LEFT JOIN "Membro" m ON m."accountId" = a.id
+       LEFT JOIN "Organizzazione" o ON o.id = m."organizzazioneId"
+       WHERE a.id = $1 AND a.stato = 'Attivo'`,
+      [accountId],
+    );
+    return righe[0] ?? null;
+  }
+
   async function creaAccount(tx, { email, passwordHash }) {
     const righe = await tx.query(
       `INSERT INTO "Account" (email, "passwordHash", "tipoAccount", stato)
@@ -104,6 +126,8 @@ function creaOperazioniAccount({ query, transazione }) {
     verificaSessione,
     eliminaSessione,
     esisteAccountEmail,
+    trovaAccountPerEmail,
+    recuperaUtenteCorrente,
     creaAccount,
     creaMembro,
     creaTokenVerifica,
