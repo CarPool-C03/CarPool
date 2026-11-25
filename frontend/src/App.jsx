@@ -6,6 +6,7 @@ import RottaProtetta from './components/RottaProtetta.jsx';
 import PaginaIniziale from './pages/PaginaIniziale.jsx';
 import Login from './pages/Login.jsx';
 import Home from './pages/Home.jsx';
+import Profilo from './pages/Profilo.jsx';
 import Ricerca from './pages/Ricerca.jsx';
 import DettaglioViaggio from './pages/DettaglioViaggio.jsx';
 import LeMiePrenotazioni from './pages/LeMiePrenotazioni.jsx';
@@ -72,11 +73,11 @@ export default function App() {
           />
           <Route
             path="/profilo"
-            element={protetta(['Membro'], <PaginaVuota titolo="Profilo e veicolo" />)}
+            element={protetta(['Membro'], <Profilo />)}
           />
           <Route
             path="/profilo/veicolo"
-            element={protetta(['Membro'], <PaginaVuota titolo="Il mio veicolo" />)}
+            element={protetta(['Membro'], <Profilo />)}
           />
           <Route
             path="/report"
