@@ -27,6 +27,7 @@
     "globalSetup": "<rootDir>/test/global-setup.js"
   },
   "dependencies": {
+    "@getbrevo/brevo": "^3.0.4",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "dotenv": "^18.0.10",

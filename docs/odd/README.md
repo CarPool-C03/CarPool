@@ -49,6 +49,13 @@ Dove: `backend/src/subsystems/notifiche/`. L'adapter si sceglie con una variabil
 **Messaggio** passato a `ProviderEmail.invia(messaggio)`: `{ destinatario, oggetto, html }`
 (indirizzo e-mail, testo dell'oggetto, corpo HTML). Lo compone NotificaService; gli adapter lo
 traducono nel formato del provider e restituiscono `true` se il provider ha accettato l'invio.
+NotificaService avvia l'invio senza attendere il provider; restituisce subito `true` se la richiesta
+è stata inoltrata e `false` se non è stato possibile avviarla. Un rifiuto o errore asincrono viene
+registrato con LogService e non viene rilanciato al chiamante.
+
+**`NotificaService.inviaLinkVerifica(email, link)`** (ServizioEmailBoundary.inviaLinkVerifica):
+- `email`: indirizzo del Membro; il corpo HTML in italiano contiene il link di verifica ricevuto.
+- oggetto: «Verifica il tuo account CarPool».
 
 **`NotificaService.inviaEsitoPrenotazione(email, dati, esito)`** (ServizioEmailBoundary.inviaNotificaEsito):
 - `email`: indirizzo del Passeggero; `esito`: `Accettata` o `Rifiutata` (stato della richiesta);
