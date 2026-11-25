@@ -24,6 +24,9 @@
     "setupFiles": [
       "<rootDir>/test/setup-env.js"
     ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/test/close-persistence.js"
+    ],
     "globalSetup": "<rootDir>/test/global-setup.js"
   },
   "dependencies": {

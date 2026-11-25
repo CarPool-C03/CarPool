@@ -84,8 +84,9 @@ Il campo Tipologia (verso evento) non è nella beta. Senza veicolo (`409 VEICOLO
 modulo l'avviso «Per pubblicare un viaggio inserisci prima i dati del veicolo» con link a `/profilo/veicolo`.
 
 **Dettaglio viaggio** (senza mockup): tragitto, data e ora, conducente, posti disponibili, contributo,
-stato. Pulsante «Richiedi posto» se il viaggio è `Attivo`, non è proprio e ha posti; dopo la richiesta,
-badge «In attesa».
+stato. Pulsante «Richiedi posto» se il viaggio è `Attivo` e non è proprio, anche se non ha posti
+disponibili; dopo la richiesta, badge «In attesa». I posti disponibili dipendono dalle richieste
+`Accettata`, non da quelle `InAttesa`.
 
 **I miei viaggi** (senza mockup): schede Attivi e Conclusi; per ogni viaggio tragitto, data, posti
 disponibili, numero di richieste in attesa, pulsanti «Richieste ricevute», «Modifica» (disattivato con

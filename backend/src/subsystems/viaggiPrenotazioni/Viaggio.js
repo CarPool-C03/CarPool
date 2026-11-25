@@ -9,10 +9,6 @@ class Viaggio {
     this.sede = sede;
   }
 
-  calcolaPostiDisponibili() {
-    return this.postiOfferti;
-  }
-
   isAttivo() {
     return this.stato === 'Attivo';
   }

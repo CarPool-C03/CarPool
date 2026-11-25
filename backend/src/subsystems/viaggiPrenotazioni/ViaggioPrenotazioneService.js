@@ -1,6 +1,7 @@
 // ViaggioPrenotazioneService: Facade del sottosistema viaggiPrenotazioni (docs/sdd/README.md, docs/odd/README.md).
 const OrganizzazioneService = require('../organizzazioni/OrganizzazioneService');
 const RicercaViaggi = require('./ricerca/RicercaViaggi');
+const GestorePrenotazioni = require('./GestorePrenotazioni');
 const GestoreViaggi = require('./GestoreViaggi');
 const { ErroreValidazione, ErroreNonAutorizzato } = require('../../comune/errori');
 
@@ -81,9 +82,28 @@ async function cercaViaggi(criterio, membroId, organizzazioneId) {
   return RicercaViaggi.cerca(criterio, membroId);
 }
 
+async function dettaglioViaggio(viaggioId, membroId) {
+  return GestoreViaggi.dettaglioViaggio(viaggioId, membroId);
+}
+
+async function inviaRichiesta(membroId, viaggioId) {
+  return GestorePrenotazioni.inviaRichiesta(membroId, viaggioId);
+}
+
+async function richiesteDelPasseggero(membroId) {
+  return GestorePrenotazioni.richiesteDelPasseggero(membroId);
+}
+
+async function annullaRichiesta(membroId, richiestaId) {
+  return GestorePrenotazioni.annullaRichiesta(membroId, richiestaId);
+}
+
 module.exports = {
   cercaViaggi,
   avviaPubblicazione: GestoreViaggi.avviaPubblicazione,
   pubblicaViaggio: GestoreViaggi.pubblica,
-  dettaglioViaggio: GestoreViaggi.dettaglio,
+  dettaglioViaggio,
+  inviaRichiesta,
+  richiesteDelPasseggero,
+  annullaRichiesta,
 };

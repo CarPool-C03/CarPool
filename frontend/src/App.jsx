@@ -10,6 +10,7 @@ import Profilo from './pages/Profilo.jsx';
 import Ricerca from './pages/Ricerca.jsx';
 import PubblicaViaggio from './pages/PubblicaViaggio.jsx';
 import DettaglioViaggio from './pages/DettaglioViaggio.jsx';
+import LeMiePrenotazioni from './pages/LeMiePrenotazioni.jsx';
 import PaginaVuota from './pages/PaginaVuota.jsx';
 import Registrazione from './pages/Registrazione.jsx';
 import RegistrazioneInviata from './pages/RegistrazioneInviata.jsx';
@@ -61,7 +62,7 @@ export default function App() {
           />
           <Route
             path="/prenotazioni"
-            element={protetta(['Membro'], <PaginaVuota titolo="Le mie prenotazioni" />)}
+            element={protetta(['Membro'], <LeMiePrenotazioni />)}
           />
           <Route
             path="/valutazioni"

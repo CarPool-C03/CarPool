@@ -87,6 +87,13 @@ nel codice la chiamata passa dal Service di quel sottosistema.
   Membro; se il vincolo univoco su `Veicolo.membroId` impedisce l'inserimento, restituisce `null`
   e AccountService solleva `VEICOLO_GIA_PRESENTE` (409).
 
+## Posti disponibili nei viaggi
+
+Le operazioni di ricerca e dettaglio esposte da `PersistenzaService` restituiscono
+`postiDisponibili`, calcolato come `postiOfferti` meno il numero di richieste di prenotazione
+nello stato `Accettata`. Le richieste `InAttesa` non occupano posti. Il calcolo è responsabilità
+della persistenza, non dell'entità `Viaggio`.
+
 ## Design goal che vincolano il codice
 
 - **DG_1** report solo aggregati: i conteggi li calcola PersistenzaService, nessuna riga sui singoli Membri.

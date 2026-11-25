@@ -116,6 +116,13 @@ async function pulisciContesto(contesto) {
   const membriId = contesto.account.map(({ membroId }) => membroId).filter(Boolean);
   if (membriId.length) {
     await PersistenzaService.query(
+      `DELETE FROM "RichiestaPrenotazione" r
+       USING "Viaggio" v
+       WHERE r."viaggioId" = v.id
+         AND v."conducenteId" = ANY($1::integer[])`,
+      [membriId],
+    );
+    await PersistenzaService.query(
       'DELETE FROM "Viaggio" WHERE "conducenteId" = ANY($1::integer[])',
       [membriId],
     );

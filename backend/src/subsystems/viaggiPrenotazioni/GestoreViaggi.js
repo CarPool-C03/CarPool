@@ -37,24 +37,28 @@ function istanteValidoEuropaRoma(valore) {
   const data = match[1];
   const ora = match[2];
   const minuto = match[3];
-  const pareggio = new Date(`${data}T${ora}:${minuto}:00Z`);
+  const secondi = match[4]?.slice(1, 3) ?? '00';
+  const millisecondi = (match[4]?.split('.')[1] ?? '').padEnd(3, '0') || '000';
+  const pareggio = new Date(`${data}T${ora}:${minuto}:${secondi}.${millisecondi}Z`);
   if (Number.isNaN(pareggio.getTime())) return null;
   const candidati = [];
   for (let ore = -12; ore <= 14; ore += 1) {
     const istante = new Date(pareggio.getTime() - ore * 60 * 60 * 1000);
     const romano = partiRomaIstante(istante);
-    if (romano.data === data && romano.orario.startsWith(`${ora}:${minuto}:`)) {
+    if (romano.data === data && romano.orario === `${ora}:${minuto}:${secondi}`) {
       if (!candidati.some((candidato) => candidato.getTime() === istante.getTime())) candidati.push(istante);
     }
   }
-  if (candidati.length !== 1) return null;
-  const istante = candidati[0];
   const conOffset = /(?:Z|[+-][0-2]\d:[0-5]\d)$/.test(valore);
   if (conOffset) {
     const fornito = new Date(valore);
-    if (Number.isNaN(fornito.getTime()) || fornito.getTime() !== istante.getTime()) return null;
+    if (
+      Number.isNaN(fornito.getTime()) ||
+      !candidati.some((candidato) => candidato.getTime() === fornito.getTime())
+    ) return null;
+    return fornito;
   }
-  return istante;
+  return candidati.length === 1 ? candidati[0] : null;
 }
 
 async function profilo(membroId) {
@@ -122,7 +126,7 @@ async function pubblica(membroId, dati) {
   });
 }
 
-async function dettaglio(viaggioId, membroId) {
+async function dettaglioViaggio(viaggioId, membroId) {
   if (!Number.isSafeInteger(viaggioId) || !Number.isSafeInteger(membroId)) throw new ErroreNonTrovato('Viaggio non trovato');
   const viaggio = await PersistenzaService.dettaglioViaggio(viaggioId, membroId);
   if (!viaggio) throw new ErroreNonTrovato('Viaggio non trovato');
@@ -132,5 +136,5 @@ async function dettaglio(viaggioId, membroId) {
 module.exports = {
   avviaPubblicazione,
   pubblica,
-  dettaglio,
+  dettaglioViaggio,
 };

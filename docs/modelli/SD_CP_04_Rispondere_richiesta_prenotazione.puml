@@ -49,10 +49,11 @@ alt attivo = false: viaggio cancellato o concluso (2.b)
   B -->> CD : viaggio non più attivo · exit on failure
 else attivo = true
   alt accettazione
-    C -> V : posti = calcolaPostiDisponibili()
-    activate V
-    V -->> C : posti
-    deactivate V
+    note over C
+      La disponibilità usata dalla guardia è calcolata dalla persistenza come
+      postiOfferti meno le richieste «Accettata». Il controllo dei posti e
+      l'accettazione avvengono nella stessa transazione (DG_5, M4).
+    end note
     alt posti = 0: posti esauriti (2.a)
       C -> B : mostraPostiEsauriti()
       B -->> CD : posti esauriti · exit on failure

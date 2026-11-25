@@ -123,6 +123,10 @@ e minuscole. La query calcola `postiDisponibili` come `postiOfferti` meno il num
 stato `Accettata`, ordina per `dataOraPartenza` e restituisce tutti i dati necessari al formato di
 risposta dell'API. Se nessun viaggio corrisponde, restituisce una lista vuota.
 
+Anche le operazioni di dettaglio viaggio esposte da `PersistenzaService` restituiscono
+`postiDisponibili` calcolato sottraendo ai posti offerti le richieste `Accettata`. Il calcolo
+appartiene alla persistenza, non all'entità `Viaggio`.
+
 ViaggioPrenotazioneService crea il criterio adatto. Dove: `backend/src/subsystems/viaggiPrenotazioni/ricerca/`.
 
 ## Glossario delle classi introdotte

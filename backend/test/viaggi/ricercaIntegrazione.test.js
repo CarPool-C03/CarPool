@@ -1,4 +1,6 @@
 const PersistenzaService = require('../../src/subsystems/persistenza/PersistenzaService');
+const request = require('supertest');
+const { creaApp } = require('../../src/app');
 const {
   aggiungiAccount,
   allineaOrganizzazione,
@@ -76,6 +78,30 @@ describe('Pubblicazione viaggio e ricerca Strategy', () => {
       postiOfferti: 2,
       postiDisponibili: 2,
       contributoIndicativoEuro: 3.5,
+    });
+  });
+
+  test('TC_TRIP_03.01 - ricerca e pubblicazione: membro autorizzato invia una richiesta', async () => {
+    const pubblicazione = await pubblica(
+      contesto,
+      datiViaggio(contesto.sede.id, { postiOfferti: 1 }),
+    );
+    const risultati = await cerca(contesto);
+
+    expect(pubblicazione.status).toBe(201);
+    expect(risultati.status).toBe(200);
+    expect(risultati.body.viaggi).toContainEqual(
+      expect.objectContaining({ id: pubblicazione.body.id }),
+    );
+
+    const richiestaCreata = await request(creaApp())
+      .post(`/api/viaggi/${pubblicazione.body.id}/richieste`)
+      .set('Cookie', contesto.passeggero.cookie);
+
+    expect(richiestaCreata.status).toBe(201);
+    expect(richiestaCreata.body).toMatchObject({
+      stato: 'InAttesa',
+      viaggio: { id: pubblicazione.body.id, stato: 'Attivo' },
     });
   });
 });
