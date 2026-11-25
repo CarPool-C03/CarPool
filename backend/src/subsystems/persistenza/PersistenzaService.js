@@ -1,7 +1,7 @@
 // PersistenzaService: Facade di PersistenzaSubsystem, unico accesso a PostgreSQL
-// (docs/sdd/README.md).
 const { Pool } = require('pg');
 const creaOperazioniOrganizzazioni = require('./OperazioniOrganizzazioni');
+const creaOperazioniPrenotazioni = require('./OperazioniPrenotazioni');
 
 let pool = null;
 
@@ -195,5 +195,6 @@ module.exports = {
   creaTokenVerifica,
   attivaAccountConTokenVerifica,
   ...operazioniOrganizzazioni,
+  ...creaOperazioniPrenotazioni({ query, transazione }),
   chiudi,
 };

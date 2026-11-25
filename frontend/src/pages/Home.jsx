@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useUtente } from '../auth/UtenteContext.jsx';
 import { richiesta } from '../api/client.js';
+import RiquadriPrenotazioniHome from './RiquadriPrenotazioniHome.jsx';
 
 const useStyles = makeStyles({
   pagina: { display: 'flex', flexDirection: 'column', gap: '24px' },
@@ -143,6 +144,7 @@ export default function Home() {
           </Button>
         </form>
       </Card>
+      <RiquadriPrenotazioniHome />
     </section>
   );
 }
