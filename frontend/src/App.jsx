@@ -6,6 +6,7 @@ import RottaProtetta from './components/RottaProtetta.jsx';
 import PaginaIniziale from './pages/PaginaIniziale.jsx';
 import Login from './pages/Login.jsx';
 import Home from './pages/Home.jsx';
+import Ricerca from './pages/Ricerca.jsx';
 import PaginaVuota from './pages/PaginaVuota.jsx';
 import DashboardAmministratore from './pages/admin/DashboardAmministratore.jsx';
 import Organizzazioni from './pages/admin/Organizzazioni.jsx';
@@ -33,7 +34,7 @@ export default function App() {
           <Route path="/home" element={protetta(['Membro'], <Home />)} />
           <Route
             path="/ricerca"
-            element={protetta(['Membro'], <PaginaVuota titolo="Cerca viaggi" />)}
+            element={protetta(['Membro'], <Ricerca />)}
           />
           <Route
             path="/viaggi/nuovo"
