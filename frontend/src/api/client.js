@@ -48,7 +48,7 @@ export async function richiesta(percorso, { metodo = 'GET', corpo } = {}) {
   const risposta = await fetch(percorso, opzioni);
   const dati = await leggiCorpo(risposta);
 
-  if (risposta.status === 401) {
+  if (risposta.status === 401 && dati?.errore?.codice === 'NON_AUTENTICATO') {
     if (window.location.pathname !== '/login') {
       window.location.assign('/login');
     }

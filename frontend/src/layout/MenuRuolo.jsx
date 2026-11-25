@@ -1,6 +1,8 @@
 // Voci del menu in base al ruolo dell'utente.
 import {
   Button,
+  MessageBar,
+  MessageBarBody,
   Menu,
   MenuItem,
   MenuList,
@@ -10,6 +12,7 @@ import {
   tokens,
 } from '@fluentui/react-components';
 import { NavLink, useNavigate } from 'react-router';
+import { useState } from 'react';
 import { useUtente } from '../auth/UtenteContext.jsx';
 
 const VOCI_MEMBRO = [
@@ -79,9 +82,20 @@ function Voce({ etichetta, percorso, visitatore = false }) {
 }
 
 export default function MenuRuolo() {
-  const { utente } = useUtente();
+  const { utente, esci } = useUtente();
   const navigate = useNavigate();
   const styles = useStyles();
+  const [erroreLogout, setErroreLogout] = useState('');
+
+  async function gestisciLogout() {
+    setErroreLogout('');
+    try {
+      await esci();
+      navigate('/');
+    } catch (errore) {
+      setErroreLogout(errore.message);
+    }
+  }
 
   let voci;
   if (!utente) {
@@ -108,7 +122,7 @@ export default function MenuRuolo() {
           <Voce key={voce.percorso} {...voce} visitatore={!utente} />
         ))}
         {utente && (
-          <Button appearance="subtle" onClick={() => navigate('/')}>
+          <Button appearance="subtle" onClick={gestisciLogout}>
             Esci
           </Button>
         )}
@@ -125,11 +139,16 @@ export default function MenuRuolo() {
                   {voce.etichetta}
                 </MenuItem>
               ))}
-              {utente && <MenuItem onClick={() => navigate('/')}>Esci</MenuItem>}
+              {utente && <MenuItem onClick={gestisciLogout}>Esci</MenuItem>}
             </MenuList>
           </MenuPopover>
         </Menu>
       </div>
+      {erroreLogout && (
+        <MessageBar intent="error">
+          <MessageBarBody>{erroreLogout}</MessageBarBody>
+        </MessageBar>
+      )}
     </>
   );
 }

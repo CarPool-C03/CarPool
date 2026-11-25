@@ -7,16 +7,18 @@ class ErroreValidazione extends Error {
 }
 
 class ErroreNonAutenticato extends Error {
-  constructor(messaggio) {
+  constructor(messaggio, codice = 'NON_AUTENTICATO') {
     super(messaggio);
     this.name = 'ErroreNonAutenticato';
+    this.codice = codice;
   }
 }
 
 class ErroreNonAutorizzato extends Error {
-  constructor(messaggio) {
+  constructor(messaggio, codice = 'NON_AUTORIZZATO') {
     super(messaggio);
     this.name = 'ErroreNonAutorizzato';
+    this.codice = codice;
   }
 }
 

@@ -4,6 +4,7 @@ import { UtenteProvider } from './auth/UtenteContext.jsx';
 import Layout from './layout/Layout.jsx';
 import RottaProtetta from './components/RottaProtetta.jsx';
 import PaginaIniziale from './pages/PaginaIniziale.jsx';
+import Login from './pages/Login.jsx';
 import Home from './pages/Home.jsx';
 import PaginaVuota from './pages/PaginaVuota.jsx';
 
@@ -17,7 +18,7 @@ export default function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<PaginaIniziale />} />
-          <Route path="/login" element={<PaginaVuota titolo="Login" />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/registrazione" element={<PaginaVuota titolo="Registrazione" />} />
           <Route
             path="/registrazione/inviata"

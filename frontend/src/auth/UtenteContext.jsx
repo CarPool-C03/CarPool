@@ -2,23 +2,33 @@
 // Il file esporta provider e hook insieme: la regola di Fast Refresh non si applica.
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { ErroreApi, richiesta } from '../api/client.js';
 
 const UtenteContext = createContext(null);
 
 async function caricaUtente() {
-  try {
-    const risposta = await fetch('/api/auth/me', { credentials: 'include' });
-    if (risposta.status === 401 || risposta.status === 404) return null;
-    if (!risposta.ok) return null;
-    return await risposta.json();
-  } catch {
+  const risposta = await fetch('/api/auth/me', { credentials: 'include' });
+  const dati = await risposta.json();
+  if (
+    risposta.status === 401 &&
+    dati?.errore?.codice === 'NON_AUTENTICATO'
+  ) {
     return null;
   }
+  if (!risposta.ok) {
+    throw new ErroreApi({
+      stato: risposta.status,
+      codice: dati?.errore?.codice ?? 'ERRORE',
+      messaggio: dati?.errore?.messaggio ?? 'Impossibile caricare la sessione',
+    });
+  }
+  return dati;
 }
 
 export function UtenteProvider({ utenteIniziale, children }) {
   const [utente, setUtente] = useState(utenteIniziale ?? null);
   const [caricamento, setCaricamento] = useState(utenteIniziale === undefined);
+  const [errore, setErrore] = useState(null);
 
   useEffect(() => {
     if (utenteIniziale !== undefined) return undefined;
@@ -27,6 +37,10 @@ export function UtenteProvider({ utenteIniziale, children }) {
     caricaUtente().then((dati) => {
       if (!attivo) return;
       setUtente(dati);
+      setCaricamento(false);
+    }).catch((erroreCaricamento) => {
+      if (!attivo) return;
+      setErrore(erroreCaricamento);
       setCaricamento(false);
     });
 
@@ -37,14 +51,41 @@ export function UtenteProvider({ utenteIniziale, children }) {
 
   const aggiorna = useCallback(async () => {
     setCaricamento(true);
-    const dati = await caricaUtente();
+    try {
+      const dati = await caricaUtente();
+      setUtente(dati);
+      setErrore(null);
+      return dati;
+    } catch (erroreAggiornamento) {
+      setErrore(erroreAggiornamento);
+      throw erroreAggiornamento;
+    } finally {
+      setCaricamento(false);
+    }
+  }, []);
+
+  const accedi = useCallback(async (email, password) => {
+    const dati = await richiesta('/api/auth/login', {
+      metodo: 'POST',
+      corpo: { email, password },
+    });
     setUtente(dati);
-    setCaricamento(false);
+    setErrore(null);
     return dati;
   }, []);
 
+  const esci = useCallback(async () => {
+    await richiesta('/api/auth/logout', { metodo: 'POST' });
+    setUtente(null);
+    setErrore(null);
+  }, []);
+
+  if (errore) {
+    return <div role="alert">Errore nel caricamento della sessione: {errore.message}</div>;
+  }
+
   return (
-    <UtenteContext.Provider value={{ utente, caricamento, aggiorna }}>
+    <UtenteContext.Provider value={{ utente, caricamento, aggiorna, accedi, esci }}>
       {children}
     </UtenteContext.Provider>
   );
