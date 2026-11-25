@@ -16,6 +16,8 @@ Service: `ViaggioPrenotazioneService.inviaRichiesta(membroId, viaggioId)`. Nessu
 Viaggio inesistente o di un'altra organizzazione → `404`; viaggio proprio → `409` `VIAGGIO_PROPRIO`;
 viaggio non `Attivo` → `409` `VIAGGIO_NON_ATTIVO`; richiesta `InAttesa` o `Accettata` già presente per
 quel viaggio → `409` `RICHIESTA_GIA_PRESENTE`. Risposta `201`: la richiesta, stato `InAttesa`.
+La richiesta è ammessa anche quando i posti disponibili sono zero: i posti sono occupati solo dalle
+richieste `Accettata`, quindi il Conducente può gestire una richiesta in attesa di un posto.
 
 ## GET /api/richieste/mie — #19 · RF_TRIP_14
 Service: `ViaggioPrenotazioneService.richiesteDelPasseggero(membroId)`. Risposta `200`:
