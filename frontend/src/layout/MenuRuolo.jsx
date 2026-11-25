@@ -33,9 +33,17 @@ const useStyles = makeStyles({
     flexWrap: 'wrap',
     '@media (max-width: 768px)': { display: 'none' },
   },
-  mobile: {
-    display: 'none',
-    '@media (max-width: 768px)': { display: 'inline-flex' },
+    mobile: {
+      display: 'none',
+      '@media (max-width: 768px)': {
+      display: 'inline-flex',
+      flexShrink: 0,
+    },
+  },
+  pulsanteMobile: {
+    minWidth: '40px',
+    width: '40px',
+    padding: 0,
   },
   voce: { textDecoration: 'none', color: tokens.colorBrandForeground1 },
   visitatoreAccedi: {
@@ -108,7 +116,7 @@ export default function MenuRuolo() {
       <div className={styles.mobile}>
         <Menu>
           <MenuTrigger disableButtonEnhancement>
-            <Button aria-label="Apri menu">☰</Button>
+            <Button className={styles.pulsanteMobile} aria-label="Apri menu">☰</Button>
           </MenuTrigger>
           <MenuPopover>
             <MenuList>

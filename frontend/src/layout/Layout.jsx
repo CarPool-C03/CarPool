@@ -12,20 +12,30 @@ const useStyles = makeStyles({
     backgroundColor: tokens.colorNeutralBackground2,
   },
   intestazione: {
+
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: '16px',
     flexWrap: 'wrap',
+    width: '100%',
+    boxSizing: 'border-box',
     padding: '10px 24px',
     backgroundColor: tokens.colorNeutralBackground1,
     borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+    '@media (max-width: 768px)': {
+      flexWrap: 'nowrap',
+      padding: '10px 16px',
+      gap: '8px',
+  },
   },
   marchio: {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
     flexWrap: 'wrap',
+    flex: '1 1 auto',
+    minWidth: 0,
   },
   logo: {
     display: 'inline-flex',
@@ -35,8 +45,8 @@ const useStyles = makeStyles({
     color: tokens.colorBrandForeground1,
   },
   immagineLogo: {
-    width: '36px',
-    height: '32px',
+    width: '65px',
+    height: '65px',
     objectFit: 'contain',
   },
   nomeLogo: {
@@ -51,8 +61,12 @@ const useStyles = makeStyles({
     flex: 1,
     width: '100%',
     maxWidth: '1360px',
+    boxSizing: 'border-box',
     margin: '0 auto',
     padding: '32px 36px',
+    '@media (max-width: 768px)': {
+      padding: '20px 16px',
+    },
   },
 });
 
@@ -71,7 +85,7 @@ export default function Layout({ children }) {
         <div className={styles.marchio}>
           <Link to={destinazioneLogo} className={styles.logo} aria-label="CarPool">
             <img
-              src="/logo.svg"
+              src="/CARPOOL.png"
               alt="Logo CarPool"
               className={styles.immagineLogo}
             />
