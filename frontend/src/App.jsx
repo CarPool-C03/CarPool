@@ -8,6 +8,8 @@ import Login from './pages/Login.jsx';
 import Home from './pages/Home.jsx';
 import Profilo from './pages/Profilo.jsx';
 import Ricerca from './pages/Ricerca.jsx';
+import PubblicaViaggio from './pages/PubblicaViaggio.jsx';
+import DettaglioViaggio from './pages/DettaglioViaggio.jsx';
 import PaginaVuota from './pages/PaginaVuota.jsx';
 import Registrazione from './pages/Registrazione.jsx';
 import RegistrazioneInviata from './pages/RegistrazioneInviata.jsx';
@@ -39,11 +41,11 @@ export default function App() {
           />
           <Route
             path="/viaggi/nuovo"
-            element={protetta(['Membro'], <PaginaVuota titolo="Pubblica un viaggio" />)}
+            element={protetta(['Membro'], <PubblicaViaggio />)}
           />
           <Route
             path="/viaggi/:id"
-            element={protetta(['Membro'], <PaginaVuota titolo="Dettaglio viaggio" />)}
+            element={protetta(['Membro'], <DettaglioViaggio />)}
           />
           <Route
             path="/miei-viaggi"

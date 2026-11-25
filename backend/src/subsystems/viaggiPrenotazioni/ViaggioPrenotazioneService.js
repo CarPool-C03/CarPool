@@ -1,6 +1,7 @@
 // ViaggioPrenotazioneService: Facade del sottosistema viaggiPrenotazioni (docs/sdd/README.md, docs/odd/README.md).
 const OrganizzazioneService = require('../organizzazioni/OrganizzazioneService');
 const RicercaViaggi = require('./ricerca/RicercaViaggi');
+const GestoreViaggi = require('./GestoreViaggi');
 const { ErroreValidazione, ErroreNonAutorizzato } = require('../../comune/errori');
 
 function erroreCampo(campo, messaggio) {
@@ -80,4 +81,9 @@ async function cercaViaggi(criterio, membroId, organizzazioneId) {
   return RicercaViaggi.cerca(criterio, membroId);
 }
 
-module.exports = { cercaViaggi };
+module.exports = {
+  cercaViaggi,
+  avviaPubblicazione: GestoreViaggi.avviaPubblicazione,
+  pubblicaViaggio: GestoreViaggi.pubblica,
+  dettaglioViaggio: GestoreViaggi.dettaglio,
+};

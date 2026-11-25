@@ -6,6 +6,31 @@ const { richiediAutenticazione, richiediRuolo } = require('../middleware/autenti
 const router = express.Router();
 
 router.get(
+  '/viaggi/pubblicazione',
+  richiediAutenticazione,
+  richiediRuolo('Membro'),
+  async (richiesta, risposta) => {
+    const dati = await ViaggioPrenotazioneService.avviaPubblicazione(
+      richiesta.utente.membro.id,
+    );
+    risposta.status(200).json(dati);
+  },
+);
+
+router.post(
+  '/viaggi',
+  richiediAutenticazione,
+  richiediRuolo('Membro'),
+  async (richiesta, risposta) => {
+    const viaggio = await ViaggioPrenotazioneService.pubblicaViaggio(
+      richiesta.utente.membro.id,
+      richiesta.body,
+    );
+    risposta.status(201).json(viaggio);
+  },
+);
+
+router.get(
   '/viaggi/ricerca',
   richiediAutenticazione,
   richiediRuolo('Membro'),
@@ -22,6 +47,19 @@ router.get(
       richiesta.utente.organizzazione.id,
     );
     risposta.status(200).json({ viaggi });
+  },
+);
+
+router.get(
+  '/viaggi/:id',
+  richiediAutenticazione,
+  richiediRuolo('Membro'),
+  async (richiesta, risposta) => {
+    const viaggio = await ViaggioPrenotazioneService.dettaglioViaggio(
+      Number(richiesta.params.id),
+      richiesta.utente.membro.id,
+    );
+    risposta.status(200).json(viaggio);
   },
 );
 
