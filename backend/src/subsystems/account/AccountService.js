@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const { createHash, randomBytes } = require('node:crypto');
 const PersistenzaService = require('../persistenza/PersistenzaService');
 const Membro = require('./Membro');
+const GestioneProfiloControl = require('./GestioneProfiloControl');
 const {
   ErroreValidazione,
   ErroreNonAutenticato,
@@ -108,10 +109,20 @@ async function assegnaRuoloMobilityManager(membroId) {
   return aggiornato;
 }
 
+async function profilo(membroId) {
+  return GestioneProfiloControl.profilo(membroId);
+}
+
+async function registraVeicolo(membroId, dati) {
+  return GestioneProfiloControl.registraVeicolo(membroId, dati);
+}
+
 module.exports = {
   accedi,
   esci,
   utenteCorrente,
   cercaMembri,
   assegnaRuoloMobilityManager,
+  profilo,
+  registraVeicolo,
 };

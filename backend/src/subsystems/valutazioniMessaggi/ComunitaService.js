@@ -1,4 +1,8 @@
 // ComunitaService: Facade del sottosistema valutazioniMessaggi (docs/sdd/README.md, docs/odd/README.md).
-// Vuoto finché i task del sottosistema non lo implementano.
+const PersistenzaService = require('../persistenza/PersistenzaService');
 
-module.exports = {};
+async function calcolaValutazioneMedia(membroId) {
+  return PersistenzaService.calcolaValutazioneMedia(membroId);
+}
+
+module.exports = { calcolaValutazioneMedia };

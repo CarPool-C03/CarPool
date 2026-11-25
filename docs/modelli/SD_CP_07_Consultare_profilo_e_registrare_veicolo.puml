@@ -1,0 +1,53 @@
+@startuml SD_CP_07
+' CarPool · UC_AUTH_03 — Consultare il profilo e registrare il veicolo
+skinparam shadowing false
+skinparam defaultFontName Inter
+title CarPool · UC_AUTH_03 Consultare il profilo e registrare il veicolo
+
+actor Membro as MB
+boundary ProfiloBoundary as B
+control AccountService as AS
+control GestioneProfiloControl as C
+participant PersistenzaService as P
+participant ComunitaService as CS
+
+== Consultazione profilo ==
+MB -> B : richiediProfilo()
+B -> AS : profilo(membroId)
+AS -> C : profilo(membroId)
+C -> P : recuperaProfilo(membroId)
+P --> C : dati Membro, Account, Organizzazione, Veicolo [0..1]
+C -> CS : calcolaValutazioneMedia(membroId)
+CS -> P : calcolaValutazioneMedia(membroId)
+P --> CS : media [0..1]
+CS --> C : media [0..1]
+C --> AS : profilo completo
+AS --> B : profilo completo
+B --> MB : mostraProfilo(profilo)
+
+alt Veicolo presente
+  B --> MB : mostraVeicolo(veicolo) in sola lettura
+else Veicolo assente
+  == Registrazione veicolo ==
+  MB -> B : inviaDatiVeicolo(dati)
+  B -> AS : registraVeicolo(membroId, dati)
+  AS -> C : registraVeicolo(membroId, dati)
+  C -> C : validaVeicolo(dati)
+  alt Dati non validi
+    C --> B : ErroreValidazione(errori per campo)
+    B --> MB : mostraErrori(esito)
+  else Dati validi
+    C -> P : inserisciVeicolo(membroId, dati)
+    alt Veicolo già presente
+      P --> C : null
+      C --> B : VEICOLO_GIA_PRESENTE
+      B --> MB : mostraConflittoVeicolo()
+    else Inserimento riuscito
+      P --> C : veicolo
+      C --> AS : veicolo
+      AS --> B : veicolo
+      B --> MB : mostraVeicolo(veicolo) in sola lettura
+    end
+  end
+end
+@enduml

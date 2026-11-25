@@ -23,6 +23,7 @@ senza segnalarlo. Gli identificativi sono quelli del RAD.
 | `SD_CP_04_Rispondere_richiesta_prenotazione.puml` | UC_TRIP_06 Rispondere a una richiesta di prenotazione | RispondiRichiestaControl |
 | `SD_CP_05_Valutare_partecipante.puml` | UC_TRIP_09 Valutare un partecipante al viaggio | ValutaPartecipanteControl |
 | `SD_CP_06_Generare_report_PSCL.puml` | UC_ORG_01 Generare un report PSCL | GeneraReportControl |
+| `SD_CP_07_Consultare_profilo_e_registrare_veicolo.puml` | UC_AUTH_03 Consultare il profilo e registrare il veicolo | GestioneProfiloControl |
 
 Il sequence fissa chi chiama chi e in che ordine (per esempio: il controllo dei
 posti avviene prima di `accetta()`). Per un caso d'uso senza sequence diagram
