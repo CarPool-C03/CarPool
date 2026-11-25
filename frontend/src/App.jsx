@@ -10,6 +10,11 @@ import PaginaVuota from './pages/PaginaVuota.jsx';
 import Registrazione from './pages/Registrazione.jsx';
 import RegistrazioneInviata from './pages/RegistrazioneInviata.jsx';
 import Verifica from './pages/Verifica.jsx';
+import DashboardAmministratore from './pages/admin/DashboardAmministratore.jsx';
+import Organizzazioni from './pages/admin/Organizzazioni.jsx';
+import NuovaOrganizzazione from './pages/admin/NuovaOrganizzazione.jsx';
+import DettaglioOrganizzazione from './pages/admin/DettaglioOrganizzazione.jsx';
+import MembriRuoli from './pages/admin/MembriRuoli.jsx';
 
 function protetta(ruoli, elemento) {
   return <RottaProtetta ruoli={ruoli}>{elemento}</RottaProtetta>;
@@ -76,32 +81,23 @@ export default function App() {
           />
           <Route
             path="/admin"
-            element={protetta(['Amministratore'], <PaginaVuota titolo="Dashboard" />)}
+            element={protetta(['Amministratore'], <DashboardAmministratore />)}
           />
           <Route
             path="/admin/organizzazioni"
-            element={protetta(
-              ['Amministratore'],
-              <PaginaVuota titolo="Organizzazioni" />,
-            )}
+            element={protetta(['Amministratore'], <Organizzazioni />)}
           />
           <Route
             path="/admin/organizzazioni/nuova"
-            element={protetta(
-              ['Amministratore'],
-              <PaginaVuota titolo="Nuova organizzazione" />,
-            )}
+            element={protetta(['Amministratore'], <NuovaOrganizzazione />)}
           />
           <Route
             path="/admin/organizzazioni/:id"
-            element={protetta(
-              ['Amministratore'],
-              <PaginaVuota titolo="Dettaglio organizzazione" />,
-            )}
+            element={protetta(['Amministratore'], <DettaglioOrganizzazione />)}
           />
           <Route
             path="/admin/membri"
-            element={protetta(['Amministratore'], <PaginaVuota titolo="Membri e ruoli" />)}
+            element={protetta(['Amministratore'], <MembriRuoli />)}
           />
         </Routes>
       </Layout>

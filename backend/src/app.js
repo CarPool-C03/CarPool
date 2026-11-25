@@ -5,6 +5,8 @@ const cookieParser = require('cookie-parser');
 const healthRouter = require('./routes/healthRouter');
 const authRouter = require('./routes/authRouter');
 const accountRouter = require('./routes/accountRouter');
+const organizzazioniRouter = require('./routes/organizzazioniRouter');
+const membriRouter = require('./routes/membriRouter');
 const gestoreErrori = require('./middleware/gestoreErrori');
 
 function creaApp() {
@@ -14,6 +16,8 @@ function creaApp() {
   app.use('/api/health', healthRouter);
   app.use('/api/account', accountRouter);
   app.use('/api/auth', authRouter);
+  app.use('/api', organizzazioniRouter);
+  app.use('/api/membri', membriRouter);
   app.use(gestoreErrori);
   return app;
 }
