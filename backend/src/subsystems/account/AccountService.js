@@ -4,6 +4,7 @@ const PersistenzaService = require('../persistenza/PersistenzaService');
 const RegistraAccountControl = require('./RegistraAccountControl');
 const { hashToken } = require('./tokenUtils');
 const Membro = require('./Membro');
+const GestioneProfiloControl = require('./GestioneProfiloControl');
 const {
   ErroreValidazione,
   ErroreNonAutenticato,
@@ -114,6 +115,14 @@ async function assegnaRuoloMobilityManager(membroId) {
   return aggiornato;
 }
 
+async function profilo(membroId) {
+  return GestioneProfiloControl.profilo(membroId);
+}
+
+async function registraVeicolo(membroId, dati) {
+  return GestioneProfiloControl.registraVeicolo(membroId, dati);
+}
+
 module.exports = {
   accedi,
   esci,
@@ -122,4 +131,6 @@ module.exports = {
   verificaLink,
   cercaMembri,
   assegnaRuoloMobilityManager,
+  profilo,
+  registraVeicolo,
 };

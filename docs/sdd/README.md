@@ -19,7 +19,7 @@ controllate dagli autori dell'SDD; se l'SDD cambia, si aggiornano qui e in
 | GestioneViaggiPrenotazioniSubsystem | ViaggioPrenotazioneService | `backend/src/subsystems/viaggiPrenotazioni/` | UC_TRIP_01–06, 08, 11–14 |
 | GestioneOrganizzazioniSubsystem | OrganizzazioneService | `backend/src/subsystems/organizzazioni/` | UC_ADM_01–03, RF_ORG_03 |
 | ReportisticaPSCLSubsystem | ReportService | `backend/src/subsystems/reportistica/` | UC_ORG_01–02 |
-| ValutazioniMessaggiSubsystem | ComunitaService | `backend/src/subsystems/valutazioniMessaggi/` | UC_TRIP_09, 10, 15 |
+| ValutazioniMessaggiSubsystem | ComunitaService | `backend/src/subsystems/valutazioniMessaggi/` | UC_AUTH_03, UC_TRIP_09, 10, 15 |
 | NotificheSubsystem (servizi) | NotificaService | `backend/src/subsystems/notifiche/` | — |
 | PersistenzaSubsystem (servizi) | PersistenzaService | `backend/src/subsystems/persistenza/` | — |
 | LoggingSubsystem (servizi) | LogService | `backend/src/subsystems/logging/` | — |
@@ -36,7 +36,7 @@ La struttura delle cartelle è quella dell'ODD (`docs/odd/`): sottosistemi in
 
 | Cartella (`subsystems/`) | Può usare |
 |---|---|
-| account | OrganizzazioneService, NotificaService, PersistenzaService, LogService |
+| account | OrganizzazioneService, ComunitaService, NotificaService, PersistenzaService, LogService |
 | viaggiPrenotazioni | AccountService, OrganizzazioneService, NotificaService, PersistenzaService, LogService |
 | organizzazioni | PersistenzaService, LogService |
 | reportistica | AccountService, OrganizzazioneService, PersistenzaService, LogService |
@@ -66,12 +66,26 @@ tramite il suo Service, mai i suoi file interni.
 | PubblicaViaggioControl, CercaViaggioControl, RispondiRichiestaControl | GestioneViaggiPrenotazioniSubsystem |
 | ValutaPartecipanteControl | ValutazioniMessaggiSubsystem |
 | GeneraReportControl | ReportisticaPSCLSubsystem |
+| GestioneProfiloControl | GestioneAccountProfiloSubsystem |
 | Boundary dell'interfaccia (Registrazione, RicercaViaggio, …) | InterfacciaUtenteSubsystem |
 | ServizioEmailBoundary | NotificheSubsystem (NotificaService) |
 
 Quando un sequence diagram fa chiamare a un control un'entity di un altro
 sottosistema (es. `Organizzazione.trovaPerDominio` da RegistraAccountControl),
 nel codice la chiamata passa dal Service di quel sottosistema.
+
+## Profilo e veicolo (UC_AUTH_03)
+
+- `AccountService.profilo(membroId)` usa `PersistenzaService.recuperaProfilo(membroId)` per leggere
+  Membro, Account, Organizzazione e l'eventuale Veicolo; delega la media a
+  `ComunitaService.calcolaValutazioneMedia(membroId)`.
+- `ComunitaService.calcolaValutazioneMedia(membroId)` usa
+  `PersistenzaService.calcolaValutazioneMedia(membroId)`. Restituisce una media arrotondata a due
+  decimali oppure `null` se non ci sono valutazioni.
+- `AccountService.registraVeicolo(membroId, dati)` valida i campi prima di chiamare
+  `PersistenzaService.inserisciVeicolo(membroId, dati)`. L'operazione inserisce un solo Veicolo per
+  Membro; se il vincolo univoco su `Veicolo.membroId` impedisce l'inserimento, restituisce `null`
+  e AccountService solleva `VEICOLO_GIA_PRESENTE` (409).
 
 ## Design goal che vincolano il codice
 

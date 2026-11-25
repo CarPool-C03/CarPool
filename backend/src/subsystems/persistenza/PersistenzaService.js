@@ -2,6 +2,7 @@
 // (docs/sdd/README.md).
 const { Pool } = require('pg');
 const creaOperazioniOrganizzazioni = require('./OperazioniOrganizzazioni');
+const creaOperazioniProfilo = require('./OperazioniProfilo');
 
 let pool = null;
 
@@ -39,6 +40,7 @@ async function transazione(fn) {
 }
 
 const operazioniOrganizzazioni = creaOperazioniOrganizzazioni({ query, transazione });
+const operazioniProfilo = creaOperazioniProfilo({ query });
 
 async function creaSessione({ accountId, hashToken, ultimaAttivita }) {
   return query(
@@ -195,5 +197,6 @@ module.exports = {
   creaTokenVerifica,
   attivaAccountConTokenVerifica,
   ...operazioniOrganizzazioni,
+  ...operazioniProfilo,
   chiudi,
 };

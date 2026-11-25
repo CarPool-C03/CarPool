@@ -1,6 +1,6 @@
 @startuml CD_CP_02
 ' CarPool · Class diagram di analisi — Boundary e Control
-' Ogni messaggio ricevuto nei sequence SD_CP_01–06 è un'operazione della classe destinataria.
+' Ogni messaggio ricevuto nei sequence SD_CP_01–07 è un'operazione della classe destinataria.
 skinparam shadowing false
 skinparam defaultFontName Inter
 skinparam classAttributeIconSize 0
@@ -73,6 +73,14 @@ package boundary {
     + mostraReport(report : ReportPSCL)
     + mostraErrorePeriodo()
   }
+  class ProfiloBoundary <<boundary>> {
+    + richiediProfilo()
+    + mostraProfilo(profilo)
+    + inviaDatiVeicolo(dati : DatiVeicolo)
+    + mostraVeicolo(veicolo : Veicolo)
+    + mostraErrori(esito : EsitoValidazione)
+    + mostraConflittoVeicolo()
+  }
 }
 
 package "boundary · sistemi esterni" as ext {
@@ -115,6 +123,15 @@ package control {
     - validaPeriodo(inizio : DataOra, fine : DataOra) : Booleano
     - aggregaDati(viaggi : Viaggio [0..*]) : ReportPSCL
   }
+  class GestioneProfiloControl <<control>> {
+    + profilo(membroId : Intero)
+    + registraVeicolo(membroId : Intero, dati : DatiVeicolo)
+    - validaVeicolo(dati : DatiVeicolo) : EsitoValidazione
+  }
+}
+
+package "service di altri sottosistemi" as svc {
+  class ComunitaService <<control>>
 }
 
 package "entity (dettaglio nel CD_CP_01)" as ent {
@@ -136,6 +153,7 @@ PubblicazioneViaggioBoundary "1" -- "1" PubblicaViaggioControl : crea e invoca >
 GestionePrenotazioneBoundary "1" -- "1" RispondiRichiestaControl : crea e invoca >
 ValutazioneBoundary "1" -- "1" ValutaPartecipanteControl : crea e invoca >
 ReportPSCLBoundary "1" -- "1" GeneraReportControl : crea e invoca >
+ProfiloBoundary "1" -- "1" GestioneProfiloControl : crea e invoca >
 
 ' Dipendenze dei control
 RegistraAccountControl ..> ServizioEmailBoundary : <<use>>
@@ -158,4 +176,7 @@ GeneraReportControl ..> Membro : <<use>>
 GeneraReportControl ..> Organizzazione : <<use>>
 GeneraReportControl ..> Sede : <<use>>
 GeneraReportControl ..> Viaggio : <<use>>
+GestioneProfiloControl ..> Membro : <<use>>
+GestioneProfiloControl ..> Veicolo : <<use>>
+GestioneProfiloControl ..> ComunitaService : <<use>>
 @enduml

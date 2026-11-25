@@ -7,6 +7,7 @@ const authRouter = require('./routes/authRouter');
 const accountRouter = require('./routes/accountRouter');
 const organizzazioniRouter = require('./routes/organizzazioniRouter');
 const membriRouter = require('./routes/membriRouter');
+const profiloRouter = require('./routes/profiloRouter');
 const viaggiRouter = require('./routes/viaggiRouter');
 const gestoreErrori = require('./middleware/gestoreErrori');
 
@@ -19,6 +20,7 @@ function creaApp() {
   app.use('/api/auth', authRouter);
   app.use('/api', organizzazioniRouter);
   app.use('/api/membri', membriRouter);
+  app.use('/api/profilo', profiloRouter);
   app.use('/api', viaggiRouter);
   app.use(gestoreErrori);
   return app;

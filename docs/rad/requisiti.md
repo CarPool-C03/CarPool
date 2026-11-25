@@ -18,6 +18,7 @@ questo file nella stessa PR. Le issue citano i requisiti con questi identificati
 | RF_AUTH_09 | Aggiornamento Dati Veicolo | Il Sistema deve permettere al Membro di aggiornare i dati della propria auto all'interno del proprio profilo | Bassa |
 | RF_AUTH_10 | Recupero Credenziali | Il Sistema deve consentire al Membro di richiedere il recupero delle sue credenziali di accesso (via link sull’email con cui si è registrato) | Bassa |
 | RF_AUTH_11 | Cancellazione Dati Veicolo | Il Sistema deve permettere all’utente di cancellare i dati inseriti riguardo la proprio auto | Bassa |
+| RF_AUTH_12 | Consultazione Profilo | Il Sistema deve consentire al Membro di consultare i propri dati personali, l’organizzazione di appartenenza e i dati del veicolo associato al profilo. | Alta |
 | RF_TRIP_01a | Pubblicazione Viaggio | Il Sistema deve permettere al Conducente con un veicolo associato al profilo di pubblicare un viaggio singolo verso una sede dell'organizzazione, indicando data, orario, punto di partenza e numero di posti offerti. | Alta |
 | RF_TRIP_01b | Vincolo Posti Offerti | Il Sistema deve impedire al Conducente di offrire un numero di posti superiore al numero di posti passeggeri del veicolo associato al proprio profilo. | Alta |
 | RF_TRIP_02 | Inserimento Costo Indicativo | Il Sistema deve permettere al Conducente di indicare facoltativamente, in fase di pubblicazione del viaggio, un contributo spese in euro per Passeggero, mostrato come informazione non vincolante. | Alta |
