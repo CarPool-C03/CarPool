@@ -51,5 +51,7 @@ Formato unico, prodotto dal middleware di #10 a partire dalle classi di `backend
 - I **codici 409** sono elencati negli endpoint (es. `POSTI_ESAURITI`): il frontend mostra `messaggio`.
 - Classi in `comune/errori.js`: `ErroreValidazione` (400, con `errori`), `ErroreNonAutenticato` (401),
   `ErroreNonAutorizzato` (403), `ErroreNonTrovato` (404), `ErroreConflitto` (409, con `codice`).
+- Gli errori imprevisti sono registrati con `codice: ERRORE_INTERNO` e `sottosistema: backend`.
+  Nel log, `data` è una data ISO 8601 e `ora` è l'ora ISO 8601 in UTC.
 - Un campo di un elenco si indica con l'indice: `"campo": "sedi[0].nome"`.
 - I messaggi sono in italiano e dicono il campo e il formato atteso (RNF_USA_2).
