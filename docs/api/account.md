@@ -21,6 +21,11 @@ all'organizzazione del dominio, TokenVerifica `VerificaEmail` con scadenza 24 or
 
 Risposta `201`: `{ "messaggio": "Ti abbiamo inviato un link di verifica all'indirizzo indicato" }`
 
+Se `NotificaService.inviaLinkVerifica(email, link)` restituisce `false`, la registrazione non conferma
+l'invio: l'operazione viene annullata e Account, Membro e TokenVerifica creati non restano nel database.
+La risposta è `500`:
+`{ "errore": { "codice": "ERRORE_INTERNO", "messaggio": "Si è verificato un errore" } }`.
+
 ## POST /api/account/verifica — #12 · UC_AUTH_01 passi 7–8
 Ruoli: nessuno. Service: `AccountService.verificaLink(token)` (RegistraAccountControl.verificaLink).
 

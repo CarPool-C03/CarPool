@@ -7,7 +7,11 @@ import PaginaIniziale from './pages/PaginaIniziale.jsx';
 import Login from './pages/Login.jsx';
 import Home from './pages/Home.jsx';
 import Profilo from './pages/Profilo.jsx';
+import Ricerca from './pages/Ricerca.jsx';
 import PaginaVuota from './pages/PaginaVuota.jsx';
+import Registrazione from './pages/Registrazione.jsx';
+import RegistrazioneInviata from './pages/RegistrazioneInviata.jsx';
+import Verifica from './pages/Verifica.jsx';
 import DashboardAmministratore from './pages/admin/DashboardAmministratore.jsx';
 import Organizzazioni from './pages/admin/Organizzazioni.jsx';
 import NuovaOrganizzazione from './pages/admin/NuovaOrganizzazione.jsx';
@@ -25,16 +29,13 @@ export default function App() {
         <Routes>
           <Route path="/" element={<PaginaIniziale />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/registrazione" element={<PaginaVuota titolo="Registrazione" />} />
-          <Route
-            path="/registrazione/inviata"
-            element={<PaginaVuota titolo="Controlla la tua e-mail" />}
-          />
-          <Route path="/verifica" element={<PaginaVuota titolo="Esito della verifica" />} />
+          <Route path="/registrazione" element={<Registrazione />} />
+          <Route path="/registrazione/inviata" element={<RegistrazioneInviata />} />
+          <Route path="/verifica" element={<Verifica />} />
           <Route path="/home" element={protetta(['Membro'], <Home />)} />
           <Route
             path="/ricerca"
-            element={protetta(['Membro'], <PaginaVuota titolo="Cerca viaggi" />)}
+            element={protetta(['Membro'], <Ricerca />)}
           />
           <Route
             path="/viaggi/nuovo"

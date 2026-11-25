@@ -5,6 +5,7 @@ import {
   Card,
   Field,
   Input,
+  Select,
   Text,
   Title1,
   Title2,
@@ -13,6 +14,7 @@ import {
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useUtente } from '../auth/UtenteContext.jsx';
+import { richiesta } from '../api/client.js';
 
 const useStyles = makeStyles({
   pagina: { display: 'flex', flexDirection: 'column', gap: '24px' },
@@ -36,20 +38,34 @@ export default function Home() {
   const styles = useStyles();
   const { utente } = useUtente();
   const navigate = useNavigate();
-  const [partenza, setPartenza] = useState('');
-  const [destinazione, setDestinazione] = useState('');
+  const [zona, setZona] = useState('');
+  const [sedeId, setSedeId] = useState('');
   const [data, setData] = useState('');
-  const [orario, setOrario] = useState('');
+  const [orarioMinimo, setOrarioMinimo] = useState('');
+  const [sedi, setSedi] = useState([]);
+  const [sediCaricate, setSediCaricate] = useState(false);
+  const [caricamentoSedi, setCaricamentoSedi] = useState(false);
+  const [erroreSedi, setErroreSedi] = useState('');
 
   const nome = utente?.membro?.nome ?? '';
 
+  async function caricaSedi() {
+    if (sediCaricate || caricamentoSedi) return;
+    setCaricamentoSedi(true);
+    try {
+      setSedi(await richiesta('/api/sedi'));
+      setSediCaricate(true);
+      setErroreSedi('');
+    } catch (errore) {
+      setErroreSedi(errore.message);
+    } finally {
+      setCaricamentoSedi(false);
+    }
+  }
+
   function cerca(evento) {
     evento.preventDefault();
-    const parametri = new URLSearchParams();
-    if (partenza) parametri.set('partenza', partenza);
-    if (destinazione) parametri.set('destinazione', destinazione);
-    if (data) parametri.set('data', data);
-    if (orario) parametri.set('orario', orario);
+    const parametri = new URLSearchParams({ zona, sedeId, data, orarioMinimo });
     navigate(`/ricerca?${parametri.toString()}`);
   }
 
@@ -75,21 +91,54 @@ export default function Home() {
         <Title2 as="h2">Trova un viaggio verso la tua sede</Title2>
         <form className={styles.modulo} onSubmit={cerca}>
           <Field label="Partenza">
-            <Input value={partenza} onChange={(e) => setPartenza(e.target.value)} />
-          </Field>
-          <Field label="Destinazione">
             <Input
-              value={destinazione}
-              onChange={(e) => setDestinazione(e.target.value)}
+              name="zona"
+              required
+              value={zona}
+              onChange={(e) => setZona(e.target.value)}
             />
           </Field>
+          <Field
+            label="Destinazione"
+            validationMessage={erroreSedi || undefined}
+            validationState={erroreSedi ? 'error' : 'none'}
+          >
+            <Select
+              name="sedeId"
+              required
+              value={sedeId}
+              onFocus={caricaSedi}
+              onChange={(e) => setSedeId(e.target.value)}
+            >
+              <option value="">
+                {caricamentoSedi ? 'Caricamento sedi…' : 'Seleziona una sede'}
+              </option>
+              {sedi.map((sede) => (
+                <option key={sede.id} value={sede.id}>
+                  {sede.nome}
+                </option>
+              ))}
+            </Select>
+          </Field>
           <Field label="Data">
-            <Input type="date" value={data} onChange={(e) => setData(e.target.value)} />
+            <Input
+              name="data"
+              type="date"
+              required
+              value={data}
+              onChange={(e) => setData(e.target.value)}
+            />
           </Field>
           <Field label="Orario">
-            <Input type="time" value={orario} onChange={(e) => setOrario(e.target.value)} />
+            <Input
+              name="orarioMinimo"
+              type="time"
+              required
+              value={orarioMinimo}
+              onChange={(e) => setOrarioMinimo(e.target.value)}
+            />
           </Field>
-          <Button appearance="primary" type="submit">
+          <Button appearance="primary" type="submit" disabled={!sediCaricate || !sedeId}>
             Cerca
           </Button>
         </form>

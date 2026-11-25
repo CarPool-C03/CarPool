@@ -84,12 +84,45 @@ Dove: `backend/src/subsystems/viaggiPrenotazioni/eventi/`.
 
 | Ruolo | Classi |
 |---|---|
-| Strategy | CriterioRicerca (interfaccia): costruisce il Filtro della query |
+| Strategy | CriterioRicerca (interfaccia): `costruisciFiltro(): Filtro` |
 | ConcreteStrategy | RicercaPerSede (zona, sede, data, orario), RicercaPerEvento (evento, direzione, zona) |
 | Context | RicercaViaggi |
 
-RicercaViaggi aggiunge le condizioni comuni (viaggio Attivo, futuro, almeno un
-posto disponibile) e fa eseguire **un'unica query** a PersistenzaService (DG_7).
+`RicercaPerSede.costruisciFiltro()` restituisce un oggetto `Filtro` composto solo da valori, senza
+frammenti SQL:
+
+```text
+{
+  zona: String,
+  sedeId: Intero,
+  data: String (AAAA-MM-GG),
+  orarioMinimo: String (HH:MM)
+}
+```
+
+Data e orario sono interpretati nel fuso `Europe/Rome`, come nell'API. Il router ricava `membroId` e
+`organizzazioneId` dal contesto di autenticazione lato server e li passa a
+`ViaggioPrenotazioneService.cercaViaggi(criterio, membroId, organizzazioneId)`; non sono parametri
+pubblici. La Facade verifica che `sedeId` appartenga all'organizzazione usando
+`OrganizzazioneService.sediOrganizzazione(organizzazioneId)` e non avvia la ricerca se non vi
+appartiene. Poi delega a `RicercaViaggi`, che riceve il criterio e `membroId`, applica le condizioni
+comuni (viaggio `Attivo`, futuro, almeno un posto disponibile) e il criterio di esclusione dei
+viaggi in cui `membroId` è conducente.
+L'operazione del Context è `RicercaViaggi.cerca(criterio, membroId)`.
+
+Non esiste un'operazione di ricerca specifica già esposta da `PersistenzaService` (l'operazione
+`query(sql, parametri)` è generica). Si propone quindi di aggiungere
+`PersistenzaService.cercaViaggi(filtro: Filtro, membroId: Intero): Promise<Array<{ id: Intero,
+dataOraPartenza: DataOra, puntoPartenza: String, sede: { id: Intero, nome: String },
+postiOfferti: Intero, postiDisponibili: Intero, contributoIndicativoEuro: Decimale | null,
+stato: String, conducente: { id: Intero, nome: String, cognome: String } }>>`.
+L'operazione esegue **un'unica query parametrizzata** per selezionare i viaggi `Attivo` e futuri,
+compatibili con i quattro campi del filtro, con almeno un posto disponibile e senza il conducente
+`membroId`. `zona` corrisponde a una sottostringa di `puntoPartenza` senza distinzione tra maiuscole
+e minuscole. La query calcola `postiDisponibili` come `postiOfferti` meno il numero di richieste in
+stato `Accettata`, ordina per `dataOraPartenza` e restituisce tutti i dati necessari al formato di
+risposta dell'API. Se nessun viaggio corrisponde, restituisce una lista vuota.
+
 ViaggioPrenotazioneService crea il criterio adatto. Dove: `backend/src/subsystems/viaggiPrenotazioni/ricerca/`.
 
 ## Glossario delle classi introdotte

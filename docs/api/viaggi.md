@@ -37,7 +37,12 @@ Service: `ViaggioPrenotazioneService.dettaglioViaggio(viaggioId, membroId)`. Vis
 stessa organizzazione del conducente (altrimenti `404`). Risposta `200`: il viaggio.
 
 ## GET /api/viaggi/ricerca — #17 · UC_TRIP_02
-Service: `ViaggioPrenotazioneService.cercaViaggi(criterio)`, con `criterio` = `new RicercaPerSede(filtri)`.
+Service: `ViaggioPrenotazioneService.cercaViaggi(criterio, membroId, organizzazioneId)`, con
+`criterio` = `new RicercaPerSede(filtri)`. Il router ricava `membroId` e `organizzazioneId` dal
+contesto di autenticazione lato server, non dai parametri pubblici della richiesta, e li passa alla
+Facade. La Facade verifica la sede con `OrganizzazioneService.sediOrganizzazione(organizzazioneId)`
+prima di delegare a `RicercaViaggi`; quest'ultimo passa `filtro` e `membroId` all'operazione proposta
+`PersistenzaService.cercaViaggi(filtro, membroId)` per escludere i viaggi in cui quel membro è conducente.
 
 Parametri: `zona`, `sedeId`, `data` (`AAAA-MM-GG`), `orarioMinimo` (`HH:MM`), tutti obbligatori.
 Errori 400 sul parametro: mancante (UC 4.b1); `sedeId` di un'altra organizzazione; `data` precedente
@@ -46,7 +51,8 @@ Data e orario si interpretano nel fuso `Europe/Rome`.
 
 Selezione: viaggi `Attivo` verso `sedeId`, nella `data` indicata, con partenza ≥ `orarioMinimo` e nel
 futuro, almeno 1 posto disponibile, conducente diverso dal Passeggero, `puntoPartenza` che contiene
-`zona` senza distinguere maiuscole e minuscole. Ordinati per `dataOraPartenza`.
+`zona` senza distinguere maiuscole e minuscole. La persistenza calcola i posti disponibili sottraendo
+le richieste `Accettata` ai posti offerti. Ordinati per `dataOraPartenza`.
 Risposta `200`: `{ "viaggi": [ … ] }` (formato sopra); elenco vuoto → il frontend mostra
 «Nessun viaggio disponibile per i filtri inseriti» (UC 4.a1).
 

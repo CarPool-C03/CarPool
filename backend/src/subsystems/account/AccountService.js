@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
-const { createHash, randomBytes } = require('node:crypto');
+const { randomBytes } = require('node:crypto');
 const PersistenzaService = require('../persistenza/PersistenzaService');
+const RegistraAccountControl = require('./RegistraAccountControl');
+const { hashToken } = require('./tokenUtils');
 const Membro = require('./Membro');
 const GestioneProfiloControl = require('./GestioneProfiloControl');
 const {
@@ -12,10 +14,6 @@ const {
 } = require('../../comune/errori');
 
 const MESSAGGIO_CREDENZIALI = 'E-mail o password non valide';
-
-function hashToken(token) {
-  return createHash('sha256').update(token).digest('hex');
-}
 
 async function utenteCorrente(accountId) {
   const righe = await PersistenzaService.query(
@@ -82,6 +80,14 @@ async function esci(token) {
   await PersistenzaService.eliminaSessione(hashToken(token));
 }
 
+function registra(dati) {
+  return RegistraAccountControl.registra(dati);
+}
+
+function verificaLink(token) {
+  return RegistraAccountControl.verificaLink(token);
+}
+
 async function cercaMembri(email) {
   const termine = typeof email === 'string' ? email.trim() : '';
   if (termine.length < 3) {
@@ -121,6 +127,8 @@ module.exports = {
   accedi,
   esci,
   utenteCorrente,
+  registra,
+  verificaLink,
   cercaMembri,
   assegnaRuoloMobilityManager,
   profilo,

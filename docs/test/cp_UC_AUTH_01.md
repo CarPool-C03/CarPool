@@ -19,8 +19,9 @@
 | Indirizzo e-mail | Dominio | di un'organizzazione partner · di nessuna organizzazione partner [error] |
 | Indirizzo e-mail (ambiente) | Associazione a un account | non associato · già associato a un account [error] |
 | Link di verifica | Validità | valido · non valido [error] |
+| Invio del link di verifica | Esito di NotificaService.inviaLinkVerifica | true · false [error] |
 
-Con i vincoli [error] si ottengono 6 test frame: 5 di errore e 1 combinazione dei valori restanti.
+Con i vincoli [error] si ottengono 7 test frame: 6 di errore e 1 combinazione dei valori restanti.
 
 ## Test frame
 
@@ -32,6 +33,7 @@ Con i vincoli [error] si ottengono 6 test frame: 5 di errore e 1 combinazione de
 | TF04 | dati validi, dominio partner, e-mail già associata | Nessun nuovo account; errore sull'indirizzo e-mail (4.b1). |
 | TF05 | dati validi, dominio partner, e-mail libera, link non valido | Account nello stato «In attesa di verifica»; Visitatore informato (8.a1); exit on failure. |
 | TF06 | dati validi, dominio partner, e-mail libera, link valido | Account nello stato «Attivo», associato all'organizzazione del dominio; exit on success. |
+| TF07 | dati validi, dominio partner, e-mail libera, invio del link rifiutato | Nessun Account, Membro o TokenVerifica residuo; risposta 500 `ERRORE_INTERNO` (docs/api/account.md). |
 
 ## Specifica dei casi di test
 
@@ -43,6 +45,7 @@ Con i vincoli [error] si ottengono 6 test frame: 5 di errore e 1 combinazione de
 | TC_AUTH_01.04 | Ambiente: account esistente per anna.bianchi@studenti.unisa.it. Input: dati validi con la stessa e-mail. | Numero di account invariato; errore relativo all'indirizzo e-mail; nessuna richiesta allo stub. |
 | TC_AUTH_01.05 | Dati validi con e-mail mario.rossi@studenti.unisa.it; poi apertura di un link con codice non emesso dal sistema. | Dopo la registrazione: account «In attesa di verifica» e una richiesta di invio allo stub. Dopo il link: account ancora «In attesa di verifica»; Visitatore informato. |
 | TC_AUTH_01.06 | Dati validi con e-mail mario.rossi@studenti.unisa.it; poi apertura del link registrato dallo stub. | Dopo la registrazione: account «In attesa di verifica», una richiesta di invio del link a mario.rossi@studenti.unisa.it. Dopo il link: account «Attivo», associato a «Università degli Studi di Salerno»; attivazione confermata. |
+| TC_AUTH_01.07 | Dati validi con e-mail mario.rossi@studenti.unisa.it; lo stub fa restituire `false` a `NotificaService.inviaLinkVerifica(email, link)`. | La registrazione restituisce 500 `ERRORE_INTERNO`; Account, Membro e TokenVerifica creati vengono annullati e non restano nel database. |
 
 ## Ambiente, procedure speciali e dipendenze
 
