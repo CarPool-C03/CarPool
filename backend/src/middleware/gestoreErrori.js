@@ -25,7 +25,7 @@ function gestoreErrori(errore, _richiesta, risposta, next) {
   if (erroreNoto) {
     const [, stato, codice] = erroreNoto;
     return risposta.status(stato).json({
-      errore: { codice, messaggio: errore.message },
+      errore: { codice: errore.codice || codice, messaggio: errore.message },
     });
   }
 

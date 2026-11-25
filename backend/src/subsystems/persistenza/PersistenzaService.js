@@ -41,6 +41,33 @@ async function transazione(fn) {
   }
 }
 
+async function creaSessione({ accountId, hashToken, ultimaAttivita }) {
+  return query(
+    `INSERT INTO "Sessione" ("accountId", "hashToken", "ultimaAttivita")
+     VALUES ($1, $2, $3) RETURNING id`,
+    [accountId, hashToken, ultimaAttivita],
+  );
+}
+
+async function verificaSessione(hashToken, adesso) {
+  const scadenza = new Date(adesso.getTime() - 30 * 60 * 1000);
+  const righe = await query(
+    `UPDATE "Sessione" SET "ultimaAttivita" = $1
+     WHERE "hashToken" = $2 AND "ultimaAttivita" > $3
+       AND EXISTS (
+         SELECT 1 FROM "Account"
+         WHERE "Account".id = "Sessione"."accountId" AND stato = 'Attivo'
+       )
+     RETURNING "accountId"`,
+    [adesso, hashToken, scadenza],
+  );
+  return righe[0] ?? null;
+}
+
+async function eliminaSessione(hashToken) {
+  await query('DELETE FROM "Sessione" WHERE "hashToken" = $1', [hashToken]);
+}
+
 // Chiude le connessioni (fine dei test o degli script).
 async function chiudi() {
   if (!pool) return;
@@ -48,4 +75,11 @@ async function chiudi() {
   pool = null;
 }
 
-module.exports = { query, transazione, chiudi };
+module.exports = {
+  query,
+  transazione,
+  creaSessione,
+  verificaSessione,
+  eliminaSessione,
+  chiudi,
+};
