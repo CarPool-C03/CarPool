@@ -1,8 +1,15 @@
 class EventoPrenotazione {
-  constructor(tipo, richiesta, viaggio) {
+  constructor(tipo, richiestaId, viaggioId) {
     this.tipo = tipo;
-    this.richiesta = richiesta;
-    this.viaggio = viaggio;
+    if (typeof richiestaId === 'object' && typeof viaggioId === 'object') {
+      this.richiesta = richiestaId;
+      this.viaggio = viaggioId;
+      this.richiestaId = richiestaId.id;
+      this.viaggioId = viaggioId.id;
+      return;
+    }
+    this.richiestaId = richiestaId;
+    this.viaggioId = viaggioId;
   }
 }
 

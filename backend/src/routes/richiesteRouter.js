@@ -36,4 +36,20 @@ router.post('/richieste/:id/annulla', ...soloMembro, async (richiesta, risposta)
   risposta.status(200).json(risultato);
 });
 
+router.post('/richieste/:id/accetta', ...soloMembro, async (richiesta, risposta) => {
+  const risultato = await ViaggioPrenotazioneService.accettaRichiesta(
+    richiesta.utente.membro.id,
+    idPositivo(richiesta.params.id),
+  );
+  risposta.status(200).json(risultato);
+});
+
+router.post('/richieste/:id/rifiuta', ...soloMembro, async (richiesta, risposta) => {
+  const risultato = await ViaggioPrenotazioneService.rifiutaRichiesta(
+    richiesta.utente.membro.id,
+    idPositivo(richiesta.params.id),
+  );
+  risposta.status(200).json(risultato);
+});
+
 module.exports = router;

@@ -1,5 +1,6 @@
 import {
   Badge,
+  Button,
   Card,
   MessageBar,
   MessageBarBody,
@@ -39,6 +40,8 @@ export default function RichiesteRicevute() {
   const [viaggio, setViaggio] = useState(null);
   const [errore, setErrore] = useState(null);
   const [caricamento, setCaricamento] = useState(true);
+  const [erroreRisposta, setErroreRisposta] = useState('');
+  const [rispostaInCorso, setRispostaInCorso] = useState(null);
 
   useEffect(() => {
     let attivo = true;
@@ -58,12 +61,40 @@ export default function RichiesteRicevute() {
     return () => { attivo = false; };
   }, [id]);
 
+  async function rispondi(elemento, azione) {
+    setErroreRisposta('');
+    setRispostaInCorso(elemento.id);
+    try {
+      const esito = await richiesta(`/api/richieste/${elemento.id}/${azione}`, {
+        metodo: 'POST',
+      });
+      setViaggio((corrente) => ({
+        ...corrente,
+        postiDisponibili: esito.postiDisponibili ?? corrente.postiDisponibili,
+        richieste: corrente.richieste.map((richiestaCorrente) => (
+          richiestaCorrente.id === elemento.id
+            ? { ...richiestaCorrente, stato: esito.stato }
+            : richiestaCorrente
+        )),
+      }));
+    } catch (erroreRispostaApi) {
+      setErroreRisposta(erroreRispostaApi.message);
+    } finally {
+      setRispostaInCorso(null);
+    }
+  }
+
   return (
     <section className={styles.pagina}>
       <Title1 as="h1">Richieste ricevute</Title1>
       {errore?.api ? (
         <MessageBar intent="error" role="alert"><MessageBarBody>{errore.messaggio}</MessageBarBody></MessageBar>
       ) : errore && <Text role="alert">{errore.messaggio}</Text>}
+      {erroreRisposta && (
+        <MessageBar intent="error" role="alert">
+          <MessageBarBody>{erroreRisposta}</MessageBarBody>
+        </MessageBar>
+      )}
       {caricamento ? <Spinner label="Caricamento richieste" /> : viaggio && (
         <>
           <Card className={styles.scheda}>
@@ -71,6 +102,7 @@ export default function RichiesteRicevute() {
             <Badge>Posti residui: {viaggio.postiDisponibili}</Badge>
             <Text>{dataOraMostrata(viaggio.dataOraPartenza)} · Conducente: {viaggio.conducente.nome} {viaggio.conducente.cognome}</Text>
           </Card>
+          <Text>La conferma è possibile solo per un viaggio attivo con posti residui.</Text>
           <div className={styles.elenco} aria-label="Elenco richieste">
             {viaggio.richieste.map((elemento) => (
               <Card className={styles.scheda} key={elemento.id}>
@@ -78,6 +110,23 @@ export default function RichiesteRicevute() {
                 <Badge appearance="filled" color={coloreStato(elemento.stato)}>
                   Stato: {ETICHETTE_STATO[elemento.stato] ?? elemento.stato}
                 </Badge>
+                {elemento.stato === 'InAttesa' && (
+                  <div className={styles.elenco}>
+                    <Button
+                      onClick={() => rispondi(elemento, 'accetta')}
+                      disabled={rispostaInCorso !== null || viaggio.stato !== 'Attivo'}
+                    >
+                      {rispostaInCorso === elemento.id ? 'Risposta…' : 'Accetta'}
+                    </Button>
+                    <Button
+                      appearance="secondary"
+                      onClick={() => rispondi(elemento, 'rifiuta')}
+                      disabled={rispostaInCorso !== null || viaggio.stato !== 'Attivo'}
+                    >
+                      {rispostaInCorso === elemento.id ? 'Risposta…' : 'Rifiuta'}
+                    </Button>
+                  </div>
+                )}
               </Card>
             ))}
             {viaggio.richieste.length === 0 && <Text>Nessuna richiesta ricevuta</Text>}

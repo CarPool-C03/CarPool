@@ -98,6 +98,14 @@ async function annullaRichiesta(membroId, richiestaId) {
   return GestorePrenotazioni.annullaRichiesta(membroId, richiestaId);
 }
 
+async function accettaRichiesta(membroId, richiestaId) {
+  return GestorePrenotazioni.accettaRichiesta(membroId, richiestaId);
+}
+
+async function rifiutaRichiesta(membroId, richiestaId) {
+  return GestorePrenotazioni.rifiutaRichiesta(membroId, richiestaId);
+}
+
 async function viaggiDelConducente(membroId) {
   return GestoreViaggi.viaggiDelConducente(membroId);
 }
@@ -122,6 +130,8 @@ module.exports = {
   inviaRichiesta,
   richiesteDelPasseggero,
   annullaRichiesta,
+  accettaRichiesta,
+  rifiutaRichiesta,
   viaggiDelConducente,
   modificaViaggio,
   cancellaViaggio,

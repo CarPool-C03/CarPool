@@ -110,14 +110,14 @@ describe('Gestione dei miei viaggi', () => {
     await waitFor(() => expect(screen.getByTestId('percorso')).toHaveTextContent(/^\/miei-viaggi$/));
   });
 
-  test('RichiesteRicevute: mostra nomi e stati senza pulsanti di risposta', async () => {
+  test('RichiesteRicevute: mostra i pulsanti di risposta per le richieste in attesa', async () => {
     richiesta.mockResolvedValue({ attivi: [viaggio], conclusi: [] });
     mostra('/miei-viaggi/7/richieste');
 
     expect(await screen.findByText('Anna Bianchi')).toBeInTheDocument();
     expect(screen.getByText('Stato: Accettata')).toBeInTheDocument();
     expect(screen.getByText('Stato: In attesa')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Accetta' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Rifiuta' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Accetta' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Rifiuta' })).toBeInTheDocument();
   });
 });

@@ -121,11 +121,69 @@ function creaOperazioniPrenotazioni({ query, transazione }) {
     });
   }
 
+  async function rispondiRichiesta(membroId, richiestaId, stato) {
+    return transazione(async (tx) => {
+      const righe = await tx.query(
+        `SELECT r.id, r.stato AS "statoRichiesta", r."viaggioId",
+                v.stato AS "statoViaggio", v."conducenteId", v."postiOfferti"
+         FROM "RichiestaPrenotazione" r
+         JOIN "Viaggio" v ON v.id = r."viaggioId"
+         WHERE r.id = $1
+         FOR UPDATE OF v, r`,
+        [richiestaId],
+      );
+      const richiesta = righe[0];
+      if (!richiesta) return { errore: 'RICHIESTA_NON_TROVATA' };
+      if (richiesta.conducenteId !== membroId) return { errore: 'NON_AUTORIZZATO' };
+      if (richiesta.statoRichiesta !== 'InAttesa') {
+        return { errore: 'RICHIESTA_NON_IN_ATTESA' };
+      }
+      if (richiesta.statoViaggio !== 'Attivo') return { errore: 'VIAGGIO_NON_ATTIVO' };
+
+      if (stato === 'Accettata') {
+        const accettate = await tx.query(
+          `SELECT COUNT(*)::integer AS totale
+           FROM "RichiestaPrenotazione"
+           WHERE "viaggioId" = $1 AND stato = 'Accettata'`,
+          [richiesta.viaggioId],
+        );
+        if (accettate[0].totale >= richiesta.postiOfferti) {
+          return { errore: 'POSTI_ESAURITI' };
+        }
+      }
+
+      await tx.query(
+        `UPDATE "RichiestaPrenotazione" SET stato = $1
+         WHERE id = $2 AND stato = 'InAttesa'`,
+        [stato, richiestaId],
+      );
+      const postiDisponibili = stato === 'Accettata'
+        ? (await tx.query(
+          `SELECT v."postiOfferti" - COUNT(r.id)::integer AS "postiDisponibili"
+           FROM "Viaggio" v
+           LEFT JOIN "RichiestaPrenotazione" r
+             ON r."viaggioId" = v.id AND r.stato = 'Accettata'
+           WHERE v.id = $1
+           GROUP BY v.id`,
+          [richiesta.viaggioId],
+        ))[0].postiDisponibili
+        : undefined;
+
+      return {
+        id: richiesta.id,
+        viaggioId: richiesta.viaggioId,
+        stato,
+        ...(stato === 'Accettata' ? { postiDisponibili } : {}),
+      };
+    });
+  }
+
   return {
     dettaglioViaggio,
     creaRichiesta,
     richiesteDelPasseggero,
     annullaRichiesta,
+    rispondiRichiesta,
   };
 }
 
