@@ -10,6 +10,7 @@ import {
   Title1,
   Title2,
   makeStyles,
+  tokens,
 } from '@fluentui/react-components';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -18,19 +19,25 @@ import { richiesta } from '../api/client.js';
 import RiquadriPrenotazioniHome from './RiquadriPrenotazioniHome.jsx';
 
 const useStyles = makeStyles({
-  pagina: { display: 'flex', flexDirection: 'column', gap: '24px' },
+  pagina: { display: 'flex', flexDirection: 'column', gap: 'var(--spazio-4)' },
   testata: {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px',
+    gap: 'var(--spazio-2)',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-  ricerca: { display: 'flex', flexDirection: 'column', gap: '16px', padding: '24px' },
+  ricerca: {
+    backgroundColor: tokens.colorBrandBackground2,
+    boxShadow: 'none',
+    gap: 'var(--spazio-3)',
+    padding: 'clamp(1rem, 3vw, 2rem)',
+  },
+  comunita: { display: 'flex', flexWrap: 'wrap', gap: 'var(--spazio-1)', alignItems: 'center' },
   modulo: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-    gap: '16px',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 10rem), 1fr))',
+    gap: 'var(--spazio-3)',
     alignItems: 'end',
   },
 });
@@ -76,7 +83,7 @@ export default function Home() {
         <div>
           <Title1 as="h1">Ciao {nome}, dove vai?</Title1>
           {utente?.organizzazione && (
-            <Text>
+            <Text as="div" className={styles.comunita}>
               {utente.organizzazione.denominazione}{' '}
               <Badge appearance="filled" color="success">
                 Comunità verificata

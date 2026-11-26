@@ -1,0 +1,142 @@
+.iniziale-pagina {
+  display: grid;
+  gap: var(--spazio-4);
+}
+
+.iniziale-eroe {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+  align-items: center;
+  gap: var(--spazio-5);
+  padding: clamp(1.25rem, 5vw, 4rem);
+  border-radius: var(--borderRadiusXLarge);
+  background: var(--colorBrandBackgroundPressed);
+  color: var(--colorNeutralForegroundOnBrand);
+}
+
+.iniziale-intro {
+  display: grid;
+  gap: var(--spazio-3);
+  min-width: 0;
+}
+
+.iniziale-sopratitolo {
+  font-weight: var(--fontWeightSemibold);
+  letter-spacing: 0.05em;
+}
+
+.iniziale-eroe .iniziale-titolo {
+  margin: 0;
+  font-size: clamp(2rem, 4.4vw, 4rem);
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+}
+
+.iniziale-eroe .iniziale-presentazione {
+  max-width: 48ch;
+  font-size: var(--fontSizeBase400);
+  line-height: var(--lineHeightBase400);
+}
+
+.iniziale-azioni {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spazio-2);
+  margin-top: var(--spazio-1);
+}
+
+.iniziale-azioni .fui-Button:first-child {
+  background: var(--colorBrandBackground2);
+  color: var(--colorBrandForeground2);
+}
+
+.iniziale-azioni .fui-Button:first-child:hover {
+  background: var(--colorNeutralBackground1);
+}
+
+.iniziale-azioni .fui-Button:last-child {
+  background: transparent;
+  border-color: currentColor;
+  color: var(--colorNeutralForegroundOnBrand);
+}
+
+.iniziale-azioni .fui-Button:last-child:hover {
+  background: var(--colorBrandBackgroundHover);
+}
+
+.iniziale-azioni .fui-Button:focus-visible {
+  outline-color: var(--colorNeutralForegroundOnBrand);
+}
+
+.iniziale-itinerario {
+  display: grid;
+  gap: var(--spazio-5);
+  width: min(100%, 22rem);
+  box-sizing: border-box;
+  justify-self: center;
+  padding: var(--spazio-4);
+  border-radius: var(--borderRadiusLarge);
+  background: var(--colorBrandBackground2);
+  color: var(--colorBrandForeground2);
+  font-weight: var(--fontWeightSemibold);
+}
+
+.iniziale-itinerario span {
+  display: flex;
+  align-items: center;
+  gap: var(--spazio-2);
+  position: relative;
+}
+
+.iniziale-itinerario span::before {
+  content: "";
+  box-sizing: border-box;
+  border: 3px solid currentColor;
+  border-radius: 50%;
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+}
+
+.iniziale-itinerario span:last-child::before { background: currentColor; }
+
+.iniziale-itinerario span:first-child::after {
+  content: "";
+  position: absolute;
+  top: calc(50% + 0.5rem);
+  left: 0.44rem;
+  height: calc(var(--spazio-5) + 0.25rem);
+  border-left: 2px dashed currentColor;
+}
+
+.iniziale-passi {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: var(--spazio-3);
+}
+
+.iniziale-passi .iniziale-passo {
+  padding: var(--spazio-4);
+  gap: var(--spazio-2);
+}
+
+.iniziale-titoloPasso {
+  margin: 0;
+  font-size: var(--fontSizeBase500);
+  line-height: var(--lineHeightBase500);
+  font-weight: var(--fontWeightSemibold);
+}
+
+.iniziale-testoPasso, .iniziale-footer { color: var(--colorNeutralForeground2); }
+
+.iniziale-richiamo {
+  padding: var(--spazio-3) var(--spazio-4);
+  border-radius: var(--borderRadiusMedium);
+  background: var(--colorBrandBackground2);
+  color: var(--colorBrandForeground2);
+}
+
+.iniziale-footer {
+  padding-top: var(--spazio-3);
+  border-top: 1px solid var(--colorNeutralStroke2);
+}

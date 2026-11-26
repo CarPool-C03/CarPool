@@ -1,11 +1,11 @@
 import { Button, Card, Field, Input, Select, makeStyles } from '@fluentui/react-components';
 
 const useStyles = makeStyles({
-  filtri: { display: 'flex', flexDirection: 'column', gap: '16px', padding: '24px' },
+  filtri: { display: 'flex', flexDirection: 'column', gap: 'var(--spazio-3)', padding: 'clamp(1rem, 3vw, 2rem)' },
   modulo: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-    gap: '16px',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 11rem), 1fr))',
+    gap: 'var(--spazio-3)',
     alignItems: 'end',
   },
 });

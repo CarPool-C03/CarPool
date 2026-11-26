@@ -8,6 +8,7 @@ import {
   Title1,
   Title2,
   makeStyles,
+  tokens,
 } from '@fluentui/react-components';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router';
@@ -16,19 +17,19 @@ import CampoModulo from '../components/CampoModulo.jsx';
 import EliminaAccountDialog from '../components/EliminaAccountDialog.jsx';
 
 const useStyles = makeStyles({
-  pagina: { display: 'flex', flexDirection: 'column', gap: '24px' },
+  pagina: { display: 'flex', flexDirection: 'column', gap: 'var(--spazio-4)' },
   contenuto: {
     display: 'grid',
     gridTemplateColumns: 'minmax(190px, 250px) minmax(0, 1fr)',
-    gap: '24px',
+    gap: 'var(--spazio-4)',
     '@media (max-width: 700px)': { gridTemplateColumns: '1fr' },
   },
-  navigazione: { display: 'flex', flexDirection: 'column', gap: '16px', padding: '20px' },
-  link: { color: '#117F60', textDecoration: 'none', fontWeight: 600 },
-  scheda: { display: 'flex', flexDirection: 'column', gap: '20px', padding: '24px' },
-  dati: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' },
+  navigazione: { display: 'flex', flexDirection: 'column', gap: 'var(--spazio-3)', padding: '20px' },
+  link: { color: tokens.colorBrandForeground1, textUnderlineOffset: '3px', fontWeight: 600 },
+  scheda: { display: 'flex', flexDirection: 'column', gap: '20px', padding: 'clamp(1rem, 3vw, 1.5rem)' },
+  dati: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 11rem), 1fr))', gap: 'var(--spazio-3)' },
   dato: { display: 'flex', flexDirection: 'column', gap: '4px' },
-  modulo: { display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '520px' },
+  modulo: { display: 'flex', flexDirection: 'column', gap: 'var(--spazio-3)', maxWidth: '520px' },
 });
 function Dato({ styles, etichetta, valore }) {
   return (

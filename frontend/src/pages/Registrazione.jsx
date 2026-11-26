@@ -7,6 +7,7 @@ import {
   Title1,
   Title2,
   makeStyles,
+  tokens,
 } from '@fluentui/react-components';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
@@ -15,7 +16,7 @@ import CampoModulo from '../components/CampoModulo.jsx';
 
 const useStyles = makeStyles({
   pagina: { maxWidth: '640px', margin: '0 auto' },
-  modulo: { display: 'flex', flexDirection: 'column', gap: '20px', padding: '28px' },
+  modulo: { display: 'flex', flexDirection: 'column', gap: '20px', padding: 'clamp(1rem, 4vw, 2rem)' },
   campi: {
     display: 'grid',
     gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
@@ -26,8 +27,8 @@ const useStyles = makeStyles({
     gridColumn: '1 / -1',
     '@media (max-width: 520px)': { gridColumn: 'auto' },
   },
-  link: { color: '#117F60', fontWeight: 600, textDecoration: 'none' },
-  nota: { color: '#61736B' },
+  link: { color: tokens.colorBrandForeground1, fontWeight: 600, textUnderlineOffset: '3px' },
+  nota: { color: tokens.colorNeutralForeground2 },
 });
 
 export default function Registrazione() {
@@ -73,7 +74,7 @@ export default function Registrazione() {
             <MessageBarBody>{erroreGenerale}</MessageBarBody>
           </MessageBar>
         )}
-        <form onSubmit={invia}>
+        <form onSubmit={invia} aria-busy={invio}>
           <div className={styles.campi}>
             <CampoModulo
               etichetta="Nome"
@@ -126,6 +127,7 @@ export default function Registrazione() {
             </Button>
           </div>
         </form>
+          <Text role="status">{invio ? 'Invio in corso…' : ''}</Text>
         <Text className={styles.nota}>Riceverai un link via e-mail per verificare il tuo indirizzo.</Text>
         <Text>
           Hai già un account?{' '}
