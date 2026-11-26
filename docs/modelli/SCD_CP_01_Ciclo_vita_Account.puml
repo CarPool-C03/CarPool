@@ -23,6 +23,5 @@ state "Eliminato" as Eliminato
 [*] --> InAttesaDiVerifica : registrazione completata
 InAttesaDiVerifica --> Attivo : attivaAccount()
 Attivo --> Eliminato : eliminaAccount()
-InAttesaDiVerifica --> Eliminato : eliminaAccount()
 Eliminato --> [*]
 @enduml

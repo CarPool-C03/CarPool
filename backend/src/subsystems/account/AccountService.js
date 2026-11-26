@@ -109,6 +109,21 @@ async function registraVeicolo(membroId, dati) {
   return GestioneProfiloControl.registraVeicolo(membroId, dati);
 }
 
+async function eliminaAccount(accountId, password) {
+  const account = await PersistenzaService.trovaAccountPerId(accountId);
+  if (!account || account.stato !== 'Attivo') {
+    throw new ErroreNonAutorizzato('Account non attivo', 'ACCOUNT_NON_ATTIVO');
+  }
+  const passwordValida =
+    typeof password === 'string' && (await bcrypt.compare(password, account.passwordHash));
+  if (!passwordValida) {
+    throw new ErroreValidazione([
+      { campo: 'password', messaggio: 'La password non è corretta' },
+    ]);
+  }
+  await PersistenzaService.eliminaAccount(accountId);
+}
+
 module.exports = {
   accedi,
   esci,
@@ -119,4 +134,5 @@ module.exports = {
   assegnaRuoloMobilityManager,
   profilo,
   registraVeicolo,
+  eliminaAccount,
 };

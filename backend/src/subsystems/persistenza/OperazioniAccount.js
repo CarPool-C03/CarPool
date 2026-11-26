@@ -42,6 +42,14 @@ function creaOperazioniAccount({ query, transazione }) {
     return righe[0] ?? null;
   }
 
+  async function trovaAccountPerId(accountId) {
+    const righe = await query(
+      'SELECT id, "passwordHash", stato FROM "Account" WHERE id = $1',
+      [accountId],
+    );
+    return righe[0] ?? null;
+  }
+
   async function recuperaUtenteCorrente(accountId) {
     const righe = await query(
       `SELECT a.id, a.email, a."tipoAccount", m.id AS "membroId",
@@ -127,6 +135,7 @@ function creaOperazioniAccount({ query, transazione }) {
     eliminaSessione,
     esisteAccountEmail,
     trovaAccountPerEmail,
+    trovaAccountPerId,
     recuperaUtenteCorrente,
     creaAccount,
     creaMembro,

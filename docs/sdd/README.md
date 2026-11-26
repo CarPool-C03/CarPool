@@ -94,6 +94,22 @@ Le operazioni di ricerca e dettaglio esposte da `PersistenzaService` restituisco
 nello stato `Accettata`. Le richieste `InAttesa` non occupano posti. Il calcolo è responsabilità
 della persistenza, non dell'entità `Viaggio`.
 
+## Cancellazione account
+
+`PersistenzaService.eliminaAccount(accountId: Intero): Promise<void>` esegue in un'unica
+`PersistenzaService.transazione(fn)` la cancellazione dei dati associati e l'anonimizzazione.
+Imposta Account nello stato `Eliminato` e `email` a
+`eliminato+<Account.id>@anonimo.invalid`; imposta Membro a `nome = Utente`,
+`cognome = Eliminato` e `ruoloMobilityManager = false`. Elimina il Veicolo, i Messaggi inviati
+dal Membro e le Valutazioni di cui è autore o valutato.
+
+Nella stessa transazione imposta a `Cancellato` i Viaggi `Attivo` condotti dal Membro e ad
+`Annullata` le RichiestePrenotazione `InAttesa` o `Accettata` del Membro o relative ai viaggi
+cancellati. Conserva i Viaggi `Concluso` e le richieste `Completata`, collegati al Membro
+anonimizzato, per non alterare i conteggi aggregati PSCL. Elimina tutte le Sessioni dell'Account.
+Se una scrittura fallisce prima del commit, la transazione annulla tutte le modifiche, incluse
+quelle alle Sessioni.
+
 ## Modifica e cancellazione dei viaggi
 
 Le firme e i risultati delle operazioni di persistenza sono definiti in `docs/odd/README.md`.
