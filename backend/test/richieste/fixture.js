@@ -1,8 +1,11 @@
-const { randomUUID } = require('node:crypto');
 const request = require('supertest');
 const { creaApp } = require('../../src/app');
 const PersistenzaService = require('../../src/subsystems/persistenza/PersistenzaService');
-const { PASSWORD, creaAccount, eliminaAccount } = require('../auth/fixture');
+const {
+  PASSWORD,
+  creaAccount,
+  eliminaAccount,
+} = require('../auth/fixture');
 
 async function login(account) {
   const risposta = await request(creaApp())
@@ -11,10 +14,29 @@ async function login(account) {
   return risposta.headers['set-cookie'][0].split(';')[0];
 }
 
+async function impostaIdentita(account, { nome, cognome }) {
+  await PersistenzaService.query(
+    'UPDATE "Membro" SET nome = $1, cognome = $2 WHERE id = $3',
+    [nome, cognome, account.membroId],
+  );
+}
+
 async function creaContesto() {
   const passeggero = await creaAccount();
   const conducente = await creaAccount();
   const altroPasseggero = await creaAccount();
+  await impostaIdentita(passeggero, {
+    nome: 'Anna',
+    cognome: 'Bianchi',
+  });
+  await impostaIdentita(conducente, {
+    nome: 'Luca',
+    cognome: 'Verdi',
+  });
+  await impostaIdentita(altroPasseggero, {
+    nome: 'Marco',
+    cognome: 'Russo',
+  });
   for (const account of [conducente, altroPasseggero]) {
     await PersistenzaService.query(
       'UPDATE "Membro" SET "organizzazioneId" = $1 WHERE id = $2',
@@ -24,7 +46,7 @@ async function creaContesto() {
   const [sede] = await PersistenzaService.query(
     `INSERT INTO "Sede" (nome, indirizzo, "organizzazioneId")
      VALUES ($1, 'Via di prova, 1', $2) RETURNING id, nome`,
-    [`Sede ${randomUUID()}`, passeggero.organizzazioneId],
+    ['Campus di Fisciano', passeggero.organizzazioneId],
   );
   return {
     passeggero,
@@ -32,10 +54,21 @@ async function creaContesto() {
     altroPasseggero,
     cookie: await login(passeggero),
     cookieAltroPasseggero: await login(altroPasseggero),
+    cookieConducente: await login(conducente),
     sede,
     viaggiId: [],
     accounts: [passeggero, conducente, altroPasseggero],
   };
+}
+
+async function aggiungiPasseggero(contesto) {
+  const account = await creaAccount();
+  await PersistenzaService.query(
+    'UPDATE "Membro" SET "organizzazioneId" = $1 WHERE id = $2',
+    [contesto.passeggero.organizzazioneId, account.membroId],
+  );
+  contesto.accounts.push(account);
+  return account;
 }
 
 async function creaViaggio(contesto, opzioni = {}) {
@@ -83,5 +116,6 @@ module.exports = {
   creaContesto,
   creaRichiesta,
   creaViaggio,
+  aggiungiPasseggero,
   pulisciContesto,
 };
