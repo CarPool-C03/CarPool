@@ -7,10 +7,14 @@ class EventiPrenotazione {
     this.osservatori.push(osservatore);
   }
 
-  async pubblica(evento) {
+  async notifica(evento) {
     for (const osservatore of this.osservatori) {
       await osservatore.aggiorna(evento);
     }
+  }
+
+  pubblica(evento) {
+    return this.notifica(evento);
   }
 }
 

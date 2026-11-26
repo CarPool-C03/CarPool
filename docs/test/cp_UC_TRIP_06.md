@@ -49,6 +49,8 @@ Con i vincoli si ottengono 7 test frame: 3 di errore, 2 singoli, 1 accettazione 
 
 **Environmental needs**: ambiente comune (`docs/test/ambiente.md`); viaggio V1 del Conducente Luca Verdi verso Campus di Fisciano il 03/12/2026 e le richieste indicate.
 
+**Nota sui fixture locali**: gli account usano indirizzi e-mail fittizi univoci per isolare i test nel database condiviso. Per UC_TRIP_06 l’oracolo verifica che la notifica sia indirizzata all’e-mail associata al Passeggero nel fixture, non un indirizzo letterale; il servizio e-mail è sostituito dallo stub.
+
 **Special procedural requirements**: RNF_PERF_1: per TC_TRIP_06.04-06 l'istante della richiesta allo stub dista meno di 60 secondi dalla risposta del Conducente. TC_TRIP_06.07 richiede due operazioni concorrenti sullo stesso database (due connessioni).
 
 **Intercase dependencies**: nessuna: le richieste di prenotazione sono create direttamente nel database di test.

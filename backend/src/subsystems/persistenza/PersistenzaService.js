@@ -48,6 +48,7 @@ const operazioniAccount = creaOperazioniAccount({ query, transazione });
 const operazioniOrganizzazioni = creaOperazioniOrganizzazioni({ query, transazione });
 const operazioniProfilo = creaOperazioniProfilo({ query });
 const operazioniReport = creaOperazioniReport({ query });
+const operazioniPrenotazioni = creaOperazioniPrenotazioni({ query, transazione });
 const operazioniViaggi = creaOperazioniViaggi({ query, transazione });
 const operazioniViaggiConducente = creaOperazioniViaggiConducente({ query, transazione });
 const operazioniConclusioneViaggi = creaOperazioniConclusioneViaggi({ transazione });
@@ -100,7 +101,7 @@ module.exports = {
   trovaOrganizzazioneAttivaPerDominio,
   ...operazioniAccount,
   ...operazioniOrganizzazioni,
-  ...creaOperazioniPrenotazioni({ query, transazione }),
+  ...operazioniPrenotazioni,
   ...operazioniProfilo,
   ...operazioniReport,
   ...operazioniViaggi,

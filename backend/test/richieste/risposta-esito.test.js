@@ -1,3 +1,4 @@
+const { hrtime } = require('node:process');
 const emailProviderOriginale = process.env.EMAIL_PROVIDER;
 process.env.EMAIL_PROVIDER = 'console';
 
@@ -13,12 +14,15 @@ const {
   creaContesto,
   creaRichiesta,
   creaViaggio,
+  fissaOrologio,
   pulisciContesto,
+  ripristinaOrologio,
 } = require('./fixture');
 
 eventi.registra(new NotificaEsitoObserver());
 
 const statiAlMomentoDellaNotifica = [];
+let istantiInvio;
 eventi.registra({
   async aggiorna(evento) {
     const [richiesta] = await PersistenzaService.query(
@@ -51,11 +55,10 @@ async function cerca(contesto) {
     .set('Cookie', contesto.cookie);
 }
 
-function verificaInvioEntro60Secondi(email, istanteRisposta) {
-  const istanteInvio = Date.parse(email.istante);
-  expect(Number.isNaN(istanteInvio)).toBe(false);
-  expect(istanteInvio).toBeLessThanOrEqual(istanteRisposta);
-  expect(istanteRisposta - istanteInvio).toBeLessThan(60_000);
+function verificaInvioEntro60Secondi(inizioOperazione) {
+  expect(istantiInvio).toHaveLength(1);
+  expect(istantiInvio[0] >= inizioOperazione).toBe(true);
+  expect(istantiInvio[0] - inizioOperazione).toBeLessThan(60_000_000_000n);
 }
 
 function verificaNotificaDopoCommit(contesto, richiestaId, tipo, esito) {
@@ -74,16 +77,27 @@ describe('Esito delle risposte di prenotazione', () => {
   let contesto;
 
   beforeEach(async () => {
+    fissaOrologio();
     contesto = await creaContesto();
     ConsoleEmailAdapter.emailInviate.length = 0;
     statiAlMomentoDellaNotifica.length = 0;
+    istantiInvio = [];
+    const inviaOriginale = ConsoleEmailAdapter.prototype.invia;
+    jest.spyOn(ConsoleEmailAdapter.prototype, 'invia').mockImplementation(function (messaggio) {
+      istantiInvio.push(hrtime.bigint());
+      return inviaOriginale.call(this, messaggio);
+    });
     jest.spyOn(NotificaService, 'inviaEsitoPrenotazione');
     jest.spyOn(console, 'info').mockImplementation(() => {});
   });
 
   afterEach(async () => {
-    await pulisciContesto(contesto);
-    jest.restoreAllMocks();
+    try {
+      if (contesto) await pulisciContesto(contesto);
+    } finally {
+      jest.restoreAllMocks();
+      ripristinaOrologio();
+    }
   });
 
   afterAll(async () => {
@@ -103,8 +117,8 @@ describe('Esito delle risposte di prenotazione', () => {
     }
     const richiestaId = await creaRichiesta(viaggioId, contesto.passeggero.membroId);
 
+    const inizioOperazione = hrtime.bigint();
     const risposta = await rispondi('accetta', richiestaId, contesto.cookieConducente);
-    const istanteRisposta = Date.now();
     const risultati = await cerca(contesto);
     const [email] = ConsoleEmailAdapter.emailInviate;
 
@@ -124,15 +138,15 @@ describe('Esito delle risposte di prenotazione', () => {
       'RichiestaAccettata',
       'Accettata',
     );
-    verificaInvioEntro60Secondi(email, istanteRisposta);
+    verificaInvioEntro60Secondi(inizioOperazione);
   });
 
   test('TC_TRIP_06.05 - Risposta: accettazione riduce di uno i posti disponibili', async () => {
     const viaggioId = await creaViaggio(contesto, { postiOfferti: 3 });
     const richiestaId = await creaRichiesta(viaggioId, contesto.passeggero.membroId);
 
+    const inizioOperazione = hrtime.bigint();
     const risposta = await rispondi('accetta', richiestaId, contesto.cookieConducente);
-    const istanteRisposta = Date.now();
     const risultati = await cerca(contesto);
     const [email] = ConsoleEmailAdapter.emailInviate;
 
@@ -150,15 +164,15 @@ describe('Esito delle risposte di prenotazione', () => {
       'RichiestaAccettata',
       'Accettata',
     );
-    verificaInvioEntro60Secondi(email, istanteRisposta);
+    verificaInvioEntro60Secondi(inizioOperazione);
   });
 
   test('TC_TRIP_06.06 - Risposta: rifiuto non modifica i posti e notifica il Passeggero', async () => {
     const viaggioId = await creaViaggio(contesto, { postiOfferti: 3 });
     const richiestaId = await creaRichiesta(viaggioId, contesto.passeggero.membroId);
 
+    const inizioOperazione = hrtime.bigint();
     const risposta = await rispondi('rifiuta', richiestaId, contesto.cookieConducente);
-    const istanteRisposta = Date.now();
     const viaggio = await request(creaApp())
       .get(`/api/viaggi/${viaggioId}`)
       .set('Cookie', contesto.cookie);
@@ -175,6 +189,6 @@ describe('Esito delle risposte di prenotazione', () => {
       'RichiestaRifiutata',
       'Rifiutata',
     );
-    verificaInvioEntro60Secondi(email, istanteRisposta);
+    verificaInvioEntro60Secondi(inizioOperazione);
   });
 });

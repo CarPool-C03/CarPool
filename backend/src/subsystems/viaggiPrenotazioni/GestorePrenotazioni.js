@@ -1,4 +1,6 @@
 const PersistenzaService = require('../persistenza/PersistenzaService');
+const LogService = require('../logging/LogService');
+const { EventoPrenotazione, eventi } = require('./eventi');
 const { ErroreConflitto, ErroreNonAutorizzato, ErroreNonTrovato } = require('../../comune/errori');
 
 function erroreOperazione(codice) {
@@ -13,8 +15,12 @@ function erroreOperazione(codice) {
       return new ErroreConflitto(codice, 'Hai già una richiesta attiva per questo viaggio');
     case 'RICHIESTA_NON_TROVATA':
       return new ErroreNonTrovato('Richiesta non trovata');
+    case 'RICHIESTA_NON_IN_ATTESA':
+      return new ErroreConflitto(codice, 'La richiesta non è più in attesa');
+    case 'POSTI_ESAURITI':
+      return new ErroreConflitto(codice, 'I posti offerti sono esauriti');
     case 'NON_AUTORIZZATO':
-      return new ErroreNonAutorizzato('La richiesta non appartiene al Passeggero');
+      return new ErroreNonAutorizzato('Non sei autorizzato a eseguire questa operazione');
     case 'RICHIESTA_NON_ANNULLABILE':
       return new ErroreConflitto(codice, 'La richiesta non può essere annullata');
     case 'VIAGGIO_CONCLUSO':
@@ -43,4 +49,56 @@ async function annullaRichiesta(membroId, richiestaId) {
   return risultato.richiesta;
 }
 
-module.exports = { inviaRichiesta, richiesteDelPasseggero, annullaRichiesta };
+async function rispondiRichiesta(membroId, richiestaId, stato, tipoEvento) {
+  const risultato = await PersistenzaService.rispondiRichiesta(
+    membroId,
+    richiestaId,
+    stato,
+  );
+  if (risultato.errore) throw erroreOperazione(risultato.errore);
+
+  try {
+    await eventi.notifica(
+      new EventoPrenotazione(tipoEvento, risultato.id, risultato.viaggioId),
+    );
+  } catch {
+    LogService.registraErrore({
+      codice: 'ERRORE_INTERNO',
+      descrizione: `Pubblicazione evento ${tipoEvento} non riuscita dopo il commit`,
+      sottosistema: 'viaggiPrenotazioni',
+    });
+  }
+
+  const { id, stato: statoRisposta, postiDisponibili } = risultato;
+  return {
+    id,
+    stato: statoRisposta,
+    ...(statoRisposta === 'Accettata' ? { postiDisponibili } : {}),
+  };
+}
+
+function accettaRichiesta(membroId, richiestaId) {
+  return rispondiRichiesta(
+    membroId,
+    richiestaId,
+    'Accettata',
+    'RichiestaAccettata',
+  );
+}
+
+function rifiutaRichiesta(membroId, richiestaId) {
+  return rispondiRichiesta(
+    membroId,
+    richiestaId,
+    'Rifiutata',
+    'RichiestaRifiutata',
+  );
+}
+
+module.exports = {
+  inviaRichiesta,
+  richiesteDelPasseggero,
+  annullaRichiesta,
+  accettaRichiesta,
+  rifiutaRichiesta,
+};

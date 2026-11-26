@@ -1,8 +1,14 @@
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { FluentProvider, webLightTheme } from '@fluentui/react-components';
 import { Link, MemoryRouter } from 'react-router';
 import App from './App.jsx';
+
+class ResizeObserverMock {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+}
 
 const membro = {
   ruolo: 'Membro',
@@ -157,6 +163,8 @@ afterEach(() => {
   window.innerWidth = larghezzaSchermoPrecedente;
   window.dispatchEvent(new Event('resize'));
 });
+
+beforeEach(() => vi.stubGlobal('ResizeObserver', ResizeObserverMock));
 
 describe('Navigazione responsive', () => {
   test('Navigazione: tutte le pagine sono raggiungibili anche da mobile senza errori in console', async () => {

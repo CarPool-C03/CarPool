@@ -13,7 +13,9 @@ const {
   creaContesto,
   creaRichiesta,
   creaViaggio,
+  fissaOrologio,
   pulisciContesto,
+  ripristinaOrologio,
 } = require('./fixture');
 
 const connectOriginale = Pool.prototype.connect;
@@ -24,14 +26,19 @@ describe('Risposte concorrenti alle richieste di prenotazione', () => {
   let contesto;
 
   beforeEach(async () => {
+    fissaOrologio();
     contesto = await creaContesto();
     ConsoleEmailAdapter.emailInviate.length = 0;
     jest.spyOn(console, 'info').mockImplementation(() => {});
   });
 
   afterEach(async () => {
-    await pulisciContesto(contesto);
-    jest.restoreAllMocks();
+    try {
+      if (contesto) await pulisciContesto(contesto);
+    } finally {
+      jest.restoreAllMocks();
+      ripristinaOrologio();
+    }
   });
 
   afterAll(async () => {
