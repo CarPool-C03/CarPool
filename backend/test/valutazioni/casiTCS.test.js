@@ -77,10 +77,14 @@ describe('UC_TRIP_09 - casi TCS', () => {
       'SELECT punteggio FROM "Valutazione" WHERE "viaggioId" = $1',
       [viaggioId],
     );
+    const mediaValutato = await PersistenzaService.calcolaValutazioneMedia(
+      contesto.passeggero.membroId,
+    );
 
     expect(risposta.status).toBe(409);
     expect(risposta.body.errore.codice).toBe('VALUTAZIONE_GIA_INVIATA');
     expect(valutazioni).toEqual([{ punteggio: 3 }]);
+    expect(mediaValutato).toBe(3);
   });
 
   test('TC_TRIP_09.05 - punteggio mancante: errore sul punteggio', async () => {

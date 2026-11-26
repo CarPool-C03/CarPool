@@ -74,7 +74,8 @@ async function registraValutazione(autoreId, viaggioId, dati) {
       'Hai già valutato questo partecipante per il viaggio',
     );
   }
-  const mediaValutato = await PersistenzaService.calcolaValutazioneMedia(valutatoId);
+  const ComunitaService = require('./ComunitaService');
+  const mediaValutato = await ComunitaService.calcolaValutazioneMedia(valutatoId);
   return { ...valutazione, mediaValutato };
 }
 
