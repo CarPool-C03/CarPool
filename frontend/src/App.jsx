@@ -15,7 +15,8 @@ import IMieiViaggi from './pages/IMieiViaggi.jsx';
 import ModificaViaggio from './pages/ModificaViaggio.jsx';
 import RichiesteRicevute from './pages/RichiesteRicevute.jsx';
 import Report from './pages/Report.jsx';
-import PaginaVuota from './pages/PaginaVuota.jsx';
+import DaValutare from './pages/DaValutare.jsx';
+import ValutaPartecipante from './pages/ValutaPartecipante.jsx';
 import Registrazione from './pages/Registrazione.jsx';
 import RegistrazioneInviata from './pages/RegistrazioneInviata.jsx';
 import Verifica from './pages/Verifica.jsx';
@@ -70,11 +71,11 @@ export default function App() {
           />
           <Route
             path="/valutazioni"
-            element={protetta(['Membro'], <PaginaVuota titolo="Da valutare" />)}
+            element={protetta(['Membro'], <DaValutare />)}
           />
           <Route
             path="/valutazioni/:viaggioId"
-            element={protetta(['Membro'], <PaginaVuota titolo="Valuta un partecipante" />)}
+            element={protetta(['Membro'], <ValutaPartecipante />)}
           />
           <Route
             path="/profilo"

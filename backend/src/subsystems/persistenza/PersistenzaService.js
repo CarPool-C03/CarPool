@@ -9,6 +9,7 @@ const creaOperazioniReport = require('./OperazioniReport');
 const creaOperazioniViaggi = require('./OperazioniViaggi');
 const creaOperazioniViaggiConducente = require('./OperazioniViaggiConducente');
 const creaOperazioniConclusioneViaggi = require('./OperazioniConclusioneViaggi');
+const creaOperazioniValutazioni = require('./OperazioniValutazioni');
 
 let pool = null;
 
@@ -54,6 +55,7 @@ const operazioniPrenotazioni = creaOperazioniPrenotazioni({ query, transazione }
 const operazioniViaggi = creaOperazioniViaggi({ query, transazione });
 const operazioniViaggiConducente = creaOperazioniViaggiConducente({ query, transazione });
 const operazioniConclusioneViaggi = creaOperazioniConclusioneViaggi({ transazione });
+const operazioniValutazioni = creaOperazioniValutazioni({ query });
 
 async function cercaViaggi(filtro, membroId) {
   const zona = filtro.zona.replace(/[\\%_]/g, '\\$&');
@@ -110,5 +112,6 @@ module.exports = {
   ...operazioniViaggi,
   ...operazioniViaggiConducente,
   ...operazioniConclusioneViaggi,
+  ...operazioniValutazioni,
   chiudi,
 };
