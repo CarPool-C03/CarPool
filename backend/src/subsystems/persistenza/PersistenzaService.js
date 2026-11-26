@@ -1,6 +1,7 @@
 // PersistenzaService: Facade di PersistenzaSubsystem, unico accesso a PostgreSQL
 const { Pool } = require('pg');
 const creaOperazioniAccount = require('./OperazioniAccount');
+const creaOperazioniEliminazioneAccount = require('./OperazioniEliminazioneAccount');
 const creaOperazioniOrganizzazioni = require('./OperazioniOrganizzazioni');
 const creaOperazioniPrenotazioni = require('./OperazioniPrenotazioni');
 const creaOperazioniProfilo = require('./OperazioniProfilo');
@@ -45,6 +46,7 @@ async function transazione(fn) {
 }
 
 const operazioniAccount = creaOperazioniAccount({ query, transazione });
+const operazioniEliminazioneAccount = creaOperazioniEliminazioneAccount({ transazione });
 const operazioniOrganizzazioni = creaOperazioniOrganizzazioni({ query, transazione });
 const operazioniProfilo = creaOperazioniProfilo({ query });
 const operazioniReport = creaOperazioniReport({ query });
@@ -99,6 +101,7 @@ module.exports = {
   cercaViaggi,
   trovaOrganizzazioneAttivaPerDominio,
   ...operazioniAccount,
+  ...operazioniEliminazioneAccount,
   ...operazioniOrganizzazioni,
   ...creaOperazioniPrenotazioni({ query, transazione }),
   ...operazioniProfilo,

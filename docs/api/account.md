@@ -72,7 +72,9 @@ Corpo: `{ "modello", "colore", "numeroPostiPasseggeri" }`: `modello` 1–100, `c
 Risposta `201`: il veicolo (`{ "id", "modello", "colore", "numeroPostiPasseggeri" }`).
 
 ## DELETE /api/account — #23 · RF_AUTH_07
-Ruoli: Membro. Service: `AccountService.eliminaAccount(accountId, password)`.
+Ruoli: Membro autenticato con Account nello stato `Attivo`. Un Account `InAttesaDiVerifica`
+non può accedere a questo endpoint: non può autenticarsi e quindi non può cancellarsi tramite
+UC_AUTH_07. Service: `AccountService.eliminaAccount(accountId, password)`.
 Corpo: `{ "password" }`; password errata → `400` con `campo: "password"`. Politica di cancellazione:
 SDD Sez. 4.1 (riportata nella issue #23). Chiude tutte le sessioni e cancella il cookie. Risposta `204`.
 
