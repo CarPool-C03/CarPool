@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router';
 import { ErroreApi, ErroreValidazione, richiesta } from '../api/client.js';
 import CampoModulo from '../components/CampoModulo.jsx';
+import EliminaAccountDialog from '../components/EliminaAccountDialog.jsx';
 
 const useStyles = makeStyles({
   pagina: { display: 'flex', flexDirection: 'column', gap: '24px' },
@@ -99,7 +100,6 @@ export default function Profilo() {
       setSalvataggio(false);
     }
   }
-
   if (caricamento) return <Spinner label="Caricamento profilo" />;
   if (erroreCaricamento) {
     return (
@@ -185,12 +185,9 @@ export default function Profilo() {
                 <Dato styles={styles} etichetta="Nome" valore={profilo.nome} />
                 <Dato styles={styles} etichetta="Cognome" valore={profilo.cognome} />
                 <Dato styles={styles} etichetta="E-mail verificata" valore={profilo.email} />
-                <Dato
-                  styles={styles}
-                  etichetta="Organizzazione"
-                  valore={profilo.organizzazione?.denominazione}
-                />
+                <Dato styles={styles} etichetta="Organizzazione" valore={profilo.organizzazione?.denominazione} />
               </div>
+              <EliminaAccountDialog />
             </>
           )}
         </Card>

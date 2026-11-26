@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { FluentProvider, webLightTheme } from '@fluentui/react-components';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter, useLocation } from 'react-router';
 import Profilo from './Profilo.jsx';
 
 function risposta(status, dati) {
@@ -13,9 +13,26 @@ function mostraProfilo(percorso = '/profilo/veicolo') {
     <FluentProvider theme={webLightTheme}>
       <MemoryRouter initialEntries={[percorso]}>
         <Profilo />
+        <PercorsoCorrente />
       </MemoryRouter>
     </FluentProvider>,
   );
+}
+
+function PercorsoCorrente() {
+  return <output data-testid="percorso">{useLocation().pathname}</output>;
+}
+
+function datiProfilo() {
+  return {
+    nome: 'Luca',
+    cognome: 'Verdi',
+    email: 'luca@example.test',
+    organizzazione: { id: 1, denominazione: 'Università di prova' },
+    ruoloMobilityManager: false,
+    veicolo: null,
+    valutazioneMedia: null,
+  };
 }
 
 afterEach(() => {
@@ -97,5 +114,39 @@ describe('Profilo', () => {
     expect(screen.getByText('Bianco')).toBeInTheDocument();
     expect(screen.getByText('4')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Salva veicolo' })).not.toBeInTheDocument();
+  });
+
+  test('Profilo: conferma eliminazione spiega gli effetti e può essere annullata', async () => {
+    const fetch = vi.fn().mockResolvedValue(risposta(200, datiProfilo()));
+    vi.stubGlobal('fetch', fetch);
+    mostraProfilo('/profilo');
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Elimina il mio account' }));
+    expect(await screen.findByRole('dialog')).toHaveTextContent('profilo saranno anonimizzati');
+    expect(screen.getByRole('dialog')).toHaveTextContent('viaggi attivi saranno cancellati');
+    fireEvent.click(screen.getByRole('button', { name: 'Annulla' }));
+
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  test('Profilo: conferma eliminazione invia la password e torna alla pagina iniziale', async () => {
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(risposta(200, datiProfilo()))
+      .mockResolvedValueOnce(risposta(204));
+    vi.stubGlobal('fetch', fetch);
+    mostraProfilo('/profilo');
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Elimina il mio account' }));
+    fireEvent.change(await screen.findByLabelText('Password'), {
+      target: { value: 'Password-di-test-47!' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Conferma eliminazione' }));
+
+    await waitFor(() => expect(screen.getByTestId('percorso')).toHaveTextContent('/'));
+    expect(fetch).toHaveBeenCalledWith('/api/account', expect.objectContaining({
+      method: 'DELETE',
+      body: JSON.stringify({ password: 'Password-di-test-47!' }),
+    }));
   });
 });
