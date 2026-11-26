@@ -6,7 +6,7 @@ skinparam defaultFontName Inter
 left to right direction
 title CarPool · Deployment diagram (SDD 3.3.1)
 
-node "Hosting frontend" as HF <<node>> {
+node "Vercel\nHosting frontend statico\napp.<dominio-beta>" as HF <<node>> {
   artifact "Applicazione web\n(file statici)" as WEB
 }
 
@@ -16,7 +16,7 @@ node "Browser dell'utente" as BR <<device>> {
   }
 }
 
-node "Hosting backend" as HB <<node>> {
+node "Render\nHosting backend\napi.<dominio-beta>" as HB <<node>> {
   node "Node.js\nAPI REST CarPool" as NODE <<executionEnvironment>> {
     component GestioneAccountProfiloSubsystem
     component GestioneOrganizzazioniSubsystem
@@ -29,14 +29,14 @@ node "Hosting backend" as HB <<node>> {
   }
 }
 
-node "Nodo database" as DBN <<node>> {
-  database "PostgreSQL\nDatabase CarPool" as DB
+node "Neon\nPostgreSQL branch prod" as DBN <<node>> {
+  database "Database CarPool\nTLS obbligatorio" as DB
 }
 
 node "Provider e-mail esterno" as MAIL <<external system>>
 
 HF --> BR : HTTPS\ndistribuzione file web
-UI --> NODE : HTTPS / REST\nrichieste applicative
+UI --> NODE : HTTPS / REST\nsame-site, CORS da FRONTEND_URL
 PER --> DB : protocollo PostgreSQL / TLS
 NOT --> MAIL : HTTPS / API\ninvio e-mail
 
@@ -44,8 +44,19 @@ note bottom of NODE
   Un'attività pianificata avvia periodicamente la
   conclusione automatica dei viaggi
   (GestioneViaggiPrenotazioniSubsystem).
-  Servizio cloud gestito: riavvio automatico,
-  deploy da GitHub, backup del DB; ripristino < 15 min
-  (DG_8, DG_14, DG_15).
+  Servizio persistente, una sola istanza.
+  Deploy automatico da main.
+end note
+
+note bottom of HF
+  Deploy automatico da main.
+  VITE_BACKEND_URL punta a api.<dominio-beta>.
+  Frontend e API condividono il dominio registrabile:
+  il cookie SameSite=Lax funziona su HTTPS.
+end note
+
+note bottom of DB
+  DATABASE_URL usa sslmode=require.
+  DATABASE_SSL=true.
 end note
 @enduml

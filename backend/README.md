@@ -48,9 +48,15 @@ solo Service (Facade). Si sviluppa dal basso: prima `migrations/` e
 
 Credenziali e connessione al database solo in variabili d'ambiente:
 `.env` non si versiona, `.env.example` contiene i nomi delle variabili con
-valori finti (`PORT`, `DATABASE_URL`, `TEST_DATABASE_URL`, `DATABASE_SSL`).
-Le variabili del provider e-mail (`EMAIL_PROVIDER=console|brevo`,
-`BREVO_API_KEY`) si aggiungono con il task di NotificaService (L3).
+valori finti. In locale usare i valori di sviluppo; nell'hosting impostare
+`NODE_ENV=production`, `FRONTEND_URL` all'origine HTTPS esatta del frontend,
+`DATABASE_SSL=true`, `DATABASE_URL` con `?sslmode=require`,
+`EMAIL_PROVIDER=brevo` e `BREVO_API_KEY`. Impostare anche `ADMIN_PASSWORD`
+solo quando si esegue il seed di produzione. Non inserire segreti nel repository.
+
+Il frontend e l'API devono essere HTTPS e sotto lo stesso dominio registrabile
+per mantenere il cookie di sessione `SameSite=Lax`. CORS accetta solo
+`FRONTEND_URL` e abilita le richieste con credenziali.
 
 ## Database
 
@@ -62,3 +68,10 @@ Le variabili del provider e-mail (`EMAIL_PROVIDER=console|brevo`,
 - I test usano `TEST_DATABASE_URL` (in CI: `DATABASE_URL`, già di test); prima
   di tutti i test `test/global-setup.js` applica le migrazioni.
 - TLS solo con `DATABASE_SSL=true` (database in cloud).
+- In produzione usare il branch `prod` di Neon e `DATABASE_URL` con
+  `?sslmode=require`; `DATABASE_SSL=true` abilita TLS anche per il driver.
+- Dopo aver configurato il database, eseguire `npm run db:migrate`, quindi
+  `node seeds/produzione.js` una sola volta con `ADMIN_PASSWORD` impostata
+  nell'ambiente. Il seed crea l'organizzazione UNISA e l'Amministratore.
+- Collegare i deploy di frontend e backend al branch `main`. Il backend deve
+  restare attivo con una sola istanza per eseguire l'attività pianificata.
