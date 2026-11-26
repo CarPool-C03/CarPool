@@ -8,6 +8,7 @@ import {
   Text,
   Title1,
   makeStyles,
+  tokens,
   Field,
   Input,
 } from '@fluentui/react-components';
@@ -17,10 +18,10 @@ import { ErroreApi, ErroreValidazione, richiesta } from '../api/client.js';
 import CampoModulo from '../components/CampoModulo.jsx';
 
 const useStyles = makeStyles({
-  pagina: { display: 'flex', flexDirection: 'column', gap: '24px' },
-  scheda: { display: 'flex', flexDirection: 'column', gap: '16px', padding: '24px', maxWidth: '720px' },
-  modulo: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' },
-  ora: { gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' },
+  pagina: { display: 'flex', flexDirection: 'column', gap: 'var(--spazio-4)' },
+  scheda: { display: 'flex', flexDirection: 'column', gap: 'var(--spazio-3)', padding: 'clamp(1rem, 3vw, 1.5rem)', maxWidth: '720px' },
+  modulo: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 14rem), 1fr))', gap: 'var(--spazio-3)' },
+  ora: { gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 10rem), 1fr))', gap: 'var(--spazio-3)' },
   erroreOra: { gridColumn: '1 / -1' },
   azioni: { gridColumn: '1 / -1', display: 'flex', gap: '12px', alignItems: 'center' },
 });
@@ -132,7 +133,7 @@ export default function PubblicaViaggio() {
               errore={undefined} value={dati.data} onChange={(evento) => cambia('data', evento.target.value)} />
             <CampoModulo etichetta="Orario di partenza" nome="ora" type="time" required
               errore={undefined} value={dati.ora} onChange={(evento) => cambia('ora', evento.target.value)} />
-            {erroriCampo.dataOraPartenza && <Text className={styles.erroreOra} role="alert" style={{ color: '#a4262c' }}>{erroriCampo.dataOraPartenza}</Text>}
+            {erroriCampo.dataOraPartenza && <Text className={styles.erroreOra} role="alert" style={{ color: tokens.colorStatusDangerForeground1 }}>{erroriCampo.dataOraPartenza}</Text>}
           </div>
           <CampoModulo etichetta="Posti offerti" nome="postiOfferti" type="number" min={1} max={pubblicazione?.postiMassimi} step={1}
             errore={erroriCampo.postiOfferti} value={dati.postiOfferti}

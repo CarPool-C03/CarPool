@@ -1,5 +1,7 @@
 import {
+  Card,
   Text,
+  tokens,
   Title1,
   Title2,
   makeStyles,
@@ -7,13 +9,15 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { ErroreValidazione, richiesta } from '../api/client.js';
+import AvvisoErrore from '../components/AvvisoErrore.jsx';
 import FiltroRicerca from './FiltroRicerca.jsx';
 import SchedaViaggio from './SchedaViaggio.jsx';
 import { leggiFiltri, urlRicerca } from './ricercaUtilita.js';
 
 const useStyles = makeStyles({
-  pagina: { display: 'flex', flexDirection: 'column', gap: '24px' },
-  risultati: { display: 'flex', flexDirection: 'column', gap: '16px' },
+  pagina: { display: 'flex', flexDirection: 'column', gap: 'var(--spazio-4)' },
+  vuoto: { padding: 'var(--spazio-4)', color: tokens.colorNeutralForeground2 },
+  risultati: { display: 'flex', flexDirection: 'column', gap: 'var(--spazio-3)' },
 });
 
 export default function Ricerca() {
@@ -129,17 +133,20 @@ function RicercaConFiltri({ search }) {
         onInvia={invia}
       />
 
-      {errore && <Text role="alert">{errore}</Text>}
-      {viaggi !== null && (
-        <section className={styles.risultati} aria-live="polite">
-          <Title2 as="h2">Viaggi disponibili</Title2>
-          {viaggi.length === 0 ? (
-            <Text>Nessun viaggio disponibile per i filtri inseriti</Text>
-          ) : viaggi.map((viaggio) => (
-            <SchedaViaggio key={viaggio.id} viaggio={viaggio} />
-          ))}
-        </section>
-      )}
+      {errore && <AvvisoErrore>{errore}</AvvisoErrore>}
+      <div aria-live="polite">
+        {caricamento && <Text>Ricerca in corso…</Text>}
+        {viaggi !== null && (
+          <section className={styles.risultati}>
+            <Title2 as="h2">Viaggi disponibili</Title2>
+            {viaggi.length === 0 ? (
+              <Card className={styles.vuoto}>Nessun viaggio disponibile per i filtri inseriti</Card>
+            ) : viaggi.map((viaggio) => (
+              <SchedaViaggio key={viaggio.id} viaggio={viaggio} />
+            ))}
+          </section>
+        )}
+      </div>
     </section>
   );
 }

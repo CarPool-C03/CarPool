@@ -1,72 +1,56 @@
-// Layout comune: intestazione con logo e menu, contenuto della pagina.
-import { Text, Title3, makeStyles, tokens } from '@fluentui/react-components';
+// Layout comune: intestazione, navigazione e contenuto della pagina.
+import { makeStyles, tokens } from '@fluentui/react-components';
 import { Link } from 'react-router';
 import { useUtente } from '../auth/UtenteContext.jsx';
+import { schermoCompatto } from '../styles/tema.js';
 import MenuRuolo from './MenuRuolo.jsx';
+import TitoloPagina from './TitoloPagina.jsx';
 
 const useStyles = makeStyles({
-  radice: {
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: tokens.colorNeutralBackground2,
-  },
   intestazione: {
-
+    backgroundColor: tokens.colorNeutralBackground1,
+    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+  },
+  barra: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: '16px',
+    gap: 'var(--spazio-3)',
     flexWrap: 'wrap',
-    width: '100%',
-    boxSizing: 'border-box',
-    padding: '10px 24px',
-    backgroundColor: tokens.colorNeutralBackground1,
-    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
-    '@media (max-width: 768px)': {
-      flexWrap: 'nowrap',
-      padding: '10px 16px',
-      gap: '8px',
+    maxWidth: 'var(--larghezza-pagina)',
+    margin: '0 auto',
+    padding: 'var(--spazio-2) var(--margine-pagina)',
   },
-  },
-  marchio: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-    flexWrap: 'wrap',
-    flex: '1 1 auto',
-    minWidth: 0,
+  marchio: { display: 'flex', alignItems: 'center', gap: 'var(--spazio-3)' },
+  sottotitolo: {
+    color: tokens.colorNeutralForeground2,
+    [schermoCompatto]: { display: 'none' },
   },
   logo: {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '8px',
+    gap: 'var(--spazio-1)',
     textDecoration: 'none',
+    color: tokens.colorNeutralForeground1,
+    fontSize: tokens.fontSizeBase600,
+    fontWeight: tokens.fontWeightBold,
+  },
+  immagineLogo: { width: '44px', height: '44px', objectFit: 'contain' },
+  salta: {
+    position: 'absolute',
+    zIndex: 2,
+    left: 'var(--margine-pagina)',
+    top: 'var(--spazio-1)',
+    transform: 'translateY(-200%)',
+    padding: 'var(--spazio-2)',
+    backgroundColor: tokens.colorNeutralBackground1,
     color: tokens.colorBrandForeground1,
-  },
-  immagineLogo: {
-    width: '65px',
-    height: '65px',
-    objectFit: 'contain',
-  },
-  nomeLogo: {
-    color: '#117F60',
-    fontSize: '28px',
-    fontWeight: 700,
-  },
-  sottotitolo: {
-    color: tokens.colorNeutralForeground2,
+    ':focus': { transform: 'none' },
   },
   contenuto: {
-    flex: 1,
-    width: '100%',
-    maxWidth: '1360px',
-    boxSizing: 'border-box',
+    maxWidth: 'var(--larghezza-pagina)',
     margin: '0 auto',
-    padding: '32px 36px',
-    '@media (max-width: 768px)': {
-      padding: '20px 16px',
-    },
+    padding: 'clamp(1.5rem, 4vw, 3rem) var(--margine-pagina)',
   },
 });
 
@@ -80,28 +64,24 @@ export default function Layout({ children }) {
       : '/home';
 
   return (
-    <div className={styles.radice}>
+    <>
+      <TitoloPagina />
+      <a href="#contenuto-principale" className={styles.salta}>Vai al contenuto</a>
       <header className={styles.intestazione}>
-        <div className={styles.marchio}>
-          <Link to={destinazioneLogo} className={styles.logo} aria-label="CarPool">
-            <img
-              src="/CARPOOL.png"
-              alt="Logo CarPool"
-              className={styles.immagineLogo}
-            />
-            <Title3 as="span" className={styles.nomeLogo}>
+        <div className={styles.barra}>
+          <div className={styles.marchio}>
+            <Link to={destinazioneLogo} className={styles.logo} aria-label="CarPool">
+              <img src="/CARPOOL.png" alt="Logo CarPool" width="44" height="44" className={styles.immagineLogo} />
               CarPool
-            </Title3>
-          </Link>
-          {!utente && (
-            <Text className={styles.sottotitolo}>
-              Condividi il tragitto nella tua comunità
-            </Text>
-          )}
+            </Link>
+            {!utente && <span className={styles.sottotitolo}>Condividi il tragitto nella tua comunità</span>}
+          </div>
+          <MenuRuolo />
         </div>
-        <MenuRuolo />
       </header>
-      <main className={styles.contenuto}>{children}</main>
-    </div>
+      <main id="contenuto-principale" tabIndex={-1} className={styles.contenuto}>
+        {children}
+      </main>
+    </>
   );
 }

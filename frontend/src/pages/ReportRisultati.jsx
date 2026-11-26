@@ -6,14 +6,19 @@ import {
   Title2,
   Title3,
   makeStyles,
+  tokens,
 } from '@fluentui/react-components';
 
 const useStyles = makeStyles({
-  totali: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' },
+  totali: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 12rem), 1fr))', gap: 'var(--spazio-3)' },
   totale: { display: 'flex', flexDirection: 'column', gap: '8px', padding: '20px' },
-  scheda: { display: 'flex', flexDirection: 'column', gap: '16px', padding: '24px' },
+  scheda: { display: 'flex', flexDirection: 'column', gap: 'var(--spazio-3)', padding: 'clamp(1rem, 3vw, 1.5rem)' },
   tabella: { width: '100%', borderCollapse: 'collapse', textAlign: 'left' },
-  cella: { padding: '12px', borderBottom: '1px solid #E2E9E4' },
+  numero: { color: tokens.colorBrandForeground1, fontVariantNumeric: 'tabular-nums' },
+  cella: {
+    padding: 'clamp(0.25rem, 1.5vw, 0.75rem)',
+    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+  },
 });
 
 export default function ReportRisultati({ report }) {
@@ -33,7 +38,7 @@ export default function ReportRisultati({ report }) {
         {metriche.map(([etichetta, valore]) => (
           <Card key={etichetta} className={styles.totale}>
             <Title3 as="h2">{etichetta}</Title3>
-            <Text>{valore}</Text>
+            <Text size={800} weight="bold" className={styles.numero}>{valore}</Text>
             <Text>Nel periodo selezionato</Text>
           </Card>
         ))}

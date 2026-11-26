@@ -1,12 +1,14 @@
-import { Badge, Button, Card, Text, Title2, makeStyles } from '@fluentui/react-components';
+import { Badge, Button, Card, Text, Title2, makeStyles, tokens } from '@fluentui/react-components';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import AvvisoErrore from '../components/AvvisoErrore.jsx';
 import { richiesta } from '../api/client.js';
 import { dataOraMostrata } from './ricercaUtilita.js';
 
 const useStyles = makeStyles({
-  riquadri: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' },
-  riquadro: { display: 'flex', flexDirection: 'column', gap: '10px', padding: '20px' },
+  riquadri: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 19rem), 1fr))', gap: 'var(--spazio-3)' },
+  stato: { color: tokens.colorNeutralForeground2 },
+  riquadro: { display: 'flex', flexDirection: 'column', gap: 'var(--spazio-2)', padding: 'var(--spazio-4)' },
 });
 
 function prossimaRichiesta(richieste, stato) {
@@ -44,17 +46,17 @@ export default function RiquadriPrenotazioniHome() {
     };
   }, []);
 
-  if (errore) return <Text role="alert">{errore}</Text>;
+  if (errore) return <AvvisoErrore>{errore}</AvvisoErrore>;
 
   const prossimoViaggio = richieste && prossimaRichiesta(richieste, 'Accettata');
   const prossimaInAttesa = richieste && prossimaRichiesta(richieste, 'InAttesa');
 
   return (
-    <section className={styles.riquadri}>
+    <section className={styles.riquadri} aria-label="Riepilogo prenotazioni" aria-live="polite">
       <Card className={styles.riquadro}>
         <Title2 as="h2">Il tuo prossimo viaggio</Title2>
         {richieste === null ? (
-          <Text>Caricamento…</Text>
+          <Text className={styles.stato}>Caricamento…</Text>
         ) : prossimoViaggio ? (
           <>
             <Badge appearance="filled" color="success">Accettata</Badge>
@@ -69,12 +71,12 @@ export default function RiquadriPrenotazioniHome() {
               Dettaglio viaggio
             </Button>
           </>
-        ) : <Text>Nessun viaggio in programma</Text>}
+        ) : <Text className={styles.stato}>Nessun viaggio in programma</Text>}
       </Card>
       <Card className={styles.riquadro}>
         <Title2 as="h2">Le tue richieste</Title2>
         {richieste === null ? (
-          <Text>Caricamento…</Text>
+          <Text className={styles.stato}>Caricamento…</Text>
         ) : prossimaInAttesa ? (
           <>
             <Badge appearance="filled" color="warning">In attesa</Badge>
@@ -84,7 +86,7 @@ export default function RiquadriPrenotazioniHome() {
             </Text>
             <Button onClick={() => navigate('/prenotazioni')}>Le mie prenotazioni</Button>
           </>
-        ) : <Text>Non hai richieste in attesa</Text>}
+        ) : <Text className={styles.stato}>Non hai richieste in attesa</Text>}
       </Card>
     </section>
   );

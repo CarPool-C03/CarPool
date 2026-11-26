@@ -7,6 +7,7 @@ import {
   Title1,
   Title2,
   makeStyles,
+  tokens,
 } from '@fluentui/react-components';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
@@ -16,16 +17,16 @@ import { useUtente } from '../auth/UtenteContext.jsx';
 const useStyles = makeStyles({
   pagina: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 19rem), 1fr))',
     gap: '32px',
     alignItems: 'center',
     maxWidth: '960px',
     margin: '0 auto',
   },
-  introduzione: { display: 'flex', flexDirection: 'column', gap: '16px' },
-  modulo: { padding: '28px' },
+  introduzione: { display: 'flex', flexDirection: 'column', gap: 'var(--spazio-3)' },
+  modulo: { padding: 'clamp(1rem, 4vw, 2rem)' },
   campi: { display: 'flex', flexDirection: 'column', gap: '18px' },
-  link: { color: '#117F60', fontWeight: 600, textDecoration: 'none' },
+  link: { color: tokens.colorBrandForeground1, fontWeight: 600, textUnderlineOffset: '3px' },
 });
 
 export default function Login() {
@@ -65,7 +66,7 @@ export default function Login() {
             <MessageBarBody>{errore}</MessageBarBody>
           </MessageBar>
         )}
-        <form onSubmit={invia}>
+        <form onSubmit={invia} aria-busy={invio}>
           <div className={styles.campi}>
             <CampoModulo
               etichetta="E-mail istituzionale / aziendale"
@@ -96,6 +97,7 @@ export default function Login() {
             </Text>
           </div>
         </form>
+        <Text role="status">{invio ? 'Invio in corso…' : ''}</Text>
       </Card>
     </section>
   );

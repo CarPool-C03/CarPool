@@ -1,0 +1,61 @@
+:root {
+  --spazio-1: 0.5rem;
+  --spazio-2: 0.75rem;
+  --spazio-3: 1rem;
+  --spazio-4: 1.5rem;
+  --spazio-5: 2rem;
+  --spazio-6: 3rem;
+  --margine-pagina: clamp(1rem, 4vw, 3rem);
+  --larghezza-pagina: 78rem;
+  --durata-ui: 180ms;
+}
+
+body { margin: 0; }
+
+.carpool {
+  min-height: 100vh;
+  background: var(--colorNeutralBackground2);
+  color: var(--colorNeutralForeground1);
+}
+
+.carpool main { overflow-wrap: anywhere; }
+
+.carpool main section,
+.carpool main form,
+.carpool main .fui-Field,
+.carpool main .fui-Input,
+.carpool main .fui-Select,
+.carpool main .fui-Card {
+  min-inline-size: 0;
+}
+
+.carpool main .fui-Input,
+.carpool main .fui-Select,
+.carpool main input,
+.carpool main select,
+.carpool main textarea {
+  max-inline-size: 100%;
+}
+
+.carpool main input { min-inline-size: 0; }
+.carpool main select { inline-size: 100%; }
+
+.carpool main .fui-Card {
+  border-color: var(--colorNeutralStroke2);
+  border-radius: var(--borderRadiusLarge);
+}
+
+.carpool :is(a, button, input, select, textarea):focus-visible,
+.carpool main:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 3px;
+}
+
+.carpool :is(a, button) {
+  transition: background-color var(--durata-ui), color var(--durata-ui),
+    border-color var(--durata-ui);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carpool :is(a, button) { transition: none; }
+}

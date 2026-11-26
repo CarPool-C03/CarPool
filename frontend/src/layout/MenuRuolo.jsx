@@ -11,8 +11,9 @@ import {
   makeStyles,
   tokens,
 } from '@fluentui/react-components';
-import { NavLink, useNavigate } from 'react-router';
+import { matchPath, NavLink, useLocation, useNavigate } from 'react-router';
 import { useState } from 'react';
+import { schermoCompatto } from '../styles/tema.js';
 import { useUtente } from '../auth/UtenteContext.jsx';
 
 const VOCI_MEMBRO = [
@@ -32,38 +33,46 @@ const useStyles = makeStyles({
   desktop: {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px',
+    gap: 'var(--spazio-2)',
     flexWrap: 'wrap',
-    '@media (max-width: 768px)': { display: 'none' },
+    [schermoCompatto]: { display: 'none' },
   },
-    mobile: {
-      display: 'none',
-      '@media (max-width: 768px)': {
+  mobile: {
+    display: 'none',
+    [schermoCompatto]: {
       display: 'inline-flex',
       flexShrink: 0,
     },
   },
-  pulsanteMobile: {
-    minWidth: '40px',
-    width: '40px',
-    padding: 0,
+  pulsanteMobile: { minWidth: '44px', minHeight: '44px' },
+  voceMobile: {
+    '&[aria-current="page"]': {
+      backgroundColor: tokens.colorBrandBackground2,
+      color: tokens.colorBrandForeground1,
+    },
   },
-  voce: { textDecoration: 'none', color: tokens.colorBrandForeground1 },
-  visitatoreAccedi: {
-    padding: '12px 20px',
-    border: '1px solid #E2E9E4',
-    borderRadius: '8px',
-    backgroundColor: '#FFFFFF',
-    fontWeight: 600,
+  voce: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    minHeight: '44px',
+    paddingInline: 'var(--spazio-2)',
+    borderRadius: tokens.borderRadiusMedium,
+    textDecoration: 'none',
+    color: tokens.colorNeutralForeground1,
+    fontWeight: tokens.fontWeightSemibold,
+    ':hover': { backgroundColor: tokens.colorBrandBackground2 },
+    '&[aria-current="page"]': {
+      backgroundColor: tokens.colorBrandBackground2,
+      color: tokens.colorBrandForeground1,
+      textDecoration: 'underline',
+      textUnderlineOffset: '4px',
+    },
   },
+  visitatoreAccedi: { border: `1px solid ${tokens.colorNeutralStroke2}` },
   visitatoreRegistrati: {
-    padding: '12px 20px',
-    border: '1px solid #117F60',
-    borderRadius: '8px',
-    backgroundColor: '#117F60',
-    color: '#FFFFFF',
-    fontWeight: 600,
-    ':hover': { backgroundColor: '#0E6D52' },
+    backgroundColor: tokens.colorBrandBackground,
+    color: tokens.colorNeutralForegroundOnBrand,
+    ':hover': { backgroundColor: tokens.colorBrandBackgroundHover },
   },
 });
 
@@ -75,7 +84,7 @@ function Voce({ etichetta, percorso, visitatore = false }) {
       : styles.visitatoreAccedi
     : '';
   return (
-    <NavLink to={percorso} className={`${styles.voce} ${classeVisitatore}`}>
+    <NavLink to={percorso} end={percorso === '/admin'} className={`${styles.voce} ${classeVisitatore}`}>
       {etichetta}
     </NavLink>
   );
@@ -84,6 +93,7 @@ function Voce({ etichetta, percorso, visitatore = false }) {
 export default function MenuRuolo() {
   const { utente, esci } = useUtente();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const styles = useStyles();
   const [erroreLogout, setErroreLogout] = useState('');
 
@@ -135,7 +145,15 @@ export default function MenuRuolo() {
           <MenuPopover>
             <MenuList>
               {voci.map((voce) => (
-                <MenuItem key={voce.percorso} onClick={() => navigate(voce.percorso)}>
+                <MenuItem
+                  key={voce.percorso}
+                  className={styles.voceMobile}
+                  aria-current={matchPath({
+                    path: voce.percorso,
+                    end: voce.percorso === '/admin',
+                  }, pathname) ? 'page' : undefined}
+                  onClick={() => navigate(voce.percorso)}
+                >
                   {voce.etichetta}
                 </MenuItem>
               ))}
