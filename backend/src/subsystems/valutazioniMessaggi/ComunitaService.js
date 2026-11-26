@@ -1,12 +1,12 @@
 // ComunitaService: Facade del sottosistema valutazioniMessaggi (docs/sdd/README.md, docs/odd/README.md).
 const PersistenzaService = require('../persistenza/PersistenzaService');
-const ValutaPartecipanteControl = require('./ValutaPartecipanteControl');
 
 async function calcolaValutazioneMedia(membroId) {
   return PersistenzaService.calcolaValutazioneMedia(membroId);
 }
 
 async function registraValutazione(autoreId, viaggioId, dati) {
+  const ValutaPartecipanteControl = require('./ValutaPartecipanteControl');
   return ValutaPartecipanteControl.registraValutazione(autoreId, viaggioId, dati);
 }
 
