@@ -66,19 +66,31 @@ registrato con LogService e non viene rilanciato al chiamante.
 - restituisce `true` se l'invio è inoltrato al provider, `false` altrimenti; non lancia eccezioni:
   un fallimento si registra con LogService (`docs/sdd/README.md`, «Registrazione degli errori»).
 
+**`NotificaService.inviaNotificaCancellazione(email, dati)`** (RF_TRIP_16): `email` è l'indirizzo
+  del Passeggero; `dati` contiene `{ nomePasseggero, nomeConducente, puntoPartenza, destinazione,
+  dataOraPartenza }` come per l'esito prenotazione. Oggetto: «Viaggio cancellato»; restituisce `true`
+  se l'invio è inoltrato, `false` altrimenti. Non lancia eccezioni: i fallimenti sono registrati con
+  LogService e non annullano la cancellazione.
+
+**`NotificaService.inviaNotificaModifica(email, dati)`** (RF_TRIP_18): usa gli stessi dati aggiornati
+del viaggio e li invia ai Passeggeri con richiesta `InAttesa`, con oggetto «Viaggio modificato».
+Restituisce `true` se inoltrata e `false` altrimenti; un fallimento viene registrato e non annulla la modifica.
+
 ## Observer
 
 | Ruolo | Classi |
 |---|---|
 | Subject | EventiPrenotazione |
 | Observer | OsservatorePrenotazione (interfaccia) |
-| ConcreteObserver | NotificaEsitoObserver (chiama NotificaService) |
+| ConcreteObserver | NotificaEsitoObserver, NotificaModificaObserver, NotificaCancellazioneObserver |
 | Stato notificato | EventoPrenotazione: tipo di evento, richiesta e viaggio coinvolti |
 
-**Dopo il commit** della transazione, GestorePrenotazioni pubblica un
-EventoPrenotazione; gli osservatori sono registrati all'avvio. Una nuova notifica
-(es. RF_TRIP_17) si aggiunge con un nuovo osservatore.
-Dove: `backend/src/subsystems/viaggiPrenotazioni/eventi/`.
+**Dopo il commit** della transazione, GestorePrenotazioni pubblica gli eventi di esito; GestoreViaggi
+pubblica `ViaggioModificato` per ciascuna richiesta `InAttesa` e `ViaggioCancellato` per ciascuna
+richiesta `InAttesa` o `Accettata` appena annullata. Gli observer recuperano i dati aggiornati e
+chiamano il metodo NotificaService corrispondente; un fallimento non annulla la modifica o la
+cancellazione già confermata. Gli observer sono registrati all'avvio. Dove:
+`backend/src/subsystems/viaggiPrenotazioni/eventi/`.
 
 ## Strategy
 
@@ -129,6 +141,31 @@ appartiene alla persistenza, non all'entità `Viaggio`.
 
 ViaggioPrenotazioneService crea il criterio adatto. Dove: `backend/src/subsystems/viaggiPrenotazioni/ricerca/`.
 
+## Persistenza dei viaggi del Conducente
+
+Le operazioni applicative REST sono in `docs/api/viaggi.md`; quelle seguenti sono operazioni interne
+proposte per `PersistenzaService`. I tipi dei risultati sono strutture inline, non nuove classi.
+
+La struttura `ViaggioConRichieste` usata sotto è solo la forma del dato restituito, non una nuova
+classe: `{ id: Intero, dataOraPartenza: DataOra, puntoPartenza: String, sede: { id: Intero,
+nome: String }, postiOfferti: Intero, postiDisponibili: Intero, contributoIndicativoEuro:
+Decimale | null, stato: String, conducente: { id: Intero, nome: String, cognome: String },
+richieste: Array<{ id: Intero, stato: String, passeggero: { id: Intero, nome: String,
+cognome: String } }> }`.
+
+- `recuperaViaggiDelConducente(membroId: Intero): Promise<{ attivi: Array<ViaggioConRichieste>, conclusi: Array<ViaggioConRichieste> }>`.
+  Esclude i viaggi `Cancellato`; ordina gli attivi per partenza crescente e i conclusi per partenza
+  decrescente. `postiDisponibili` è calcolato sottraendo le richieste `Accettata`.
+- `modificaViaggio(membroId: Intero, viaggioId: Intero, dati: DatiModificaViaggio): Promise<{ esito: "AGGIORNATO", viaggio: ViaggioConRichieste, richiesteInAttesaIds: Intero[] } | { esito: "NON_TROVATO" | "NON_PROPRIETARIO" | "NON_ATTIVO" | "RICHIESTE_ACCETTATE" }>` .
+- `cancellaViaggio(membroId: Intero, viaggioId: Intero): Promise<{ esito: "CANCELLATO", viaggio: ViaggioConRichieste, richiesteAnnullateIds: Intero[] } | { esito: "NON_TROVATO" | "NON_PROPRIETARIO" | "NON_ATTIVO" }>` .
+
+GestoreViaggi traduce gli esiti nei codici HTTP già definiti in `docs/api/viaggi.md`: `NON_TROVATO`
+→ 404, `NON_PROPRIETARIO` → 403, `NON_ATTIVO` → 409 `VIAGGIO_NON_ATTIVO` e
+`RICHIESTE_ACCETTATE` → 409 `VIAGGIO_CON_PRENOTAZIONI_ACCETTATE`. La validazione dei campi di
+modifica resta a GestoreViaggi; le condizioni di proprietà e stato sono ricontrollate nella
+transazione di persistenza. Gli ID delle richieste restituiti consentono a GestoreViaggi di
+pubblicare gli eventi Observer dopo il commit.
+
 ## Glossario delle classi introdotte
 
 | Classe | Definizione |
@@ -136,12 +173,14 @@ ViaggioPrenotazioneService crea il criterio adatto. Dove: `backend/src/subsystem
 | BrevoAdapter | Implementa ProviderEmail con il SDK di Brevo |
 | ConsoleEmailAdapter | Implementa ProviderEmail scrivendo sulla console; sviluppo e test |
 | CriterioRicerca | Interfaccia dei criteri di ricerca; ognuno costruisce il proprio filtro |
-| EventiPrenotazione | Conserva gli osservatori e notifica i cambi di stato delle richieste |
+| EventiPrenotazione | Conserva gli osservatori e notifica modifiche viaggio e cambi di stato richieste |
 | EventoPrenotazione | Dato inviato agli osservatori: tipo, richiesta, viaggio |
 | Filtro | Condizioni e parametri della query prodotti da un CriterioRicerca |
 | GestorePrenotazioni | Invio, risposta e annullamento delle richieste di prenotazione |
 | GestoreViaggi | Pubblicazione, modifica, cancellazione e conclusione dei viaggi |
 | NotificaEsitoObserver | Invia al Passeggero, tramite NotificaService, l'esito della richiesta |
+| NotificaModificaObserver | Invia al Passeggero i dettagli aggiornati del viaggio |
+| NotificaCancellazioneObserver | Invia al Passeggero, tramite NotificaService, la cancellazione del viaggio |
 | OsservatorePrenotazione | Interfaccia comune degli osservatori |
 | ProviderEmail | Interfaccia con cui NotificaService invia le e-mail |
 | RicercaPerEvento / RicercaPerSede | Criteri di ricerca verso un evento / verso una sede |

@@ -98,6 +98,18 @@ async function annullaRichiesta(membroId, richiestaId) {
   return GestorePrenotazioni.annullaRichiesta(membroId, richiestaId);
 }
 
+async function viaggiDelConducente(membroId) {
+  return GestoreViaggi.viaggiDelConducente(membroId);
+}
+
+async function modificaViaggio(membroId, viaggioId, dati) {
+  return GestoreViaggi.modificaViaggio(membroId, viaggioId, dati);
+}
+
+async function cancellaViaggio(membroId, viaggioId) {
+  return GestoreViaggi.cancellaViaggio(membroId, viaggioId);
+}
+
 module.exports = {
   cercaViaggi,
   avviaPubblicazione: GestoreViaggi.avviaPubblicazione,
@@ -106,4 +118,7 @@ module.exports = {
   inviaRichiesta,
   richiesteDelPasseggero,
   annullaRichiesta,
+  viaggiDelConducente,
+  modificaViaggio,
+  cancellaViaggio,
 };

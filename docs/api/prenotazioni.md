@@ -53,7 +53,9 @@ Stessi controlli 2–3 di `accetta`, poi la richiesta diventa `Rifiutata`; dopo 
 ## Observer (cartella `viaggiPrenotazioni/eventi/`, ODD)
 
 - `EventoPrenotazione`: `{ tipo, richiestaId, viaggioId }`, con `tipo` in `RichiestaAccettata`,
-  `RichiestaRifiutata`.
+  `RichiestaRifiutata`, `ViaggioCancellato`. `ViaggioCancellato` è pubblicato da GestoreViaggi,
+  dopo il commit, per ciascuna richiesta `InAttesa` o `Accettata` appena passata ad `Annullata`.
 - `EventiPrenotazione.registra(osservatore)`, `EventiPrenotazione.notifica(evento)`.
-- `OsservatorePrenotazione.aggiorna(evento)`; `NotificaEsitoObserver` la implementa.
+- `OsservatorePrenotazione.aggiorna(evento)`; `NotificaEsitoObserver` gestisce gli esiti e
+  `NotificaCancellazioneObserver` gestisce `ViaggioCancellato`.
 - Gli osservatori si registrano in `backend/src/server.js`; nei test si registrano a mano.

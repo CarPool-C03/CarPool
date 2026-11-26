@@ -66,12 +66,17 @@ I viaggi `Cancellato` non compaiono.
 Service: `ViaggioPrenotazioneService.modificaViaggio(membroId, viaggioId, dati)`.
 Corpo e validazione come `POST /api/viaggi`. Non è il conducente → `403`; viaggio non `Attivo` →
 `409` `VIAGGIO_NON_ATTIVO`; richieste `Accettata` presenti → `409` `VIAGGIO_CON_PRENOTAZIONI_ACCETTATE`.
-Risposta `200`: il viaggio aggiornato.
+Risposta `200`: il viaggio aggiornato. Dopo il commit, `GestoreViaggi` pubblica `ViaggioModificato`
+per ciascuna richiesta `InAttesa`; `NotificaModificaObserver` inoltra RF_TRIP_18 con i dati aggiornati.
+Un invio fallito non annulla la modifica ed è registrato con LogService.
 
 ## DELETE /api/viaggi/:id — #18 · RF_TRIP_05
 Service: `ViaggioPrenotazioneService.cancellaViaggio(membroId, viaggioId)`. Non è il conducente →
 `403`; viaggio non `Attivo` → `409` `VIAGGIO_NON_ATTIVO`. In un'unica transazione: viaggio `Cancellato`,
-richieste `InAttesa` e `Accettata` → `Annullata`. Risposta `204`.
+richieste `InAttesa` e `Accettata` → `Annullata`. Dopo il commit, `GestoreViaggi` pubblica un evento
+`ViaggioCancellato` per ciascuna richiesta annullata; `NotificaCancellazioneObserver` inoltra la notifica
+RF_TRIP_16 al Passeggero. Un invio fallito non annulla la cancellazione ed è registrato con LogService.
+Risposta `204`.
 
 ## Funzioni per altri sottosistemi e per l'attività pianificata (non sono endpoint)
 

@@ -94,6 +94,21 @@ Le operazioni di ricerca e dettaglio esposte da `PersistenzaService` restituisco
 nello stato `Accettata`. Le richieste `InAttesa` non occupano posti. Il calcolo è responsabilità
 della persistenza, non dell'entità `Viaggio`.
 
+## Modifica e cancellazione dei viaggi
+
+Le firme e i risultati delle operazioni di persistenza sono definiti in `docs/odd/README.md`.
+`modificaViaggio` e `cancellaViaggio` eseguono i controlli e gli aggiornamenti in
+`PersistenzaService.transazione(fn)` (già esistente) e bloccano la riga del viaggio con
+`SELECT ... FOR UPDATE` prima di controllarne proprietà e stato. La modifica verifica inoltre,
+sotto lo stesso lock, che non esistano richieste `Accettata`. L'accettazione di una richiesta usa
+il medesimo lock sul viaggio (DG_5), così modifica, cancellazione e accettazione non possono
+superarsi a vicenda.
+
+La cancellazione aggiorna nella stessa transazione il viaggio a `Cancellato` e le richieste
+`InAttesa` o `Accettata` ad `Annullata`. Se una delle scritture fallisce prima del commit, la
+transazione è annullata integralmente. Solo dopo il commit GestoreViaggi pubblica gli eventi per le
+notifiche; un errore d'invio non annulla le modifiche già confermate.
+
 ## Design goal che vincolano il codice
 
 - **DG_1** report solo aggregati: i conteggi li calcola PersistenzaService, nessuna riga sui singoli Membri.

@@ -18,6 +18,8 @@ package "GestioneViaggiPrenotazioniSubsystem" {
   class EventiPrenotazione <<Subject>>
   interface OsservatorePrenotazione <<Observer>>
   class NotificaEsitoObserver <<ConcreteObserver>>
+  class NotificaModificaObserver <<ConcreteObserver>>
+  class NotificaCancellazioneObserver <<ConcreteObserver>>
   interface CriterioRicerca <<Strategy>>
   class RicercaPerSede <<ConcreteStrategy>>
   class RicercaPerEvento <<ConcreteStrategy>>
@@ -41,12 +43,17 @@ GestorePrenotazioni ..> Viaggio
 GestorePrenotazioni ..> RichiestaPrenotazione
 Viaggio "1" *-- "0..*" RichiestaPrenotazione
 GestorePrenotazioni ..> EventiPrenotazione : pubblica()
+GestoreViaggi ..> EventiPrenotazione : pubblica dopo il commit
 EventiPrenotazione o-- "0..*" OsservatorePrenotazione
 OsservatorePrenotazione <|.. NotificaEsitoObserver
+OsservatorePrenotazione <|.. NotificaModificaObserver
+OsservatorePrenotazione <|.. NotificaCancellazioneObserver
 RicercaViaggi --> CriterioRicerca : usa
 CriterioRicerca <|.. RicercaPerSede
 CriterioRicerca <|.. RicercaPerEvento
 NotificaEsitoObserver ..> NotificaService : inviaEsitoPrenotazione(email, dati, esito)
+NotificaModificaObserver ..> NotificaService : inviaNotificaModifica(email, dati)
+NotificaCancellazioneObserver ..> NotificaService : inviaNotificaCancellazione(email, dati)
 NotificaService --> ProviderEmail : usa
 ProviderEmail <|.. BrevoAdapter
 ProviderEmail <|.. ConsoleEmailAdapter
