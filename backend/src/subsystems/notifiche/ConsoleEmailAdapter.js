@@ -4,6 +4,8 @@ const tipoPerOggetto = new Map([
   ['Verifica il tuo account CarPool', 'verificaAccount'],
   ['Richiesta di prenotazione accettata', 'esitoPrenotazione'],
   ['Richiesta di prenotazione rifiutata', 'esitoPrenotazione'],
+  ['Viaggio modificato', 'modificaViaggio'],
+  ['Viaggio cancellato', 'cancellazioneViaggio'],
 ]);
 
 class ConsoleEmailAdapter extends ProviderEmail {

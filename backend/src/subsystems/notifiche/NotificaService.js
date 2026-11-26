@@ -10,6 +10,14 @@ const modelli = {
     path.join(__dirname, 'modelli', 'esitoPrenotazione.html'),
     'utf8',
   ),
+  modificaViaggio: fs.readFileSync(
+    path.join(__dirname, 'modelli', 'modificaViaggio.html'),
+    'utf8',
+  ),
+  cancellazioneViaggio: fs.readFileSync(
+    path.join(__dirname, 'modelli', 'cancellazioneViaggio.html'),
+    'utf8',
+  ),
 };
 
 function creaProviderEmail(provider) {
@@ -123,4 +131,45 @@ function inviaEsitoPrenotazione(email, dati, esito) {
   return inoltra({ destinatario: email, oggetto, html }, 'esitoPrenotazione');
 }
 
-module.exports = { inviaLinkVerifica, inviaEsitoPrenotazione };
+function validaDatiViaggio(dati) {
+  if (!dati || typeof dati !== 'object') {
+    throw new TypeError('dati deve contenere i dettagli aggiornati del viaggio');
+  }
+}
+
+function inviaNotificaModifica(email, dati) {
+  validaDatiViaggio(dati);
+  const html = applicaModello(modelli.modificaViaggio, {
+    nomePasseggero: dati.nomePasseggero,
+    nomeConducente: dati.nomeConducente,
+    puntoPartenza: dati.puntoPartenza,
+    destinazione: dati.destinazione,
+    dataOraPartenza: formattaDataOra(dati.dataOraPartenza),
+  });
+  return inoltra(
+    { destinatario: email, oggetto: 'Viaggio modificato', html },
+    'modificaViaggio',
+  );
+}
+
+function inviaNotificaCancellazione(email, dati) {
+  validaDatiViaggio(dati);
+  const html = applicaModello(modelli.cancellazioneViaggio, {
+    nomePasseggero: dati.nomePasseggero,
+    nomeConducente: dati.nomeConducente,
+    puntoPartenza: dati.puntoPartenza,
+    destinazione: dati.destinazione,
+    dataOraPartenza: formattaDataOra(dati.dataOraPartenza),
+  });
+  return inoltra(
+    { destinatario: email, oggetto: 'Viaggio cancellato', html },
+    'cancellazioneViaggio',
+  );
+}
+
+module.exports = {
+  inviaLinkVerifica,
+  inviaEsitoPrenotazione,
+  inviaNotificaModifica,
+  inviaNotificaCancellazione,
+};

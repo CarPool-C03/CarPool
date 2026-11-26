@@ -58,6 +58,30 @@ router.get(
   },
 );
 
+router.get('/viaggi/miei', ...soloMembro, async (richiesta, risposta) => {
+  const viaggi = await ViaggioPrenotazioneService.viaggiDelConducente(
+    richiesta.utente.membro.id,
+  );
+  risposta.status(200).json(viaggi);
+});
+
+router.put('/viaggi/:id', ...soloMembro, async (richiesta, risposta) => {
+  const viaggio = await ViaggioPrenotazioneService.modificaViaggio(
+    richiesta.utente.membro.id,
+    idPositivo(richiesta.params.id),
+    richiesta.body,
+  );
+  risposta.status(200).json(viaggio);
+});
+
+router.delete('/viaggi/:id', ...soloMembro, async (richiesta, risposta) => {
+  await ViaggioPrenotazioneService.cancellaViaggio(
+    richiesta.utente.membro.id,
+    idPositivo(richiesta.params.id),
+  );
+  risposta.status(204).end();
+});
+
 router.get('/viaggi/:id', ...soloMembro, async (richiesta, risposta) => {
   const viaggio = await ViaggioPrenotazioneService.dettaglioViaggio(
     idPositivo(richiesta.params.id),

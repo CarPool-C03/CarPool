@@ -11,6 +11,9 @@ import Ricerca from './pages/Ricerca.jsx';
 import PubblicaViaggio from './pages/PubblicaViaggio.jsx';
 import DettaglioViaggio from './pages/DettaglioViaggio.jsx';
 import LeMiePrenotazioni from './pages/LeMiePrenotazioni.jsx';
+import IMieiViaggi from './pages/IMieiViaggi.jsx';
+import ModificaViaggio from './pages/ModificaViaggio.jsx';
+import RichiesteRicevute from './pages/RichiesteRicevute.jsx';
 import PaginaVuota from './pages/PaginaVuota.jsx';
 import Registrazione from './pages/Registrazione.jsx';
 import RegistrazioneInviata from './pages/RegistrazioneInviata.jsx';
@@ -50,15 +53,15 @@ export default function App() {
           />
           <Route
             path="/miei-viaggi"
-            element={protetta(['Membro'], <PaginaVuota titolo="I miei viaggi" />)}
+            element={protetta(['Membro'], <IMieiViaggi />)}
           />
           <Route
             path="/miei-viaggi/:id/modifica"
-            element={protetta(['Membro'], <PaginaVuota titolo="Modifica viaggio" />)}
+            element={protetta(['Membro'], <ModificaViaggio />)}
           />
           <Route
             path="/miei-viaggi/:id/richieste"
-            element={protetta(['Membro'], <PaginaVuota titolo="Richieste ricevute" />)}
+            element={protetta(['Membro'], <RichiesteRicevute />)}
           />
           <Route
             path="/prenotazioni"
