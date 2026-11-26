@@ -14,6 +14,7 @@
 
 | Parametro o ambiente | Categoria | Scelte |
 |---|---|---|
+| Account del Membro | Stato | Attivo [precondizione UC_AUTH_07] |
 | Password di conferma | Validità | corretta · errata [error] |
 | Account e Membro (ambiente) | Dati personali | valori identificativi presenti [single] |
 | Dati associati (ambiente) | Presenza | veicolo, messaggi e valutazioni presenti · assenti |

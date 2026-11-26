@@ -19,7 +19,7 @@ describe('Eliminazione account - report PSCL', () => {
     await pulisciContesto(contesto);
   });
 
-  test('TC_AUTH_07.07 - Eliminazione: il report PSCL passato non cambia', async () => {
+  test('TC_AUTH_07.07 - Eliminazione: il report PSCL di un periodo passato non cambia', async () => {
     const viaggioId = await creaViaggio(contesto, {
       partenza: '2026-10-20T10:00:00+02:00',
       postiOfferti: 3,

@@ -96,7 +96,7 @@ describe('Eliminazione account - dati associati', () => {
     ]);
   });
 
-  test('TC_AUTH_07.05 - Eliminazione: viaggi conclusi e richieste completate restano anonimi', async () => {
+  test('TC_AUTH_07.05 - Eliminazione: i viaggi conclusi restano senza riferimenti personali', async () => {
     const altroMembro = await aggiungiAccount(contesto);
     const viaggioGuidato = await creaViaggio(contesto, contesto.account, 'Concluso');
     const viaggioDaPasseggero = await creaViaggio(contesto, altroMembro, 'Concluso');

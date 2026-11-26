@@ -9,10 +9,10 @@
 | Data | 26/11/2026 |
 | Versione | 1.0 |
 | Autore | Roberto Rega |
-| Descrizione | Consente a un Membro autenticato di cancellare il proprio profilo e i dati associati, confermando l'operazione con la password. |
+| Descrizione | Consente a un Membro con Account «Attivo» e autenticato di cancellare il proprio profilo e i dati associati, confermando l'operazione con la password. |
 | Attore principale | Membro — obiettivo: cancellare il proprio account e i dati associati. |
 | Attori secondari | Nessuno |
-| Entry condition | Il caso d'uso inizia quando un Membro autenticato richiede la cancellazione del proprio account. |
+| Entry condition | Il caso d'uso inizia quando un Membro con Account «Attivo» e autenticato richiede la cancellazione del proprio account. Un Account «In attesa di verifica» non può autenticarsi e non può avviare UC_AUTH_07. |
 | Exit condition on success | L'Account è nello stato «Eliminato», Account e Membro sono anonimizzati, i dati previsti dalla politica sono cancellati o aggiornati, tutte le sessioni sono chiuse e il Membro è riportato alla pagina iniziale. |
 | Exit condition on failure | Il caso d'uso termina senza modifiche persistenti se la password non è corretta o se la transazione fallisce. |
 | Rilevanza / User priority | Alta |

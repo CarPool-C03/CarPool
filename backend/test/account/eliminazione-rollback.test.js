@@ -23,7 +23,7 @@ describe('Eliminazione account - transazione', () => {
     await pulisciContesto(contesto);
   });
 
-  test('TC_AUTH_07.08 - Eliminazione: errore durante una scrittura annulla tutte le modifiche', async () => {
+  test('TC_AUTH_07.08 - Eliminazione: un errore a metà non lascia modifiche', async () => {
     const passeggero = await aggiungiAccount(contesto);
     const viaggioId = await creaViaggio(contesto, contesto.account);
     const richiestaId = await creaRichiesta(passeggero, viaggioId, 'InAttesa');
@@ -55,8 +55,8 @@ describe('Eliminazione account - transazione', () => {
        END $$`,
     );
     await PersistenzaService.query(
-      `CREATE TRIGGER "${trigger}" BEFORE UPDATE OF stato ON "Account"
-       FOR EACH ROW WHEN (NEW.stato = 'Eliminato')
+      `CREATE TRIGGER "${trigger}" BEFORE DELETE ON "Sessione"
+       FOR EACH ROW
        EXECUTE FUNCTION "${funzione}"()`,
     );
 
@@ -102,7 +102,7 @@ describe('Eliminazione account - transazione', () => {
       expect(valutazioni).toHaveLength(1);
       expect(sessione.status).toBe(200);
     } finally {
-      await PersistenzaService.query(`DROP TRIGGER "${trigger}" ON "Account"`);
+      await PersistenzaService.query(`DROP TRIGGER "${trigger}" ON "Sessione"`);
       await PersistenzaService.query(`DROP FUNCTION "${funzione}"()`);
     }
   });

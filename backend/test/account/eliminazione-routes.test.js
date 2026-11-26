@@ -93,7 +93,7 @@ describe('Eliminazione account - route', () => {
     });
   });
 
-  test('TC_AUTH_07.06 - Eliminazione: sessioni chiuse, login successivo rifiutato', async () => {
+  test('TC_AUTH_07.06 - Eliminazione: sessioni chiuse, il login successivo viene rifiutato', async () => {
     const primaSessione = await login(contesto.account);
     const secondaSessione = await login(contesto.account);
     const risposta = await eliminaConCookie(primaSessione);
