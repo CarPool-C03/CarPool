@@ -14,6 +14,7 @@ import LeMiePrenotazioni from './pages/LeMiePrenotazioni.jsx';
 import IMieiViaggi from './pages/IMieiViaggi.jsx';
 import ModificaViaggio from './pages/ModificaViaggio.jsx';
 import RichiesteRicevute from './pages/RichiesteRicevute.jsx';
+import Report from './pages/Report.jsx';
 import PaginaVuota from './pages/PaginaVuota.jsx';
 import Registrazione from './pages/Registrazione.jsx';
 import RegistrazioneInviata from './pages/RegistrazioneInviata.jsx';
@@ -85,7 +86,7 @@ export default function App() {
           />
           <Route
             path="/report"
-            element={protetta(['MobilityManager'], <PaginaVuota titolo="Report PSCL" />)}
+            element={protetta(['MobilityManager'], <Report />)}
           />
           <Route
             path="/admin"
