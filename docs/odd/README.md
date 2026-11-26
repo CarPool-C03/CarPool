@@ -166,6 +166,14 @@ modifica resta a GestoreViaggi; le condizioni di proprietà e stato sono ricontr
 transazione di persistenza. Gli ID delle richieste restituiti consentono a GestoreViaggi di
 pubblicare gli eventi Observer dopo il commit.
 
+## Persistenza dei report PSCL
+
+`PersistenzaService.recuperaReportPSCL(sedeId: Intero, dal: String, al: String): Promise<{ totali: { viaggiCondivisi: Intero, postiOfferti: Intero, passeggeriTrasportati: Intero }, mesi: Array<{ mese: String, viaggiCondivisi: Intero, postiOfferti: Intero, passeggeriTrasportati: Intero }> }>`
+esegue query aggregate sui viaggi `Concluso` della sede, con `dataOraPartenza` nel periodo inclusivo
+(date `AAAA-MM-GG`, fuso `Europe/Rome`). Raggruppa i conteggi per mese (`AAAA-MM`) e restituisce
+anche i totali; i passeggeri sono le richieste `Completata`. Non restituisce dati identificativi
+dei Membri. Se non ci sono viaggi, restituisce totali a zero e `mesi` vuoto.
+
 ## Glossario delle classi introdotte
 
 | Classe | Definizione |
