@@ -110,6 +110,10 @@ async function cancellaViaggio(membroId, viaggioId) {
   return GestoreViaggi.cancellaViaggio(membroId, viaggioId);
 }
 
+async function concludiViaggiScaduti(adesso) {
+  return GestoreViaggi.concludiViaggiScaduti(adesso);
+}
+
 module.exports = {
   cercaViaggi,
   avviaPubblicazione: GestoreViaggi.avviaPubblicazione,
@@ -121,4 +125,5 @@ module.exports = {
   viaggiDelConducente,
   modificaViaggio,
   cancellaViaggio,
+  concludiViaggiScaduti,
 };
