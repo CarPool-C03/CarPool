@@ -7,7 +7,6 @@ const {
   aggiungiAccount,
   aggiungiVeicolo,
   allineaOrganizzazione,
-  cerca,
   creaContesto,
   datiViaggio,
   fissaOrologio,
@@ -16,16 +15,14 @@ const {
   ripristinaOrologio,
 } = require('./fixture');
 
-describe('Modifica e cancellazione dei viaggi', () => {
+describe('Modifica dei viaggi', () => {
   let contesto;
   let notificaModifica;
-  let notificaCancellazione;
 
   beforeEach(async () => {
     fissaOrologio();
     contesto = await creaContesto({ veicolo: true });
     notificaModifica = jest.spyOn(NotificaService, 'inviaNotificaModifica').mockReturnValue(true);
-    notificaCancellazione = jest.spyOn(NotificaService, 'inviaNotificaCancellazione').mockReturnValue(true);
   });
 
   afterEach(async () => {
@@ -96,10 +93,19 @@ describe('Modifica e cancellazione dei viaggi', () => {
 
     expect(risposta.status).toBe(409);
     expect(risposta.body.errore.codice).toBe('VIAGGIO_NON_ATTIVO');
+    const [salvato] = await PersistenzaService.query(
+      'SELECT stato, "puntoPartenza" FROM "Viaggio" WHERE id = $1',
+      [creata.body.id],
+    );
+    expect(salvato).toEqual({
+      stato: 'Concluso',
+      puntoPartenza: datiViaggio(contesto.sede.id).puntoPartenza,
+    });
   });
 
   test('TC_TRIP_04.07 - Modifica e cancellazione: un altro utente riceve 403', async () => {
     const creata = await pubblica(contesto, datiViaggio(contesto.sede.id));
+    const richiesta = await inserisciRichiesta(creata.body.id, 'InAttesa');
     const altro = await aggiungiAccount(contesto);
     await aggiungiVeicolo({ conducente: altro });
     const [sedeAltro] = await PersistenzaService.query(
@@ -118,32 +124,19 @@ describe('Modifica e cancellazione dei viaggi', () => {
 
     expect(modifica.status).toBe(403);
     expect(cancellazione.status).toBe(403);
-  });
-
-  test('TC_TRIP_04.09 - Cancellazione: viaggio Cancellato e richieste Annullate nella stessa transazione', async () => {
-    const creata = await pubblica(contesto, datiViaggio(contesto.sede.id));
-    await inserisciRichiesta(creata.body.id, 'InAttesa');
-    await inserisciRichiesta(creata.body.id, 'Accettata');
-    await inserisciRichiesta(creata.body.id, 'Rifiutata');
-
-    const risposta = await request(creaApp())
-      .delete(`/api/viaggi/${creata.body.id}`)
-      .set('Cookie', contesto.cookie);
-    const [viaggio] = await PersistenzaService.query(
-      'SELECT stato FROM "Viaggio" WHERE id = $1',
+    const [viaggioSalvato] = await PersistenzaService.query(
+      'SELECT stato, "puntoPartenza" FROM "Viaggio" WHERE id = $1',
       [creata.body.id],
     );
-    const richieste = await PersistenzaService.query(
-      'SELECT stato FROM "RichiestaPrenotazione" WHERE "viaggioId" = $1 ORDER BY id',
-      [creata.body.id],
+    const [richiestaSalvata] = await PersistenzaService.query(
+      'SELECT stato FROM "RichiestaPrenotazione" WHERE id = $1',
+      [richiesta.id],
     );
-
-    expect(risposta.status).toBe(204);
-    expect(viaggio.stato).toBe('Cancellato');
-    expect(richieste.map((elemento) => elemento.stato)).toEqual([
-      'Annullata', 'Annullata', 'Rifiutata',
-    ]);
-    expect(notificaCancellazione).toHaveBeenCalledTimes(2);
+    expect(viaggioSalvato).toEqual({
+      stato: 'Attivo',
+      puntoPartenza: datiViaggio(contesto.sede.id).puntoPartenza,
+    });
+    expect(richiestaSalvata.stato).toBe('InAttesa');
   });
 
   test('TC_TRIP_04.15 - Modifica: invio fallito non annulla il salvataggio e viene registrato', async () => {
@@ -163,25 +156,5 @@ describe('Modifica e cancellazione dei viaggi', () => {
       codice: 'ERRORE_INTERNO',
       sottosistema: 'viaggiPrenotazioni',
     }));
-  });
-
-  test('TC_TRIP_04.13 - Cancellazione: il viaggio cancellato non compare nella ricerca', async () => {
-    const creata = await pubblica(contesto, datiViaggio(contesto.sede.id));
-    const passeggero = await aggiungiAccount(contesto);
-    await allineaOrganizzazione(passeggero, contesto.conducente.organizzazioneId);
-    contesto.passeggero = passeggero;
-    const risposta = await request(creaApp())
-      .delete(`/api/viaggi/${creata.body.id}`)
-      .set('Cookie', contesto.cookie);
-    const risultati = await cerca(contesto);
-    const [viaggio] = await PersistenzaService.query(
-      'SELECT stato FROM "Viaggio" WHERE id = $1',
-      [creata.body.id],
-    );
-
-    expect(risposta.status).toBe(204);
-    expect(viaggio.stato).toBe('Cancellato');
-    expect(risultati.status).toBe(200);
-    expect(risultati.body.viaggi).toEqual([]);
   });
 });
