@@ -1,5 +1,6 @@
 // ViaggioPrenotazioneService: Facade del sottosistema viaggiPrenotazioni (docs/sdd/README.md, docs/odd/README.md).
 const OrganizzazioneService = require('../organizzazioni/OrganizzazioneService');
+const PersistenzaService = require('../persistenza/PersistenzaService');
 const RicercaViaggi = require('./ricerca/RicercaViaggi');
 const GestorePrenotazioni = require('./GestorePrenotazioni');
 const GestoreViaggi = require('./GestoreViaggi');
@@ -122,6 +123,14 @@ async function concludiViaggiScaduti(adesso) {
   return GestoreViaggi.concludiViaggiScaduti(adesso);
 }
 
+async function verificaPartecipazione(viaggioId, autoreId, valutatoId) {
+  return PersistenzaService.verificaPartecipazione(
+    viaggioId,
+    autoreId,
+    valutatoId,
+  );
+}
+
 module.exports = {
   cercaViaggi,
   avviaPubblicazione: GestoreViaggi.avviaPubblicazione,
@@ -136,4 +145,5 @@ module.exports = {
   modificaViaggio,
   cancellaViaggio,
   concludiViaggiScaduti,
+  verificaPartecipazione,
 };

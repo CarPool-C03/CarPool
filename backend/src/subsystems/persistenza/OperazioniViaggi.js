@@ -1,4 +1,22 @@
 function creaOperazioniViaggi({ query }) {
+  async function verificaPartecipazione(viaggioId, autoreId, valutatoId) {
+    const righe = await query(
+      `SELECT EXISTS (
+         SELECT 1
+         FROM "Viaggio" v
+         JOIN "RichiestaPrenotazione" r
+           ON r."viaggioId" = v.id AND r.stato = 'Completata'
+         WHERE v.id = $1
+           AND (
+             (v."conducenteId" = $2 AND r."passeggeroId" = $3)
+             OR (v."conducenteId" = $3 AND r."passeggeroId" = $2)
+           )
+       ) AS partecipante`,
+      [viaggioId, autoreId, valutatoId],
+    );
+    return righe[0].partecipante;
+  }
+
   async function inserisciViaggio(dati) {
     const righe = await query(
       `INSERT INTO "Viaggio"
@@ -44,7 +62,7 @@ function creaOperazioniViaggi({ query }) {
     return righe[0] ?? null;
   }
 
-  return { inserisciViaggio, dettaglioViaggio };
+  return { inserisciViaggio, dettaglioViaggio, verificaPartecipazione };
 }
 
 module.exports = creaOperazioniViaggi;

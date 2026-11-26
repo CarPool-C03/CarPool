@@ -11,6 +11,7 @@ const profiloRouter = require('./routes/profiloRouter');
 const viaggiRouter = require('./routes/viaggiRouter');
 const richiesteRouter = require('./routes/richiesteRouter');
 const reportRouter = require('./routes/reportRouter');
+const valutazioniRouter = require('./routes/valutazioniRouter');
 const gestoreErrori = require('./middleware/gestoreErrori');
 
 function creaApp() {
@@ -26,6 +27,7 @@ function creaApp() {
   app.use('/api', viaggiRouter);
   app.use('/api', richiesteRouter);
   app.use('/api', reportRouter);
+  app.use('/api', valutazioniRouter);
   app.use(gestoreErrori);
   return app;
 }
