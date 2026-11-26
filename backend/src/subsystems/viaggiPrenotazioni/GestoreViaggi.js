@@ -133,6 +133,11 @@ async function cancellaViaggio(membroId, viaggioId) {
   );
 }
 
+async function concludiViaggiScaduti(adesso) {
+  const limite = new Date(adesso.getTime() - 2 * 60 * 60 * 1000);
+  return PersistenzaService.concludiViaggiScaduti(limite);
+}
+
 module.exports = {
   avviaPubblicazione,
   pubblica,
@@ -140,4 +145,5 @@ module.exports = {
   viaggiDelConducente,
   modificaViaggio,
   cancellaViaggio,
+  concludiViaggiScaduti,
 };
