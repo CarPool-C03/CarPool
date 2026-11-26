@@ -2,6 +2,7 @@
 // Separata da server.js perché i test (Supertest) la usano senza aprire una porta.
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 const healthRouter = require('./routes/healthRouter');
 const authRouter = require('./routes/authRouter');
 const accountRouter = require('./routes/accountRouter');
@@ -16,6 +17,13 @@ const gestoreErrori = require('./middleware/gestoreErrori');
 
 function creaApp() {
   const app = express();
+  app.use(
+    cors({
+      origin: (origin, callback) =>
+        callback(null, Boolean(origin && origin === process.env.FRONTEND_URL)),
+      credentials: true,
+    }),
+  );
   app.use(express.json());
   app.use(cookieParser());
   app.use('/api/health', healthRouter);

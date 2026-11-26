@@ -2,12 +2,14 @@
 // Il file esporta provider e hook insieme: la regola di Fast Refresh non si applica.
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { ErroreApi, richiesta } from '../api/client.js';
+import { ErroreApi, richiesta, urlApi } from '../api/client.js';
 
 const UtenteContext = createContext(null);
 
 async function caricaUtente() {
-  const risposta = await fetch('/api/auth/me', { credentials: 'include' });
+  const risposta = await fetch(urlApi('/api/auth/me'), {
+    credentials: 'include',
+  });
   const dati = await risposta.json();
   if (
     risposta.status === 401 &&

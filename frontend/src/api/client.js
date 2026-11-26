@@ -24,6 +24,11 @@ export class ErroreValidazione extends Error {
   }
 }
 
+export function urlApi(percorso) {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL?.replace(/\/+$/, '') ?? '';
+  return `${backendUrl}${percorso}`;
+}
+
 async function leggiCorpo(risposta) {
   if (risposta.status === 204) return null;
   try {
@@ -45,7 +50,7 @@ export async function richiesta(percorso, { metodo = 'GET', corpo } = {}) {
     opzioni.body = JSON.stringify(corpo);
   }
 
-  const risposta = await fetch(percorso, opzioni);
+  const risposta = await fetch(urlApi(percorso), opzioni);
   const dati = await leggiCorpo(risposta);
 
   if (risposta.status === 401 && dati?.errore?.codice === 'NON_AUTENTICATO') {

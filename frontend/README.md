@@ -21,6 +21,9 @@ frontend/src/
 
 In sviluppo le chiamate a `/api` vanno al backend tramite il proxy di Vite
 (`vite.config.js`, variabile `VITE_BACKEND_URL`, predefinito `http://localhost:3000`).
+Nella build di produzione `VITE_BACKEND_URL` è l'URL HTTPS dell'API e viene
+usato dal client REST e dal caricamento della sessione. In sviluppo, se la
+variabile non è impostata, le richieste restano relative e usano il proxy.
 
 ## Regole
 

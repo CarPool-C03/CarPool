@@ -95,6 +95,17 @@ Il frontend inoltra le chiamate `/api` al backend (proxy di Vite, porta in
 (`TEST_DATABASE_URL`) e lo portano da soli all'ultima migrazione.
 Per fermare i database: `docker compose down`.
 
+### Beta HTTPS e deploy
+
+URL beta: da inserire dopo la configurazione del dominio pubblico.
+Frontend e API devono usare host HTTPS sotto lo stesso dominio registrabile;
+il frontend configura `VITE_BACKEND_URL` con l'URL dell'API. Negli hosting
+impostare le variabili del backend indicate in `backend/README.md`, collegare
+frontend e backend a `main` per il deploy automatico e usare il branch `prod`
+del database Neon. Applicare le migrazioni e il seed di produzione una sola
+volta secondo la procedura del README backend. La password dell'Amministratore
+va impostata come segreto dell'hosting e comunicata solo ai PM.
+
 Questa sezione è la base del Manuale di Installazione.
 
 ## Team

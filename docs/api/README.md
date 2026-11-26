@@ -30,7 +30,9 @@ endpoint o un campo non presente qui o nella issue va chiesto prima (`AGENTS.md`
 ## Autenticazione e ruoli
 
 - Sessione in un cookie `carpool_sessione` (httpOnly, sameSite=Lax, secure in produzione), impostato
-  da `POST /api/auth/login`. Il frontend usa `fetch` con `credentials: "include"`.
+  da `POST /api/auth/login`. Il frontend usa `fetch` con `credentials: "include"`. In produzione,
+  frontend e API devono usare HTTPS e host sotto lo stesso dominio registrabile, così il browser
+  invia il cookie nelle richieste cross-origin mantenendo `SameSite=Lax`.
 - Ruoli: `Membro`, `MobilityManager` (Membro con `ruoloMobilityManager = true`), `Amministratore`.
   Dove è scritto «Membro» sono ammessi anche i Mobility Manager.
 - Middleware (#13): `richiediAutenticazione` → 401 senza sessione valida; `richiediRuolo(...ruoli)` → 403.
