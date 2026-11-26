@@ -4,6 +4,31 @@ const RicercaPerSede = require('../subsystems/viaggiPrenotazioni/ricerca/Ricerca
 const { richiediAutenticazione, richiediRuolo } = require('../middleware/autenticazione');
 
 const router = express.Router();
+const formatoDataOraEuropeRome = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Europe/Rome',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hourCycle: 'h23',
+  timeZoneName: 'longOffset',
+});
+
+function serializzaDataOraEuropeRome(valore) {
+  const data = new Date(valore);
+  const valori = Object.fromEntries(
+    formatoDataOraEuropeRome
+      .formatToParts(data)
+      .map(({ type, value }) => [type, value]),
+  );
+  const millisecondi = data.getUTCMilliseconds();
+  const frazione = millisecondi === 0 ? '' : `.${String(millisecondi).padStart(3, '0')}`;
+  const offset = valori.timeZoneName.replace(/^GMT/, '');
+
+  return `${valori.year}-${valori.month}-${valori.day}T${valori.hour}:${valori.minute}:${valori.second}${frazione}${offset}`;
+}
 
 router.get(
   '/viaggi/ricerca',
@@ -21,7 +46,11 @@ router.get(
       richiesta.utente.membro.id,
       richiesta.utente.organizzazione.id,
     );
-    risposta.status(200).json({ viaggi });
+    const viaggiSerializzati = viaggi.map((viaggio) => ({
+      ...viaggio,
+      dataOraPartenza: serializzaDataOraEuropeRome(viaggio.dataOraPartenza),
+    }));
+    risposta.status(200).json({ viaggi: viaggiSerializzati });
   },
 );
 

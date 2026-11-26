@@ -90,6 +90,7 @@ describe('GET /api/viaggi/ricerca', () => {
     expect(risposta.body.viaggi).toHaveLength(1);
     expect(risposta.body.viaggi[0]).toMatchObject({
       id: viaggioId,
+      dataOraPartenza: '2026-12-03T08:00:00+01:00',
       puntoPartenza: 'Salerno, Piazza della Concordia',
       sede: { id: contesto.sede.id, nome: 'Campus di Fisciano' },
       postiOfferti: 3,
@@ -114,10 +115,20 @@ describe('GET /api/viaggi/ricerca', () => {
 
     expect(risposta.status).toBe(200);
     expect(risposta.body.viaggi.map(({ id }) => id)).toEqual([primo, secondo]);
-    expect(risposta.body.viaggi[1]).toMatchObject({
-      postiDisponibili: 4,
-      contributoIndicativoEuro: null,
-    });
+    expect(risposta.body.viaggi).toMatchObject([
+      {
+        dataOraPartenza: '2026-12-03T08:00:00+01:00',
+        puntoPartenza: 'Salerno, Piazza della Concordia',
+        postiDisponibili: 2,
+        contributoIndicativoEuro: 3.5,
+      },
+      {
+        dataOraPartenza: '2026-12-03T08:30:00+01:00',
+        puntoPartenza: 'Salerno, Piazza della Concordia',
+        postiDisponibili: 4,
+        contributoIndicativoEuro: null,
+      },
+    ]);
   });
 
   test('TC_TRIP_02.08 - sede di un’altra organizzazione: segnala la sede', async () => {
