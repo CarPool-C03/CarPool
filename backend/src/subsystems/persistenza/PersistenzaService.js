@@ -4,6 +4,7 @@ const creaOperazioniAccount = require('./OperazioniAccount');
 const creaOperazioniOrganizzazioni = require('./OperazioniOrganizzazioni');
 const creaOperazioniPrenotazioni = require('./OperazioniPrenotazioni');
 const creaOperazioniProfilo = require('./OperazioniProfilo');
+const creaOperazioniReport = require('./OperazioniReport');
 const creaOperazioniViaggi = require('./OperazioniViaggi');
 const creaOperazioniViaggiConducente = require('./OperazioniViaggiConducente');
 const creaOperazioniConclusioneViaggi = require('./OperazioniConclusioneViaggi');
@@ -46,6 +47,7 @@ async function transazione(fn) {
 const operazioniAccount = creaOperazioniAccount({ query, transazione });
 const operazioniOrganizzazioni = creaOperazioniOrganizzazioni({ query, transazione });
 const operazioniProfilo = creaOperazioniProfilo({ query });
+const operazioniReport = creaOperazioniReport({ query });
 const operazioniViaggi = creaOperazioniViaggi({ query, transazione });
 const operazioniViaggiConducente = creaOperazioniViaggiConducente({ query, transazione });
 const operazioniConclusioneViaggi = creaOperazioniConclusioneViaggi({ transazione });
@@ -100,6 +102,7 @@ module.exports = {
   ...operazioniOrganizzazioni,
   ...creaOperazioniPrenotazioni({ query, transazione }),
   ...operazioniProfilo,
+  ...operazioniReport,
   ...operazioniViaggi,
   ...operazioniViaggiConducente,
   ...operazioniConclusioneViaggi,
