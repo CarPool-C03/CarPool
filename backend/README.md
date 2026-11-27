@@ -48,15 +48,29 @@ solo Service (Facade). Si sviluppa dal basso: prima `migrations/` e
 
 Credenziali e connessione al database solo in variabili d'ambiente:
 `.env` non si versiona, `.env.example` contiene i nomi delle variabili con
-valori finti. In locale usare i valori di sviluppo; nell'hosting impostare
-`NODE_ENV=production`, `FRONTEND_URL` all'origine HTTPS esatta del frontend,
-`DATABASE_SSL=true`, `DATABASE_URL` con `?sslmode=require`,
-`EMAIL_PROVIDER=brevo` e `BREVO_API_KEY`. Impostare anche `ADMIN_PASSWORD`
-solo quando si esegue il seed di produzione. Non inserire segreti nel repository.
+valori finti. In locale usare i valori di sviluppo; nell'hosting impostare:
 
-Il frontend e l'API devono essere HTTPS e sotto lo stesso dominio registrabile
-per mantenere il cookie di sessione `SameSite=Lax`. CORS accetta solo
-`FRONTEND_URL` e abilita le richieste con credenziali.
+- `NODE_ENV=production`;
+- `FRONTEND_URL` all'origine HTTPS esatta del frontend;
+- `DATABASE_URL` con `?sslmode=require` e `DATABASE_SSL=true`;
+- `EMAIL_PROVIDER=brevo`, `BREVO_API_KEY` e `EMAIL_MITTENTE` (mittente
+  verificato in Brevo; richiesto da `BrevoAdapter`);
+- `ADMIN_PASSWORD` solo quando si esegue il seed di produzione.
+
+Non inserire segreti nel repository. Il frontend e l'API devono essere HTTPS e
+sotto lo stesso dominio registrabile per mantenere il cookie di sessione
+`SameSite=Lax`. CORS accetta solo `FRONTEND_URL` e abilita le richieste con
+credenziali.
+
+### Render
+
+- Root directory `backend`, Node.js 22, build `npm ci`, avvio `npm start`.
+- Health check `GET /api/health`.
+- Una sola istanza, sempre attiva: l'attività pianificata conclude i viaggi
+  dopo 2 ore e non gira se il servizio è in sleep.
+- Al primo deploy eseguire `npm run db:migrate`, poi `node seeds/produzione.js`
+  una sola volta con `ADMIN_PASSWORD` impostata.
+- Le variabili si impostano nella dashboard Render, mai nel repository.
 
 ## Database
 

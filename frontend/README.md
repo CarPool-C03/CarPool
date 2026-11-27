@@ -25,6 +25,21 @@ Nella build di produzione `VITE_BACKEND_URL` è l'URL HTTPS dell'API e viene
 usato dal client REST e dal caricamento della sessione. In sviluppo, se la
 variabile non è impostata, le richieste restano relative e usano il proxy.
 
+## Deploy Vercel
+
+Il progetto Vercel usa questa cartella come Root Directory, con preset Vite:
+`npm ci`, `npm run build`, output `dist`, Node.js 22.x. La variabile
+`VITE_BACKEND_URL` va impostata prima della build (Production e Preview) con
+l'URL HTTPS dell'API, senza slash finale; è pubblica e non deve contenere segreti.
+
+`vercel.json` serve il fallback SPA: i percorsi di React Router (`/login`,
+`/home`, `/verifica`, …) restituiscono `index.html`, mentre `/api/*`, `/assets/*`
+e `/CARPOOL.png` non vengono riscritti; un asset mancante resta 404 e non viene
+mascherato da `index.html`.
+
+Dopo il deploy verificare `/`, `/login`, `/home`, `/registrazione` e `/verifica`
+con accesso diretto, e che gli asset JS/CSS rispondano 200.
+
 ## Regole
 
 - Il frontend (InterfacciaUtenteSubsystem) chiama solo le API REST del backend:
