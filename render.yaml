@@ -1,0 +1,34 @@
+# Render Blueprint del backend CarPool.
+# Il servizio deve restare always-on e con una sola istanza: l'attività
+# pianificata in backend/src/pianificazione.js conclude i viaggi dopo 2 ore.
+services:
+  - type: web
+    name: carpool-api
+    runtime: node
+    plan: 0.5c-512mb
+    region: frankfurt
+    repo: https://github.com/CarPool-C03/CarPool
+    branch: main
+    rootDir: backend
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    numInstances: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_SSL
+        value: "true"
+      - key: FRONTEND_URL
+        sync: false
+      - key: EMAIL_PROVIDER
+        value: brevo
+      - key: BREVO_API_KEY
+        sync: false
+      - key: EMAIL_MITTENTE
+        sync: false

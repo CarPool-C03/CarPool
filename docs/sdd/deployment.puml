@@ -51,8 +51,9 @@ end note
 note bottom of HF
   Deploy automatico da main.
   VITE_BACKEND_URL punta a api.<dominio-beta>.
-  Frontend e API condividono il dominio registrabile:
-  il cookie SameSite=Lax funziona su HTTPS.
+  Beta attuale: frontend su car-pool-xi.vercel.app e API su
+  carpool-api.onrender.com. Per il cookie SameSite=Lax serve un
+  dominio registrabile condiviso tra frontend e API.
 end note
 
 note bottom of DB
