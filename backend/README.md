@@ -64,13 +64,19 @@ credenziali.
 
 ### Render
 
-- Root directory `backend`, Node.js 22, build `npm ci`, avvio `npm start`.
-- Health check `GET /api/health`.
-- Una sola istanza, sempre attiva: l'attività pianificata conclude i viaggi
-  dopo 2 ore e non gira se il servizio è in sleep.
+Il servizio è definito nel Blueprint `render.yaml` alla radice del repository:
+nome `carpool-api`, root `backend`, Node.js 22, build `npm ci`, avvio `npm start`,
+health check `GET /api/health`, piano always-on e una sola istanza.
+
+- URL pubblico atteso: `https://carpool-api.onrender.com` (da verificare dopo il
+  primo deploy).
+- Le variabili con `sync: false` (`DATABASE_URL`, `FRONTEND_URL`,
+  `BREVO_API_KEY`, `EMAIL_MITTENTE`) si impostano nella dashboard Render, mai
+  nel repository.
 - Al primo deploy eseguire `npm run db:migrate`, poi `node seeds/produzione.js`
   una sola volta con `ADMIN_PASSWORD` impostata.
-- Le variabili si impostano nella dashboard Render, mai nel repository.
+- `NODE_ENV=production`, `DATABASE_SSL=true` e `NODE_VERSION=22` sono nel
+  Blueprint.
 
 ## Database
 

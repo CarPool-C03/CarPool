@@ -97,7 +97,9 @@ Per fermare i database: `docker compose down`.
 
 ### Beta HTTPS e deploy
 
-URL beta: da inserire dopo la configurazione del dominio pubblico.
+URL beta: frontend `https://car-pool-xi.vercel.app`; API
+`https://carpool-api.onrender.com` (servizio definito in `render.yaml`, URL da
+confermare dopo il primo deploy Render).
 Frontend e API devono usare host HTTPS sotto lo stesso dominio registrabile;
 il frontend configura `VITE_BACKEND_URL` con l'URL dell'API. Negli hosting
 impostare le variabili del backend indicate in `backend/README.md`, collegare
